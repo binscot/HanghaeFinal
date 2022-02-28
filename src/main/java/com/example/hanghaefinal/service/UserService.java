@@ -11,9 +11,12 @@ import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.JwtTokenProvider;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.util.Objects;
 import java.util.Optional;
@@ -83,7 +86,7 @@ public class UserService {
 
     //로그인 서비스
     //존재하지 않거나 비밀번호가 맞지 않을시 오류를 내주고 그렇지 않을경우 토큰을 발행합니다.
-    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+    public ResponseEntity<LoginResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
         LoginResponseDto loginResponseDto = new LoginResponseDto();
         {
             User member = userRepository.findByUsername(loginRequestDto.getUsername())
@@ -91,9 +94,18 @@ public class UserService {
             if (!passwordEncoder.matches(loginRequestDto.getPassword(), member.getPassword())) {
                 throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요.");
             }
-            loginResponseDto.setToken(jwtTokenProvider.createToken(member.getUsername()));
+
+            String token = jwtTokenProvider.createToken(member.getUsername());
+
+            Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
+            cookie.setPath("/");    // 이 경로에 바로 넣어줘야지 모든 경로에서 쿠키를 사용할 수 있다.
+            // https에서 setHttpOnly(true) 를 사용하는지 안하는지 검색해보자
+            cookie.setHttpOnly(true);   // 프론트에서 헤더에 있는 토큰을 못 꺼내서 쓴다. 애초에 헤더에서 꺼내서 사용하는게 아니라 다른 방식으로 사용하나 보군
+            cookie.setSecure(true);     // https 에서 사용한다.
+            response.addCookie(cookie); // 이거만 있으면 프론트에서 받을 수 있다.
+
             loginResponseDto.setUsername(member.getUsername());
-            return loginResponseDto;
+            return ResponseEntity.ok(loginResponseDto);
         }
     }
 
