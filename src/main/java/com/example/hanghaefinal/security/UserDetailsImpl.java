@@ -1,13 +1,13 @@
 package com.example.hanghaefinal.security;
 
 import com.example.hanghaefinal.model.User;
-import com.example.hanghaefinal.model.UserRoleEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 public class UserDetailsImpl implements UserDetails {
 
@@ -51,15 +51,7 @@ public class UserDetailsImpl implements UserDetails {
         return true;
     }
 
-    @Override //계정이 가지고 있는 권한 목록들을 리턴
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        UserRoleEnum userRole = user.getRole();
-        String authority = userRole.getAuthority();
-
-        SimpleGrantedAuthority simpleAuthority = new SimpleGrantedAuthority(authority);
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(simpleAuthority);
-
-        return authorities;
+    @Override public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.emptyList();
     }
 }

@@ -6,7 +6,6 @@ import com.example.hanghaefinal.dto.responseDto.CheckIdResponseDto;
 import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
 import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.model.User;
-import com.example.hanghaefinal.model.UserRoleEnum;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.JwtTokenProvider;
 import com.example.hanghaefinal.security.UserDetailsImpl;
@@ -55,16 +54,7 @@ public class UserService {
 // 패스워드 암호화
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-// 사용자 ROLE 확인
-        UserRoleEnum role = UserRoleEnum.USER;
-        if (requestDto.isAdmin()) {
-            if (!requestDto.getAdminToken().equals(ADMIN_TOKEN)) {
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
-            }
-            role = UserRoleEnum.ADMIN;
-        }
-
-        User user = new User(username, password, role);
+        User user = new User(username, password);
         return userRepository.save(user);
     }
 

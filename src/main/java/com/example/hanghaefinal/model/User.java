@@ -27,19 +27,18 @@ public class User extends Timestamped{
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = true)
+    private String nickName;
 
-    @Column(nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
+    @Column(nullable = true)
+    private String userProfileImage;
 
+    @Column(nullable = true)
+    private String introduction;
 
-
-    public User(String username, String password, UserRoleEnum role) {
+    public User(String username, String password ) {
         this.username = username;
         this.password = password;
-        this.role = role;
-
     }
-
 
 }
