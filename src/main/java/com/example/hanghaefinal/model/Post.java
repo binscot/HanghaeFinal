@@ -1,6 +1,8 @@
 package com.example.hanghaefinal.model;
 
+import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -8,9 +10,11 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 @Table(name = "post")
 public class Post extends Timestamped {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -24,7 +28,7 @@ public class Post extends Timestamped {
     private String color;
 
     @Column(name = "limit_cnt")
-    private String limitCnt;
+    private int limitCnt;
 
     @Column(name = "complete")
     private boolean complete;
@@ -33,4 +37,11 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
+    public Post(PostRequestDto requestDto, User user){
+        this.title = requestDto.getTitle();
+        this.postImageUrl = requestDto.getImageUrl();
+        this.color = requestDto.getColor();
+        this.limitCnt = requestDto.getLimitCnt();
+        this.user = user;
+    }
 }
