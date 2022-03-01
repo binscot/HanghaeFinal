@@ -26,6 +26,9 @@ public class Post extends Timestamped {
     @Column(name = "limit_cnt")
     private String limitCnt;
 
+    @Column(name = "complete")
+    private boolean complete;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
