@@ -24,12 +24,15 @@ public class PostService {
     private final S3Uploader s3Uploader;
 
     public Boolean uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
-        String originalFileName = multipartFile.getOriginalFilename();
-        String convertedFileName = UUID.randomUUID() + originalFileName;
-        log.info("~~~ convertedFileName : "+ convertedFileName);
-        requestDto.setImageUrl(convertedFileName);
-        s3Uploader.upload(multipartFile, convertedFileName);
+        //String originalFileName = multipartFile.getOriginalFilename();
+        //String convertedFileName = UUID.randomUUID() + originalFileName;
+        //requestDto.setImageUrl(convertedFileName);
+        String dirName = "image";
+        //s3Uploader.upload(multipartFile, convertedFileName);
 
+        String uploadUrl =  s3Uploader.upload(multipartFile, dirName);
+        log.info("~~~ uploadUrl : " + uploadUrl );
+        requestDto.setImageUrl(uploadUrl);
         return true;
     }
 
