@@ -2,6 +2,7 @@ package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
 import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
+import com.example.hanghaefinal.dto.requestDto.UserUpdateDto;
 import com.example.hanghaefinal.dto.responseDto.CheckIdResponseDto;
 import com.example.hanghaefinal.dto.responseDto.CheckNickResponseDto;
 import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
@@ -75,6 +76,18 @@ public class UserController {
         return ResponseEntity.ok(userInfoResponseDto);
     }
 
-
+    //회원정보 수정
+    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
+    @PutMapping("/user/update")
+    public ResponseEntity<UserInfoResponseDto> updateUser(
+            @RequestPart(value = "userInfo") UserUpdateDto updateDto,
+            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) throws IOException{
+        String userProfile = "";
+        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+        UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails,userProfile);
+        return ResponseEntity.ok(userInfoResponseDto);
+    }
 
 }

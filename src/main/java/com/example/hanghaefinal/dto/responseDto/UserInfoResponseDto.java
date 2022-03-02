@@ -1,5 +1,6 @@
 package com.example.hanghaefinal.dto.responseDto;
 
+import com.example.hanghaefinal.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,4 +12,6 @@ public class UserInfoResponseDto {
     private String nickname;
     private String userProfileImage;
     private String  introduction;
+
+
 }
