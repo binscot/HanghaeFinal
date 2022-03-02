@@ -32,16 +32,24 @@ public class UserController {
     private final S3Uploader s3Uploader;
 
     // 회원 가입 요청 처리
+//    @ApiOperation(value = "회원가입", notes = "회원가입요청")
+//    @PostMapping("/user/signup")
+//    public ResponseEntity<User> registerUser(
+//            @RequestPart(value = "userInfo") SignupRequestDto requestDto,
+//            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile) throws IOException {
+//
+//        String userProfile = "";
+//        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+//
+//        User user = userService.registerUser(requestDto, userProfile);
+//        return ResponseEntity.ok(user);
+//    }
+
     @ApiOperation(value = "회원가입", notes = "회원가입요청")
     @PostMapping("/user/signup")
     public ResponseEntity<User> registerUser(
-            @RequestPart(value = "userInfo") SignupRequestDto requestDto,
-            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile) throws IOException {
-
-        String userProfile = "";
-        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
-
-        User user = userService.registerUser(requestDto, userProfile);
+            @ModelAttribute SignupRequestDto requestDto) throws IOException {
+        User user = userService.registerUser(requestDto);
         return ResponseEntity.ok(user);
     }
 
