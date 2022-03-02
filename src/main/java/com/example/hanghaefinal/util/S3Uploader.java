@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Optional;
+import java.util.UUID;
 
 @Slf4j
 @Component
@@ -20,7 +21,6 @@ import java.util.Optional;
 public class S3Uploader {
 
     private final AmazonS3Client amazonS3Client;
-    private final String imageDirName = "image";    // s3 버킷의 이미지가 담기는 /image파일 경로
 
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;  // S3 버킷 이름
@@ -33,9 +33,8 @@ public class S3Uploader {
     }
 
     // S3로 파일 업로드하기
-    private String upload(File uploadFile, String convertedFileName) {
-        String fileName = imageDirName + "/" + convertedFileName;   // S3에 저장된 파일 이름
-        System.out.println("작성" + fileName);
+    private String upload(File uploadFile, String dirName) {
+        String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();   // S3에 저장된 파일 이름
         String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
         removeNewFile(uploadFile);
         return uploadImageUrl;

@@ -3,22 +3,23 @@ package com.example.hanghaefinal.controller;
 import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
 import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
 import com.example.hanghaefinal.dto.responseDto.CheckIdResponseDto;
+import com.example.hanghaefinal.dto.responseDto.CheckNickResponseDto;
 import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
 import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.UserService;
+import com.example.hanghaefinal.util.S3Uploader;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -27,26 +28,40 @@ import javax.servlet.http.HttpServletResponse;
 public class UserController {
 
     private final UserService userService;
+    private final S3Uploader s3Uploader;
 
     // 회원 가입 요청 처리
     @ApiOperation(value = "회원가입", notes = "회원가입요청")
-    @PostMapping("/signup")
-    public ResponseEntity<User> registerUser(@RequestBody SignupRequestDto requestDto) {
-        User user = userService.registerUser(requestDto);
+    @PostMapping("/user/signup")
+    public ResponseEntity<User> registerUser(
+            @RequestPart(value = "userInfo") SignupRequestDto requestDto,
+            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile) throws IOException {
+
+        String userProfile = "";
+        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+
+        User user = userService.registerUser(requestDto, userProfile);
         return ResponseEntity.ok(user);
     }
 
     // ID 중복 체크.
     @ApiOperation(value = "ID 중복 체크", notes = "ID 중복 체크")
-    @PostMapping("/checkId")
+    @PostMapping("/user/signup/checkID")
     public ResponseEntity<CheckIdResponseDto> checkId(@RequestBody SignupRequestDto requestDto){
         CheckIdResponseDto checkIdResponseDto = userService.checkId(requestDto);
         return ResponseEntity.ok(checkIdResponseDto);
     }
 
+    @ApiOperation(value = "ID 중복 체크", notes = "ID 중복 체크")
+    @PostMapping("/user/signUp/checkNick")
+    public ResponseEntity<CheckNickResponseDto> checkNick(@RequestBody SignupRequestDto requestDto){
+        CheckNickResponseDto checkNickResponseDto = userService.checkNick(requestDto);
+        return ResponseEntity.ok(checkNickResponseDto);
+    }
+
     // 로그인
     @ApiOperation(value = "로그인", notes = "로그인")
-    @PostMapping("/login")
+    @PostMapping("/user/login")
     public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto requestDto,
                                                   HttpServletResponse response) {
         return userService.login(requestDto, response);
@@ -54,7 +69,7 @@ public class UserController {
 
     // 유저정보 전달.
     @ApiOperation(value = "유저정보 전달.", notes = "유저정보 전달.")
-    @PostMapping("/user")
+    @PostMapping("/user/myInfo")
     public ResponseEntity<UserInfoResponseDto> userInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
         UserInfoResponseDto userInfoResponseDto = userService.userInfo(userDetails);
         return ResponseEntity.ok(userInfoResponseDto);

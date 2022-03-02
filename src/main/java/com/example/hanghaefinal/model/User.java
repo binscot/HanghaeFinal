@@ -36,9 +36,12 @@ public class User extends Timestamped{
     @Column(nullable = true)
     private String introduction;
 
-    public User(String username, String password ) {
+
+    public User(String username, String password, String nickName, String introduction, String userProfile) {
         this.username = username;
         this.password = password;
+        this.nickName = nickName;
+        this.introduction = introduction;
+        this.userProfileImage = userProfile;
     }
-
 }

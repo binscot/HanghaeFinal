@@ -23,15 +23,18 @@ public class SignupRequestDto {
     private String username;
 
     @NotBlank(message = "비밀번호를 입력해 주세요!")
+    @Size(min = 4, max = 10, message = "비밀번호확인은 비밀번호와 똑같이 입력해주세요!")
+    private String nickName;
+
+    @NotBlank(message = "비밀번호를 입력해 주세요!")
     @Size(min = 4, max = 10, message = "비밀번호는 4자 이상 입력해주세요!")
     private String password;
 
     @NotBlank(message = "비밀번호를 입력해 주세요!")
     @Size(min = 4, max = 10, message = "비밀번호확인은 비밀번호와 똑같이 입력해주세요!")
-    private String check_password;
+    private String checkPassword;
 
-    @NotBlank(message = "비밀번호를 입력해 주세요!")
-    @Size(min = 4, max = 10, message = "비밀번호확인은 비밀번호와 똑같이 입력해주세요!")
-    private String nickName;
+    @Size(max = 150, message = "소개는 300자 이하로 작성해주세요!")
+    private String introduction;
 
 }
