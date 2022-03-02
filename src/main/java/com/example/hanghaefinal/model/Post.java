@@ -39,7 +39,7 @@ public class Post extends Timestamped {
 
     public Post(PostRequestDto requestDto, User user){
         this.title = requestDto.getTitle();
-        this.postImageUrl = requestDto.getImageUrl();
+        this.postImageUrl = requestDto.getPostImageUrl();
         this.color = requestDto.getColor();
         this.limitCnt = requestDto.getLimitCnt();
         this.user = user;
