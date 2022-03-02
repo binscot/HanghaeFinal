@@ -13,7 +13,10 @@ public class UserInfoResponseDto {
     private String username;
     private String nickname;
     private String userProfileImage;
-    private String introduction;
+    private String  introduction;
+
+
+
 
     public UserInfoResponseDto(User user){
         this.userKey = user.getId();
@@ -22,4 +25,5 @@ public class UserInfoResponseDto {
         this.userProfileImage = user.getUserProfileImage();
         this.introduction = user.getIntroduction();
     }
+
 }
