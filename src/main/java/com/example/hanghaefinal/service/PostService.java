@@ -1,8 +1,12 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
+import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
+import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.model.*;
+import com.example.hanghaefinal.repository.CommentRepository;
+import com.example.hanghaefinal.repository.PostLikesRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +18,7 @@ import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -22,6 +27,8 @@ import java.util.UUID;
 public class PostService {
 
     private final PostRepository postRepository;
+    private final PostLikesRepository postLikesRepository;
+    private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
 
     public Boolean uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
@@ -51,9 +58,9 @@ public class PostService {
         // paragraphList 조회
         // List<Paragraph> paragraphList =
         // commentList 조회
-        // List<Comment> commentList =
+        //List<CommentResponseDto> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         // postLikes 조회
-        // PostLikes postLikes
+        //PostLikes postLikes = postLikesRepository.findByPostId();
 
         // paragraph를 작성한 유저와 좋아요
         // comment를 작성한 유저와 좋아요가 필요하다.

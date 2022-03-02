@@ -20,6 +20,7 @@ public class PostResponseDto {
     //private double postScore;
     //private List<CommentResponseDto> commnetList;
     //private User user;
+    private List<CommentResponseDto> commentList;
 
     public PostResponseDto(Post post){
         this.postKey = post.getId();
@@ -34,5 +35,6 @@ public class PostResponseDto {
         // paragraphList에서 userId 를 가지고 user 정보와 paragraphLike를 response 하고
         // commentList 에 있는 userId를 가지고 user정보를 와 commentLikes를 response 해라
         // 또한 postLikes 도 필요하다.
+        //this.commentList = commentList;
     }
 }
