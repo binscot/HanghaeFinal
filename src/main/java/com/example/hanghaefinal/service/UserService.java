@@ -67,7 +67,7 @@ public class UserService {
     }
 
 
-    //중복확인 서비스
+    //아이디 중복확인
     public CheckIdResponseDto checkId(SignupRequestDto requestDto) {
         CheckIdResponseDto checkIdResponseDto = new CheckIdResponseDto();
         Optional<User> user = userRepository.findByUsername(requestDto.getUsername());
@@ -81,19 +81,19 @@ public class UserService {
         return checkIdResponseDto;
     }
 
+    //닉네임 중복확인
     public CheckNickResponseDto checkNick(SignupRequestDto requestDto) {
         CheckNickResponseDto checkNickResponseDto = new CheckNickResponseDto();
         Optional<User> foundNickName = userRepository.findByNickName(requestDto.getNickName());
+        System.out.println(foundNickName.isPresent());
         if (foundNickName.isPresent()){
             checkNickResponseDto.setOk(false);
             checkNickResponseDto.setMsg("중복된 닉네임이 존재합니다!");
-        }
-        if (!foundNickName.isPresent()){
+        } else {
             checkNickResponseDto.setOk(true);
             checkNickResponseDto.setMsg("사용가능한 닉네임입니다!");
         }
-
-        return null;
+        return checkNickResponseDto;
     }
 
 
@@ -133,9 +133,11 @@ public class UserService {
         User user = userDetails.getUser();
         if (user == null)
             throw new NullPointerException("유저 정보가 없습니다.");
-        userInfoResponseDto.setId(user.getId());
+        userInfoResponseDto.setUserKey(user.getId());
         userInfoResponseDto.setUsername(user.getUsername());
-        userInfoResponseDto.setIs_login(false);
+        userInfoResponseDto.setNickname(user.getNickName());
+        userInfoResponseDto.setUserProfileImage(user.getUserProfileImage());
+        userInfoResponseDto.setIntroduction(user.getIntroduction());
         return userInfoResponseDto;
     }
 

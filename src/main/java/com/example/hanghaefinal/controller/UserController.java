@@ -53,7 +53,7 @@ public class UserController {
     }
 
     @ApiOperation(value = "ID 중복 체크", notes = "ID 중복 체크")
-    @PostMapping("/user/signUp/checkNick")
+    @PostMapping("/user/signup/checkNick")
     public ResponseEntity<CheckNickResponseDto> checkNick(@RequestBody SignupRequestDto requestDto){
         CheckNickResponseDto checkNickResponseDto = userService.checkNick(requestDto);
         return ResponseEntity.ok(checkNickResponseDto);
@@ -67,7 +67,7 @@ public class UserController {
         return userService.login(requestDto, response);
     }
 
-    // 유저정보 전달.
+    // 유저정보 전달
     @ApiOperation(value = "유저정보 전달.", notes = "유저정보 전달.")
     @PostMapping("/user/myInfo")
     public ResponseEntity<UserInfoResponseDto> userInfo(@AuthenticationPrincipal UserDetailsImpl userDetails) {
