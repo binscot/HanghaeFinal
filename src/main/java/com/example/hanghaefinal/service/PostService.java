@@ -2,10 +2,7 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
-import com.example.hanghaefinal.model.Comment;
-import com.example.hanghaefinal.model.Post;
-import com.example.hanghaefinal.model.PostLikes;
-import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
@@ -47,13 +44,22 @@ public class PostService {
         return true;
     }
 
-    /*public PostResponseDto viewPostDetail(Long postId){
+    public PostResponseDto viewPostDetail(Long postId){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
+        // paragraphList 조회
+        // List<Paragraph> paragraphList =
         // commentList 조회
-        //List<Comment> commentList =
+        // List<Comment> commentList =
         // postLikes 조회
-        //PostLikes postLikes
-    }*/
+        // PostLikes postLikes
+
+        // paragraph를 작성한 유저와 좋아요
+        // comment를 작성한 유저와 좋아요가 필요하다.
+
+        // limitCnt와 paragraph의 개수가 같으면 complete를 true로 반환해라
+        
+        return new PostResponseDto(post);
+    }
 }
