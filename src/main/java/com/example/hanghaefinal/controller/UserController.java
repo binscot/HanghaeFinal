@@ -45,6 +45,7 @@ public class UserController {
 //        return ResponseEntity.ok(user);
 //    }
 
+    // 회원 가입 요청 처리
     @ApiOperation(value = "회원가입", notes = "회원가입요청")
     @PostMapping("/user/signup")
     public ResponseEntity<User> registerUser(
@@ -88,13 +89,10 @@ public class UserController {
     @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
     @PutMapping("/user/update")
     public ResponseEntity<UserInfoResponseDto> updateUser(
-            @RequestPart(value = "userInfo") UserUpdateDto updateDto,
-            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile,
+            @ModelAttribute UserUpdateDto updateDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) throws IOException{
-        String userProfile = "";
-        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
-        UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails,userProfile);
+    ) throws IOException {
+        UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails);
         return ResponseEntity.ok(userInfoResponseDto);
     }
 
