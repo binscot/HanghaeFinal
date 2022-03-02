@@ -32,8 +32,8 @@ public class PostController {
         return true;
     }
 
-    /*@GetMapping("/posts/{postId}")
+    @GetMapping("/posts/{postId}")
     public PostResponseDto viewPost(@PathVariable Long postId){
         return postService.viewPostDetail(postId);
-    }*/
+    }
 }
