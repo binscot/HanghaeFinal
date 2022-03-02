@@ -2,6 +2,7 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
 import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
+import com.example.hanghaefinal.dto.requestDto.UserUpdateDto;
 import com.example.hanghaefinal.dto.responseDto.CheckIdResponseDto;
 import com.example.hanghaefinal.dto.responseDto.CheckNickResponseDto;
 import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
@@ -142,4 +143,22 @@ public class UserService {
     }
 
 
+    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails, String userProfile) {
+        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+                () -> new IllegalArgumentException("유저가 존재하지 않습니다.")
+        );
+
+        String nickName = updateDto.getNickName();
+        String password = passwordEncoder.encode(updateDto.getPassword());
+        String introduction = updateDto.getIntroduction();
+        user.updateUser(nickName,password,introduction,userProfile);
+        userRepository.save(user);
+        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto();
+        userInfoResponseDto.setUserKey(user.getId());
+        userInfoResponseDto.setUsername(user.getUsername());
+        userInfoResponseDto.setNickname(user.getNickName());
+        userInfoResponseDto.setUserProfileImage(user.getUserProfileImage());
+        userInfoResponseDto.setIntroduction(user.getIntroduction());
+        return userInfoResponseDto;
+    }
 }

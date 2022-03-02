@@ -13,11 +13,12 @@ public class Swagger2Config {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.example.HanghaeFinal"))
+                .apis(RequestHandlerSelectors.basePackage("com.example.hanghaefinal"))
                 .paths(PathSelectors.any())
                 .build();
     }
 
+    //스웨거 주소 http://binscot.shop/swagger-ui/index.html
 //    private ApiInfo apiInfo() {
 //        return new ApiInfoBuilder()
 //                .title("제목 작성")
