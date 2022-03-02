@@ -1,14 +1,13 @@
 package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
+import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -32,4 +31,9 @@ public class PostController {
 
         return true;
     }
+
+    /*@GetMapping("/posts/{postId}")
+    public PostResponseDto viewPost(@PathVariable Long postId){
+        return postService.viewPostDetail(postId);
+    }*/
 }

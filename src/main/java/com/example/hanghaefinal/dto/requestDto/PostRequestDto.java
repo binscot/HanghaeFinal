@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 public class PostRequestDto {
     private String title;
-    private String imageUrl;
+    private String postImageUrl;
     private String color;
     private int limitCnt;
 }
