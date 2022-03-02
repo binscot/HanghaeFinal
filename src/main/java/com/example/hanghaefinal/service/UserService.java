@@ -75,9 +75,19 @@ public class UserService {
 
     @Transactional
     public User registerUser(SignupRequestDto requestDto) throws IOException {
+        //        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+
+//        String userProfile = "";
+//        if (requestDto.getUserProfile()!=null){
+//            MultipartFile multipartFile = requestDto.getUserProfile();
+//            userProfile = s3Uploader.upload(multipartFile, "static");
+//        } else {
+//
+//            userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
+//        }
         MultipartFile multipartFile = requestDto.getUserProfile();
-        String userProfile = "";
-        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
 
         //유효성 체크 추가해야함
         String username = requestDto.getUsername();
@@ -189,7 +199,12 @@ public class UserService {
     }
 
 
-    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails, String userProfile) {
+    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
+//        String userProfile = "";
+//        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+        MultipartFile multipartFile = updateDto.getUserProfile();
+        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
                 () -> new IllegalArgumentException("유저가 존재하지 않습니다.")
         );
