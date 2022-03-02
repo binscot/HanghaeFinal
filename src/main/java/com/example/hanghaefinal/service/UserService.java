@@ -11,14 +11,17 @@ import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.JwtTokenProvider;
 import com.example.hanghaefinal.security.UserDetailsImpl;
+import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -29,9 +32,62 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final S3Uploader s3Uploader;
+
+
+
+//    @Transactional
+//    public User registerUser(SignupRequestDto requestDto, String userProfile) {
+//
+//        //유효성 체크 추가해야함
+//        String username = requestDto.getUsername();
+//        Optional<User> found = userRepository.findByUsername(username);
+//        if (found.isPresent()) {
+//            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
+//        }
+//        if (requestDto.getUsername() == null) {
+//            throw new NullPointerException("아이디를 입력해주세요");
+//        }
+//        if (Objects.equals(requestDto.getUsername(), "")) {
+//            throw new NullPointerException("아이디를 입력해주세요!!!!!!!!!");
+//        }
+//        if (requestDto.getPassword() == null) {
+//            throw new NullPointerException("비밀번호를 입력해주세요");
+//        }
+//        if (Objects.equals(requestDto.getPassword(), "")) {
+//            throw new NullPointerException("비밀번호를 입력해주세요!!!!!!!!!!!!");
+//        }
+//        String nickName = requestDto.getNickName();
+//        Optional<User> foundNickName = userRepository.findByNickName(nickName);
+//        if (foundNickName.isPresent()) {
+//            throw new IllegalArgumentException("중복된 사용자 닉네임이 존재합니다.");
+//        }
+//        String introduction = requestDto.getIntroduction();
+//        if (introduction.length()>300){
+//            throw new IllegalArgumentException("소개는 300자 이하로 작성해주세요!");
+//        }
+//// 패스워드 암호화
+//        String password = passwordEncoder.encode(requestDto.getPassword());
+//
+//        User user = new User(username, password, nickName, introduction, userProfile);
+//        return userRepository.save(user);
+//    }
 
     @Transactional
-    public User registerUser(SignupRequestDto requestDto, String userProfile) {
+    public User registerUser(SignupRequestDto requestDto) throws IOException {
+        //        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+
+//        String userProfile = "";
+//        if (requestDto.getUserProfile()!=null){
+//            MultipartFile multipartFile = requestDto.getUserProfile();
+//            userProfile = s3Uploader.upload(multipartFile, "static");
+//        } else {
+//
+//            userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
+//        }
+        MultipartFile multipartFile = requestDto.getUserProfile();
+        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
 
         //유효성 체크 추가해야함
         String username = requestDto.getUsername();
@@ -143,7 +199,12 @@ public class UserService {
     }
 
 
-    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails, String userProfile) {
+    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
+//        String userProfile = "";
+//        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+        MultipartFile multipartFile = updateDto.getUserProfile();
+        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
                 () -> new IllegalArgumentException("유저가 존재하지 않습니다.")
         );

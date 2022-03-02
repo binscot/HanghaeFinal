@@ -1,9 +1,7 @@
 package com.example.hanghaefinal.dto.requestDto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,6 +12,7 @@ import javax.validation.constraints.Size;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class SignupRequestDto {
 
     //회원가입을 위한 정보 username,paddword,email의 길이와객체들
@@ -25,6 +24,9 @@ public class SignupRequestDto {
     @NotBlank(message = "비밀번호를 입력해 주세요!")
     @Size(min = 4, max = 10, message = "비밀번호확인은 비밀번호와 똑같이 입력해주세요!")
     private String nickName;
+
+
+    private MultipartFile userProfile;
 
     @NotBlank(message = "비밀번호를 입력해 주세요!")
     @Size(min = 4, max = 10, message = "비밀번호는 4자 이상 입력해주세요!")
