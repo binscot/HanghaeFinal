@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -37,7 +39,7 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
-    public CommentResponseDto toResponseDto() {
+    /*public CommentResponseDto toResponseDto() {
         return CommentResponseDto.builder()
                 .commentId(this.id)
                 .comment(this.comment)
@@ -45,7 +47,7 @@ public class Comment extends Timestamped {
                 .commentUserId(this.user.getId())
                 .userInfoResponseDto(new UserInfoResponseDto(this.user))
                 .build();
-    }
+    }*/
 
     public Comment(CommentRequestDto commentRequestDto, Post post, User user) {
         this.comment = commentRequestDto.getComment();
