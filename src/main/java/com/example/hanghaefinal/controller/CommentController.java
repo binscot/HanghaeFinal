@@ -21,7 +21,7 @@ public class CommentController {
     private final CommentService commentService;
 
     //코멘트 조회
-    @GetMapping("/api/comment/{postId}")
+    @GetMapping("/comment/{postId}")
     public List<Comment> getComment(@PathVariable Long postId){
 
         return commentService.getComment(postId);
@@ -29,12 +29,11 @@ public class CommentController {
 
 
     //코멘트 작성
-    @PostMapping("/api/comment/{postId}")
+    @PostMapping("/comment/{postId}")
     public ResponseEntity<Comment> addComment(
             @PathVariable Long postId,
             @Validated @RequestBody CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails,
-            BindingResult bindingResult
+            @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
         User user = userDetails.getUser();
 
@@ -44,7 +43,7 @@ public class CommentController {
 
 
     //코멘트 삭제
-    @DeleteMapping("/api/comment/{commentId}")
+    @DeleteMapping("/comment/{commentId}")
     public void deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
 
         commentService.deleteComment(commentId, userDetails);
