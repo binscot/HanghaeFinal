@@ -41,6 +41,9 @@ dependencies {
 
     //s3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.1.RELEASE'
+
+    //e-mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {

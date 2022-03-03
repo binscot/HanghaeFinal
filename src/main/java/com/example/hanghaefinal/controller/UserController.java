@@ -1,18 +1,19 @@
 package com.example.hanghaefinal.controller;
 
-import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
-import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
-import com.example.hanghaefinal.dto.requestDto.UserUpdateDto;
+import com.example.hanghaefinal.dto.requestDto.*;
 import com.example.hanghaefinal.dto.responseDto.CheckIdResponseDto;
 import com.example.hanghaefinal.dto.responseDto.CheckNickResponseDto;
 import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
 import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
+import com.example.hanghaefinal.service.EmailService;
 import com.example.hanghaefinal.service.UserService;
 import com.example.hanghaefinal.util.S3Uploader;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -29,7 +31,7 @@ import java.io.IOException;
 public class UserController {
 
     private final UserService userService;
-    private final S3Uploader s3Uploader;
+    private final EmailService emailService;
 
     // 회원 가입 요청 처리
 //    @ApiOperation(value = "회원가입", notes = "회원가입요청")
@@ -62,7 +64,8 @@ public class UserController {
         return ResponseEntity.ok(checkIdResponseDto);
     }
 
-    @ApiOperation(value = "ID 중복 체크", notes = "ID 중복 체크")
+    //닉네임 중복체크
+    @ApiOperation(value = "닉네임 중복 체크", notes = "닉네임 중복 체크")
     @PostMapping("/user/signup/checkNick")
     public ResponseEntity<CheckNickResponseDto> checkNick(@RequestBody SignupRequestDto requestDto){
         CheckNickResponseDto checkNickResponseDto = userService.checkNick(requestDto);
@@ -94,6 +97,30 @@ public class UserController {
     ) throws IOException {
         UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails);
         return ResponseEntity.ok(userInfoResponseDto);
+    }
+
+    //회원 정보 삭제
+    @ApiOperation(value = "회원정보 삭제.", notes = "회원정보 삭제.")
+    @DeleteMapping("/user/remove")
+    public void removeUser(@RequestBody DeleteUserRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        userService.removeUser(requestDto, userDetails);
+    }
+
+    //이메일 인증
+    @PostMapping("/mailCheck")
+    @ApiOperation(value = "회원 가입시 이메인 인증", notes = "기존사용하고 있는 이메일을 통해 인증")
+    public String mailCheck(@RequestBody EmailRequestDto requestDto){
+        return emailService.mailCheck(requestDto);
+    }
+
+
+
+
+
+    //게시글 검색
+    @GetMapping("/search")
+    public List<Post> search(String keyword){
+        return userService.search(keyword);
     }
 
 }
