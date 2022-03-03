@@ -107,8 +107,17 @@ public class PostService {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+            for (Comment comment:commentList ) {
+                Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+            }
+
             //PostResponseDto postResponseDto = new PostResponseDto(post);
-            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeCnt);
+            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
