@@ -4,6 +4,7 @@ import com.example.hanghaefinal.model.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
     List<Post> findAllByOrderByModifiedAtDesc();
@@ -12,4 +13,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // 규칙에 맞게만 써주면 jpa가 알아서 sql문을 짜준다
     // modifiedAt 은 Timestamped 에 있다.
     List<Post> findByTitleContaining(String keyword);
+    List<Post> findAllByUserIdOrderByModifiedAtDesc(Long userId);
 }

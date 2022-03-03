@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
+import com.example.hanghaefinal.dto.responseDto.OtherUserResDto;
 import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
 import com.example.hanghaefinal.model.User;
@@ -43,9 +44,26 @@ public class PostController {
         return postService.viewPostDetail(postId);
     }
 
-    // 게시글 최신순 전체 조회
+    // 완성작 게시글 전체 조회 - 최신순
     @GetMapping("/posts/recent")
     public List<PostResponseDto> viewPostRecent(){
         return postService.viewPostRecent();
+    }
+
+    // 완성작 게시글 전체 조회 - 추천순(좋아요순)
+    @GetMapping("/posts/recommend")
+    public List<PostResponseDto> viewPostRecommend(){
+        return postService.viewPostRecommend();
+    }
+
+    // 미완성 게시글 전체 조회 - 최신순
+    @GetMapping("/posts/incomplete")
+    public List<PostResponseDto> viewPostIncomplete(){
+        return postService.viewPostIncomplete();
+    }
+
+    @GetMapping("/posts/userPage/{userKey}")
+    public OtherUserResDto viewUserPage(@PathVariable Long userKey){
+        return postService.viewUserPage(userKey);
     }
 }
