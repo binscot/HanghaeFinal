@@ -1,16 +1,14 @@
 package com.example.hanghaefinal.dto.responseDto;
 
-import com.example.hanghaefinal.model.Comment;
 import com.example.hanghaefinal.model.Post;
-import com.example.hanghaefinal.model.User;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
+@Data
 @Getter
 @Setter
-public class PostResponseDto {
+public class PostDetailResponseDto {
     private Long postKey; // postId
     private String postImageUrl;
     private String color;
@@ -21,9 +19,10 @@ public class PostResponseDto {
     //private List<CommentResponseDto> commnetList;
     //private User user;
     private List<CommentResponseDto> commentList;
+    //private UserInfoResponseDto userInfoResponseDto;
+    //private List<Comment> commentList;
 
-    // public PostResponseDto(Post post){
-    public PostResponseDto(Post post, int postLikeCnt){
+    public PostDetailResponseDto(Post post, List<CommentResponseDto> commentList){
         this.postKey = post.getId();
         this.postImageUrl = post.getPostImageUrl();
         this.color = post.getColor();
@@ -32,10 +31,13 @@ public class PostResponseDto {
         // 문단을 작성한 유저와 댓글을 작성한 유저를 클릭했을때 해당 유저(다른 사용자)
         // 페이지로 가기 위해서
         // 문단을 작성한 user 정보와 댓글을 작성한 user 정보를 response해줘야한다.
-        // 즉, 
+        // 즉,
         // paragraphList에서 userId 를 가지고 user 정보와 paragraphLike를 response 하고
         // commentList 에 있는 userId를 가지고 user정보를 와 commentLikes를 response 해라
         // 또한 postLikes 도 필요하다.
-        //this.commentList = commentList;
+        this.commentList = commentList;
+//        this.userInfoResponseDto.setUserKey(post.getUser().getId());
+//        this.userInfoResponseDto.setUsername(post.getUser().getUsername());
+//        this.userInfoResponseDto.setUserProfileImage(post.getUser().getUserProfileImage());
     }
 }
