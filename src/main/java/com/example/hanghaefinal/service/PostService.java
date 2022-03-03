@@ -72,8 +72,17 @@ public class PostService {
 
         // map은 요소들을 특정조건에 해당하는 값으로 변환해 준다 즉 여기서는 jpa 구문으로 가져온걸
         // toResponseDto를 사용해서 CommentResponseDto로 변환해 준다. ( 여기서 (postId) 까지만 작성했으면 타입이 안맞는다 )
-        List<CommentResponseDto> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId).stream()
-                .map(comment -> comment.toResponseDto()).collect(Collectors.toList());
+        /*List<CommentResponseDto> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId).stream()
+                .map(comment -> comment.toResponseDto()).collect(Collectors.toList());*/
+
+        List<Comment> commentList2 = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+        // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+        for (Comment comment:commentList2 ) {
+            Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+        }
 
         //List<CommentLikes> commentLikesList = commentLikesRepository.findBy
         // postLikes 조회
@@ -84,8 +93,8 @@ public class PostService {
         // comment를 작성한 유저와 좋아요가 필요하다.
 
         // limitCnt와 paragraph의 개수가 같으면 complete를 true로 반환해라
-
-        return new PostDetailResponseDto(post, commentList, postLikesCnt);
+        return new PostDetailResponseDto(post, commentResDtoList, postLikesCnt);
+//        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 
     // 게시글 최신순 전체 조회
