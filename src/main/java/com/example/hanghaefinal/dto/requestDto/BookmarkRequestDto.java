@@ -1,4 +1,4 @@
-package com.example.hanghaefinal.Bookmark;
+package com.example.hanghaefinal.dto.requestDto;
 
 import com.example.hanghaefinal.model.Post;
 import lombok.Getter;

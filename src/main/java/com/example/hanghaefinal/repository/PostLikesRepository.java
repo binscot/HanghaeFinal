@@ -12,5 +12,4 @@ public interface PostLikesRepository extends JpaRepository<PostLikes, Long> {
     Optional<PostLikes> findByUserAndPost(User user, Post post);
     Long countByPost(Post post);
 
-    Long deleteByPost(Post post);
 }

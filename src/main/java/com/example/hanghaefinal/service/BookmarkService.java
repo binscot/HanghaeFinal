@@ -1,9 +1,10 @@
-package com.example.hanghaefinal.Bookmark;
+package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.responseDto.BookmarkResponseDto;
 import com.example.hanghaefinal.model.Bookmark;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.repository.BookmarkRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,9 +20,8 @@ import java.util.List;
 @Service
 public class BookmarkService {
 
-    private final com.example.hanghaefinal.Bookmark.BookmarkRepository bookmarkRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
 
 
     //북마크조회
