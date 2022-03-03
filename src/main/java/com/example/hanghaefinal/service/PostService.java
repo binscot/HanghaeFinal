@@ -1,15 +1,9 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
-import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
-import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
-import com.example.hanghaefinal.dto.responseDto.PostLikesResponseDto;
-import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
+import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.*;
-import com.example.hanghaefinal.repository.CommentLikesRepository;
-import com.example.hanghaefinal.repository.CommentRepository;
-import com.example.hanghaefinal.repository.PostLikesRepository;
-import com.example.hanghaefinal.repository.PostRepository;
+import com.example.hanghaefinal.repository.*;
 import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,9 +13,12 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 @Slf4j
 @Service
@@ -33,6 +30,7 @@ public class PostService {
     private final PostLikesRepository postLikesRepository;
     private final CommentRepository commentRepository;
     private final CommentLikesRepository commentLikesRepository;
+    private final UserRepository userRepository;
     private final S3Uploader s3Uploader;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
@@ -97,7 +95,7 @@ public class PostService {
 //        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 
-    // 게시글 최신순 전체 조회
+    // 완성작 게시글 전체 조회 - 최신순
     public List<PostResponseDto> viewPostRecent(){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
@@ -122,4 +120,86 @@ public class PostService {
         }
         return postResponseDtoList;
     }
+
+    // 완성작 게시글 전체 조회 - 추천순(좋아요순)
+    public List<PostResponseDto> viewPostRecommend(){
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+
+        int postLikeCnt = 0;
+        for (Post post: posts ) {
+            List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            postLikeCnt = postLikesList.size();
+
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+            for (Comment comment:commentList ) {
+                Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            //postResponseDto.getPostLikesCnt();
+            postResponseDtoList.add(postResponseDto);
+        }
+
+        // 삽입 정렬 할까..
+        /*List<PostResponseDto> tmpDtoList;
+        tmpDtoList = postResponseDtoList;
+        for(PostResponseDto responseDto : postResponseDtoList){
+            responseDto.getPostLikesCnt();
+            for(PostResponseDto tmpResDto : tmpDtoList){
+                tmpResDto.getPostLikesCnt()
+            }
+        }
+
+        // 이제 다시 for문 돌려서 좋아요순 정렬 가나요?
+        Collections.sort(postResponseDtoList , Collections.reverseOrder());*/
+
+        return postResponseDtoList;
+    }
+
+    // 미완성 게시글 전체 조회 - 최신순
+    public List<PostResponseDto> viewPostIncomplete(){
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+
+        int postLikeCnt = 0;
+        for (Post post: posts ) {
+            List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            postLikeCnt = postLikesList.size();
+
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+            for (Comment comment:commentList ) {
+                Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            postResponseDtoList.add(postResponseDto);
+        }
+        return postResponseDtoList;
+    }
+
+    public OtherUserResDto viewUserPage(Long userKey){
+        User user = userRepository.findById(userKey).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+        );
+
+        List<Post> postList = postRepository.findAllByUserIdOrderByModifiedAtDesc(userKey);
+        List<OtherUserPostListResDto> otherUserList = new ArrayList<>();
+
+        for (Post post: postList ) {
+            otherUserList.add(new OtherUserPostListResDto(post));
+        }
+        
+        //OtherUserResDto otherUserResDto = new OtherUserResDto(user, postList);
+        return new OtherUserResDto(user, otherUserList);
+    }
+
 }
