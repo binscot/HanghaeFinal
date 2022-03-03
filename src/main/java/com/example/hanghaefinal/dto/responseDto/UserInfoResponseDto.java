@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Setter
 @Getter
 @NoArgsConstructor
@@ -14,6 +16,7 @@ public class UserInfoResponseDto {
     private String nickname;
     private String userProfileImage;
     private String  introduction;
+    private List<BookmarkResponseDto> bookmarkResponseDtoList;
 
 
 
