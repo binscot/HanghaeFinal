@@ -5,7 +5,6 @@ import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostLikesService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,9 +15,9 @@ public class PostLikesController {
 
     private final PostLikesService postLikesService;
 
-    @PostMapping("/api/{postId}/likes")
+    @PostMapping("/postLikes/{postId}")
     public PostLikesResponseDto postLike(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return postLikesService.postlike(postId, userDetails.getUser().getId());
+        return postLikesService.addLike(postId, userDetails.getUser().getId());
     }
 
 }

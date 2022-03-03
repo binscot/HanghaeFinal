@@ -28,6 +28,7 @@ public class PostLikes {
 
     public PostLikes(PostLikesRequestDto postLikesRequestDto) {
 
-        this.id = postLikesRequestDto.getPost().getId();
+        this.user = postLikesRequestDto.getUser();
+        this.post = postLikesRequestDto.getPost();
     }
 }
