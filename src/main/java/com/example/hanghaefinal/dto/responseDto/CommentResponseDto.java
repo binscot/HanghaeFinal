@@ -13,6 +13,7 @@ public class CommentResponseDto {
     private String comment;
     private String commentModifiedAt;
     private Long commentUserId;
+    private String commentUsername;
     private Long commentLikesCnt;
     private UserInfoResponseDto userInfoResponseDto;
 
@@ -21,6 +22,7 @@ public class CommentResponseDto {
         this.comment = comment.getComment();
         this.commentModifiedAt = comment.getModifiedAt().toString();
         this.commentUserId = comment.getUser().getId();
+        this.commentUsername = comment.getUser().getUsername();
         this.commentLikesCnt = commentLikesCnt;
         this.userInfoResponseDto = new UserInfoResponseDto(comment.getUser());
     }

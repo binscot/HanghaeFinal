@@ -10,6 +10,9 @@ import java.util.List;
 @Setter
 public class PostDetailResponseDto {
     private Long postKey; // postId
+    private String title;
+    private String postUsername;
+    private String postModifiedAt;
     private String postImageUrl;
     private String color;
     private int limitCnt;
@@ -19,11 +22,12 @@ public class PostDetailResponseDto {
     //private List<CommentResponseDto> commnetList;
     private Long postLikesCnt;
     private List<CommentResponseDto> commentList;
-    //private UserInfoResponseDto userInfoResponseDto;
-    //private List<Comment> commentList;
 
     public PostDetailResponseDto(Post post, List<CommentResponseDto> commentList, Long postLikesCnt){
         this.postKey = post.getId();
+        this.title = post.getTitle();
+        this.postUsername = post.getUser().getUsername();
+        this.postModifiedAt = post.getModifiedAt().toString();
         this.postImageUrl = post.getPostImageUrl();
         this.color = post.getColor();
         this.limitCnt = post.getLimitCnt();
@@ -34,11 +38,7 @@ public class PostDetailResponseDto {
         // 즉,
         // paragraphList에서 userId 를 가지고 user 정보와 paragraphLike를 response 하고
         // commentList 에 있는 userId를 가지고 user정보를 와 commentLikes를 response 해라
-        // 또한 postLikes 도 필요하다.
         this.postLikesCnt = postLikesCnt;
         this.commentList = commentList;
-//        this.userInfoResponseDto.setUserKey(post.getUser().getId());
-//        this.userInfoResponseDto.setUsername(post.getUser().getUsername());
-//        this.userInfoResponseDto.setUserProfileImage(post.getUser().getUserProfileImage());
     }
 }
