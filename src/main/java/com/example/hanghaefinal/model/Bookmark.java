@@ -1,7 +1,6 @@
 package com.example.hanghaefinal.model;
 
-import com.example.hanghaefinal.model.Post;
-import com.example.hanghaefinal.model.User;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

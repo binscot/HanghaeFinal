@@ -9,5 +9,4 @@ public class CommentResponseDto {
     private String comment;
     private String commentModifiedAt;
     private Long commentUserId;
-    //private List<User> userList;
 }
