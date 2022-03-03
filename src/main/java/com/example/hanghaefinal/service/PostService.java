@@ -3,8 +3,10 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
+import com.example.hanghaefinal.dto.responseDto.PostLikesResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
 import com.example.hanghaefinal.model.*;
+import com.example.hanghaefinal.repository.CommentLikesRepository;
 import com.example.hanghaefinal.repository.CommentRepository;
 import com.example.hanghaefinal.repository.PostLikesRepository;
 import com.example.hanghaefinal.repository.PostRepository;
@@ -30,6 +32,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final PostLikesRepository postLikesRepository;
     private final CommentRepository commentRepository;
+    private final CommentLikesRepository commentLikesRepository;
     private final S3Uploader s3Uploader;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
@@ -72,15 +75,17 @@ public class PostService {
         List<CommentResponseDto> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId).stream()
                 .map(comment -> comment.toResponseDto()).collect(Collectors.toList());
 
+        //List<CommentLikes> commentLikesList = commentLikesRepository.findBy
         // postLikes 조회
-        //PostLikes postLikes = postLikesRepository.findByPostId();
-
+        //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+        // postId는 이미 알고 있으니까 totalCnt만 주면된다.
+        Long postLikesCnt =  postLikesRepository.countByPost(post);
         // paragraph를 작성한 유저와 좋아요
         // comment를 작성한 유저와 좋아요가 필요하다.
 
         // limitCnt와 paragraph의 개수가 같으면 complete를 true로 반환해라
 
-        return new PostDetailResponseDto(post, commentList);
+        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 
     // 게시글 최신순 전체 조회
