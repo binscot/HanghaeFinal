@@ -1,5 +1,6 @@
 package com.example.hanghaefinal.service;
 
+import com.example.hanghaefinal.dto.requestDto.DeleteUserRequestDto;
 import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
 import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
 import com.example.hanghaefinal.dto.requestDto.UserUpdateDto;
@@ -7,7 +8,9 @@ import com.example.hanghaefinal.dto.responseDto.CheckIdResponseDto;
 import com.example.hanghaefinal.dto.responseDto.CheckNickResponseDto;
 import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
 import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.JwtTokenProvider;
 import com.example.hanghaefinal.security.UserDetailsImpl;
@@ -22,6 +25,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -33,6 +37,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Uploader s3Uploader;
+    private final PostRepository postRepository;
 
 
 
@@ -186,10 +191,11 @@ public class UserService {
 
     //유저정보 전달
     public UserInfoResponseDto userInfo(UserDetailsImpl userDetails) {
+        if (userDetails==null){
+            throw new NullPointerException("유저정보가 없습니다!");
+        }
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto();
         User user = userDetails.getUser();
-        if (user == null)
-            throw new NullPointerException("유저 정보가 없습니다.");
         userInfoResponseDto.setUserKey(user.getId());
         userInfoResponseDto.setUsername(user.getUsername());
         userInfoResponseDto.setNickname(user.getNickName());
@@ -198,7 +204,7 @@ public class UserService {
         return userInfoResponseDto;
     }
 
-
+    @Transactional
     public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
 //        String userProfile = "";
 //        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
@@ -222,4 +228,26 @@ public class UserService {
         userInfoResponseDto.setIntroduction(user.getIntroduction());
         return userInfoResponseDto;
     }
+
+
+
+    //검색 추 후 옮길 예정
+    public List<Post> search(String keyword) {
+        return postRepository.findByTitleContaining(keyword);
+    }
+
+    @Transactional
+    public void removeUser(DeleteUserRequestDto requestDto, UserDetailsImpl userDetails) {
+        if (userDetails==null){
+            throw new NullPointerException("유저정보가 없습니다!");
+        }
+        String password = requestDto.getPassword();
+        User user = userDetails.getUser();
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요!");
+        }
+        userRepository.delete(user);
+    }
 }
+
+
