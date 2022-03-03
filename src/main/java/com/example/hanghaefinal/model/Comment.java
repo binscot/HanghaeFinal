@@ -3,6 +3,13 @@ package com.example.hanghaefinal.model;
 import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
 import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import lombok.*;
+import com.example.hanghaefinal.dto.requestDto.CommentRequestDto;
+import com.example.hanghaefinal.model.Post;
+import com.example.hanghaefinal.model.Timestamped;
+import com.example.hanghaefinal.model.User;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
@@ -38,5 +45,11 @@ public class Comment extends Timestamped {
                 .commentUserId(this.user.getId())
                 .userInfoResponseDto(new UserInfoResponseDto(this.user))
                 .build();
+    }
+
+    public Comment(CommentRequestDto commentRequestDto, Post post, User user) {
+        this.comment = commentRequestDto.getComment();
+        this.post = post;
+        this.user = user;
     }
 }
