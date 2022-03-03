@@ -2,8 +2,8 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
+import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
-import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.CommentRepository;
 import com.example.hanghaefinal.repository.PostLikesRepository;
@@ -16,8 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,34 +32,46 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final S3Uploader s3Uploader;
 
-    public Boolean uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
+    public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
         //String originalFileName = multipartFile.getOriginalFilename();
         //String convertedFileName = UUID.randomUUID() + originalFileName;
         //requestDto.setImageUrl(convertedFileName);
         String dirName = "image";
         //s3Uploader.upload(multipartFile, convertedFileName);
 
-        String uploadUrl =  s3Uploader.upload(multipartFile, dirName);
-        log.info("~~~ uploadUrl : " + uploadUrl );
-        requestDto.setPostImageUrl(uploadUrl);
-        return true;
+        String defaultImg = "https://taeks3bucket.s3.ap-northeast-2.amazonaws.com/image/defaultPhoto.png";
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
+            defaultImg = s3Uploader.upload(multipartFile, "image");
+        //String uploadUrl =  s3Uploader.upload(multipartFile, dirName);
+        //requestDto.setPostImageUrl(defaultImg);
+        //log.info("~~~ uploadUrl : " + uploadUrl );
+        //requestDto.setPostImageUrl(uploadUrl);
+        return defaultImg;
     }
 
-    public Boolean savePost(PostRequestDto postRequestDto, User user){
-        Post post = new Post(postRequestDto, user);
+    public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg){
+        Post post = new Post(postRequestDto, user, defaultImg);
         postRepository.save(post);
 
         return true;
     }
 
-    public PostResponseDto viewPostDetail(Long postId){
+    // 게시글 상세조회
+    public PostDetailResponseDto viewPostDetail(Long postId){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
         // paragraphList 조회
         // List<Paragraph> paragraphList =
         // commentList 조회
-        //List<CommentResponseDto> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        //List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        // 위처럼 commentList로 조회하면 안된다. Comment안에 user랑 post있고 post안에 user 가 있다.. (궁금하면 다시 해봐)
+
+        // map은 요소들을 특정조건에 해당하는 값으로 변환해 준다 즉 여기서는 jpa 구문으로 가져온걸
+        // toResponseDto를 사용해서 CommentResponseDto로 변환해 준다. ( 여기서 (postId) 까지만 작성했으면 타입이 안맞는다 )
+        List<CommentResponseDto> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId).stream()
+                .map(comment -> comment.toResponseDto()).collect(Collectors.toList());
+
         // postLikes 조회
         //PostLikes postLikes = postLikesRepository.findByPostId();
 
@@ -66,7 +79,24 @@ public class PostService {
         // comment를 작성한 유저와 좋아요가 필요하다.
 
         // limitCnt와 paragraph의 개수가 같으면 complete를 true로 반환해라
-        
-        return new PostResponseDto(post);
+
+        return new PostDetailResponseDto(post, commentList);
+    }
+
+    // 게시글 최신순 전체 조회
+    public List<PostResponseDto> viewPostRecent(){
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+
+        int postLikeCnt = 0;
+        for (Post post: posts ) {
+            List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            postLikeCnt = postLikesList.size();
+
+            //PostResponseDto postResponseDto = new PostResponseDto(post);
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeCnt);
+            postResponseDtoList.add(postResponseDto);
+        }
+        return postResponseDtoList;
     }
 }

@@ -1,13 +1,17 @@
 package com.example.hanghaefinal.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
+import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Getter
 @Setter
 @Entity
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "comment")
 public class Comment extends Timestamped {
     @Id
@@ -26,4 +30,13 @@ public class Comment extends Timestamped {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    public CommentResponseDto toResponseDto() {
+        return CommentResponseDto.builder()
+                .commentId(this.id)
+                .comment(this.comment)
+                .commentModifiedAt(this.getModifiedAt().toString())
+                .commentUserId(this.user.getId())
+                .userInfoResponseDto(new UserInfoResponseDto(this.user))
+                .build();
+    }
 }
