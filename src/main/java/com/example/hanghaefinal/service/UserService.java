@@ -4,12 +4,11 @@ import com.example.hanghaefinal.dto.requestDto.DeleteUserRequestDto;
 import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
 import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
 import com.example.hanghaefinal.dto.requestDto.UserUpdateDto;
-import com.example.hanghaefinal.dto.responseDto.CheckIdResponseDto;
-import com.example.hanghaefinal.dto.responseDto.CheckNickResponseDto;
-import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
-import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.model.Bookmark;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.repository.BookmarkRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.JwtTokenProvider;
@@ -25,6 +24,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,6 +38,7 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final S3Uploader s3Uploader;
     private final PostRepository postRepository;
+    private final BookmarkRepository bookmarkRepository;
 
 
 
@@ -196,11 +197,18 @@ public class UserService {
         }
         UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto();
         User user = userDetails.getUser();
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByUser(user);
+        List<BookmarkResponseDto> bookmarkResponseDtoList = new ArrayList<>();
+        for (Bookmark bookmark:bookmarkList){
+            BookmarkResponseDto bookmarkResponseDto = new BookmarkResponseDto(bookmark.getId(),bookmark.getPost().getId(),bookmark.getUser().getId());
+            bookmarkResponseDtoList.add(bookmarkResponseDto);
+        }
         userInfoResponseDto.setUserKey(user.getId());
         userInfoResponseDto.setUsername(user.getUsername());
         userInfoResponseDto.setNickname(user.getNickName());
         userInfoResponseDto.setUserProfileImage(user.getUserProfileImage());
         userInfoResponseDto.setIntroduction(user.getIntroduction());
+        userInfoResponseDto.setBookmarkResponseDtoList(bookmarkResponseDtoList);
         return userInfoResponseDto;
     }
 
