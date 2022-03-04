@@ -30,16 +30,16 @@ public class CommentController {
 
     //코멘트 작성
     @PostMapping("/comment/{postId}")
-    public ResponseEntity<Comment> addComment(
+    public Comment addComment(
             @PathVariable Long postId,
             @Validated @RequestBody CommentRequestDto commentRequestDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ){
         User user = userDetails.getUser();
 
-        Comment comment = commentService.addComment(postId, commentRequestDto,user);
-        return ResponseEntity.ok(comment);
+        return commentService.addComment(postId, commentRequestDto,user);
     }
+
 
     //코멘트 수정
     @PutMapping("/comment/{commentId}")
@@ -54,7 +54,9 @@ public class CommentController {
 
     //코멘트 삭제
     @DeleteMapping("/comment/{commentId}")
-    public void deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public void deleteComment(
+            @PathVariable Long commentId,
+            @AuthenticationPrincipal UserDetailsImpl userDetails){
 
         commentService.deleteComment(commentId, userDetails);
     }
