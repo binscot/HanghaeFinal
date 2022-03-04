@@ -1,9 +1,6 @@
 package com.example.hanghaefinal.service;
 
-import com.example.hanghaefinal.dto.requestDto.DeleteUserRequestDto;
-import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
-import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
-import com.example.hanghaefinal.dto.requestDto.UserUpdateDto;
+import com.example.hanghaefinal.dto.requestDto.*;
 import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.kakao.KakaoOAuth2;
 import com.example.hanghaefinal.kakao.KakaoUserInfo;
@@ -84,7 +81,7 @@ public class UserService {
 //    }
 
     @Transactional
-    public User registerUser(SignupRequestDto requestDto) throws IOException {
+    public Boolean registerUser(SignupRequestDto requestDto) throws IOException {
         //        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
 
 //        String userProfile = "";
@@ -130,7 +127,8 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         User user = new User(username, password, nickName, introduction, userProfile);
-        return userRepository.save(user);
+        userRepository.save(user);
+        return true;
     }
 
 
@@ -194,6 +192,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public ResponseEntity<LoginResponseDto> kakaoLogin(String accessToken, HttpServletResponse response) {
         // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
         KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
@@ -321,70 +320,34 @@ public class UserService {
         return userInfoResponseDto;
     }
 
-//    public JsonObject kakaoLogin(String accessToken) {
-//        // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
-//        System.out.println(accessToken);
-//        KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
-//        Long kakaoId = userInfo.getId();
-//        String nickname = userInfo.getNickname();
-//        String email = userInfo.getEmail();
-//        System.out.println(kakaoId);
-//        System.out.println(nickname);
-//        System.out.println(email);
-//
-//
-//        // DB 에 중복된 Kakao Id 가 있는지 확인
-//        User kakaoUser = userRepository.findByUsername(email)
-//                .orElse(null);
-//
-//        // 카카오 정보로 회원가입
-//        if (kakaoUser == null) {
-//            // 카카오 이메일과 동일한 이메일을 가진 회원이 있는지 확인
-//            User sameEmailUser = null;
-//
-//            if (email != null) {
-//                sameEmailUser = userRepository.findByUsername(email).orElse(null);
-//            }
-//            if (sameEmailUser != null) {
-//                kakaoUser = sameEmailUser;
-//                // 카카오 이메일과 동일한 이메일 회원이 있는 경우
-//                // 카카오 Id 를 회원정보에 저장
-//                kakaoUser.setKakaoId(kakaoId);
-//                userRepository.save(kakaoUser);
-//            } else {
-//                // 카카오 정보로 회원가입
-//                // username = 카카오 nickname
-//                String username = nickname;
-//                // password = 카카오 Id + ADMIN TOKEN
-//                String password = kakaoId + "a442";
-//                // 패스워드 인코딩
-//                String encodedPassword = passwordEncoder.encode(password);
-//
-//
-//
-//                if (email != null) {
-//                    kakaoUser = new User(username, encodedPassword, email, kakaoId);
-//                } else {
-//                    kakaoUser = new User(username, encodedPassword, kakaoId);
-//                }
-//                userRepository.save(kakaoUser);
-//            }
-//        }
-//
-//        // 스프링 시큐리티 통해 로그인 처리
-//        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
-//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
-//        JsonObject jsonObj = new JsonObject();
-//        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getId()));
-//        return jsonObj;
-//    }
-
-
 
     //검색 추 후 옮길 예정
-    public List<Post> search(String keyword) {
-        return postRepository.findByTitleContaining(keyword);
+    public List<PostResponseDto> search(SearchRequestDto requestDto) {
+        String keyword = requestDto.getKeyword();
+
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<Post> posts = postRepository.findByTitleContaining(keyword);
+
+        int postLikeCnt = 0;
+        for (Post post: posts ) {
+            List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            postLikeCnt = postLikesList.size();
+
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+            for (Comment comment:commentList ) {
+                Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+            }
+
+            //PostResponseDto postResponseDto = new PostResponseDto(post);
+            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            postResponseDtoList.add(postResponseDto);
+        }
+        return postResponseDtoList;
+
     }
 
     //회원 탈퇴
