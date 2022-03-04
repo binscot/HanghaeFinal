@@ -1,28 +1,26 @@
 package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.*;
-import com.example.hanghaefinal.dto.responseDto.CheckIdResponseDto;
-import com.example.hanghaefinal.dto.responseDto.CheckNickResponseDto;
-import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
-import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.EmailService;
 import com.example.hanghaefinal.service.UserService;
-import com.example.hanghaefinal.util.S3Uploader;
+import com.google.gson.JsonObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -114,8 +112,19 @@ public class UserController {
     }
 
 
+    // 카카오 로그인
+    // 프론트엔드에서 처리 후 카카오 토큰을 백으로 넘겨 주어 JWT token, username, userid 반환
+    @PostMapping("/kakaoLogin")
+    public Object loginUser(@RequestBody Map<String, Object> param) {
+        JsonObject jsonObj = userService.kakaoLogin(param.get("kakaoToken").toString());
+        return ResponseEntity.ok().body(jsonObj.toString());
 
+    }
 
+    @GetMapping("/mypostList")
+    public List<PostResponseDto> viewMyPost(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        return userService.viewMyPost(userDetails);
+    }
 
     //게시글 검색
     @GetMapping("/search")
