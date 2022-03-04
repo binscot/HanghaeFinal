@@ -247,7 +247,7 @@ public class UserService {
         Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         SecurityContextHolder.getContext().setAuthentication(authentication);
         JsonObject jsonObj = new JsonObject();
-        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getId()));
+        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getUsername()));
 
 
         LoginResponseDto loginResponseDto = new LoginResponseDto();

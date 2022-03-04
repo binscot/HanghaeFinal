@@ -26,11 +26,5 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new UserDetailsImpl(user);
     }
 
-    public UserDetailsImpl loadUserById(Long id){
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("Can't find " + id));
-
-        return new UserDetailsImpl(user);
-    }
 }
 
