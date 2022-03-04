@@ -39,6 +39,7 @@ public class PostController {
         return true;
     }
 
+    // 게시글 상세 페이지 조회
     @GetMapping("/posts/{postId}")
     public PostDetailResponseDto viewPostDetail(@PathVariable Long postId){
         return postService.viewPostDetail(postId);
