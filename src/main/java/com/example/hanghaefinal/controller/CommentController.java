@@ -41,6 +41,16 @@ public class CommentController {
         return ResponseEntity.ok(comment);
     }
 
+    //코멘트 수정
+    @PutMapping("/comment/{commentId}")
+    public Comment update(
+            @PathVariable Long commentId,
+            @RequestBody CommentRequestDto commentRequestDto,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ){
+        return commentService.update(commentId,commentRequestDto,userDetails);
+    }
+
 
     //코멘트 삭제
     @DeleteMapping("/comment/{commentId}")
