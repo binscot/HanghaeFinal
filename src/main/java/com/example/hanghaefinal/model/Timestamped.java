@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Timestamped {
+
     @CreatedDate // 최초 생성 시점
     private LocalDateTime createdAt;
 

@@ -5,17 +5,20 @@ import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
 import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
 import com.example.hanghaefinal.dto.requestDto.UserUpdateDto;
 import com.example.hanghaefinal.dto.responseDto.*;
-import com.example.hanghaefinal.model.Bookmark;
-import com.example.hanghaefinal.model.Post;
-import com.example.hanghaefinal.model.User;
-import com.example.hanghaefinal.repository.BookmarkRepository;
-import com.example.hanghaefinal.repository.PostRepository;
-import com.example.hanghaefinal.repository.UserRepository;
+
+import com.example.hanghaefinal.kakao.KakaoOAuth2;
+import com.example.hanghaefinal.kakao.KakaoUserInfo;
+import com.example.hanghaefinal.model.*;
+import com.example.hanghaefinal.repository.*;
 import com.example.hanghaefinal.security.JwtTokenProvider;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.util.S3Uploader;
+import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -39,6 +42,11 @@ public class UserService {
     private final S3Uploader s3Uploader;
     private final PostRepository postRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final KakaoOAuth2 kakaoOAuth2;
+    private final PostLikesRepository postLikesRepository;
+    private final CommentRepository commentRepository;
+    private final CommentLikesRepository commentLikesRepository;
+
 
 
 
@@ -237,6 +245,60 @@ public class UserService {
         return userInfoResponseDto;
     }
 
+    public JsonObject kakaoLogin(String accessToken) {
+        // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
+        KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
+        Long kakaoId = userInfo.getId();
+        String nickname = userInfo.getNickname();
+        String email = userInfo.getEmail();
+
+        // DB 에 중복된 Kakao Id 가 있는지 확인
+        User kakaoUser = userRepository.findByKakaoId(email)
+                .orElse(null);
+
+        // 카카오 정보로 회원가입
+        if (kakaoUser == null) {
+            // 카카오 이메일과 동일한 이메일을 가진 회원이 있는지 확인
+            User sameEmailUser = null;
+
+            if (email != null) {
+                sameEmailUser = userRepository.findByUsername(email).orElse(null);
+            }
+            if (sameEmailUser != null) {
+                kakaoUser = sameEmailUser;
+                // 카카오 이메일과 동일한 이메일 회원이 있는 경우
+                // 카카오 Id 를 회원정보에 저장
+                kakaoUser.setKakaoId(kakaoId);
+                userRepository.save(kakaoUser);
+            } else {
+                // 카카오 정보로 회원가입
+                // username = 카카오 nickname
+                String username = nickname;
+                // password = 카카오 Id + ADMIN TOKEN
+                String password = kakaoId + "a442";
+                // 패스워드 인코딩
+                String encodedPassword = passwordEncoder.encode(password);
+
+
+
+                if (email != null) {
+                    kakaoUser = new User(username, encodedPassword, email, kakaoId);
+                } else {
+                    kakaoUser = new User(username, encodedPassword, kakaoId);
+                }
+                userRepository.save(kakaoUser);
+            }
+        }
+
+        // 스프링 시큐리티 통해 로그인 처리
+        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getId()));
+        return jsonObj;
+    }
+
 
 
     //검색 추 후 옮길 예정
@@ -244,6 +306,7 @@ public class UserService {
         return postRepository.findByTitleContaining(keyword);
     }
 
+    //회원 탈퇴
     @Transactional
     public void removeUser(DeleteUserRequestDto requestDto, UserDetailsImpl userDetails) {
         if (userDetails==null){
@@ -255,6 +318,34 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요!");
         }
         userRepository.delete(user);
+    }
+
+
+    public List<PostResponseDto> viewMyPost(UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<Post> posts = postRepository.findAllByUserIdOrderByModifiedAtDesc(user.getId());
+
+        int postLikeCnt = 0;
+        for (Post post: posts ) {
+            List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            postLikeCnt = postLikesList.size();
+
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+            for (Comment comment:commentList ) {
+                Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+            }
+
+            //PostResponseDto postResponseDto = new PostResponseDto(post);
+            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            postResponseDtoList.add(postResponseDto);
+        }
+        return postResponseDtoList;
+
     }
 }
 
