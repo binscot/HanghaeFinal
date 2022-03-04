@@ -5,7 +5,6 @@ import com.example.hanghaefinal.dto.requestDto.LoginRequestDto;
 import com.example.hanghaefinal.dto.requestDto.SignupRequestDto;
 import com.example.hanghaefinal.dto.requestDto.UserUpdateDto;
 import com.example.hanghaefinal.dto.responseDto.*;
-
 import com.example.hanghaefinal.kakao.KakaoOAuth2;
 import com.example.hanghaefinal.kakao.KakaoUserInfo;
 import com.example.hanghaefinal.model.*;
@@ -23,14 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -186,17 +182,97 @@ public class UserService {
 
 
             String token = jwtTokenProvider.createToken(user.getUsername());
-            Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
-            cookie.setPath("/");    // 이 경로에 바로 넣어줘야지 모든 경로에서 쿠키를 사용할 수 있다.
+//            Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
+//            cookie.setPath("/");    // 이 경로에 바로 넣어줘야지 모든 경로에서 쿠키를 사용할 수 있다.
             // https에서 setHttpOnly(true) 를 사용하는지 안하는지 검색해보자
-            cookie.setHttpOnly(true);   // 프론트에서 헤더에 있는 토큰을 못 꺼내서 쓴다. 애초에 헤더에서 꺼내서 사용하는게 아니라 다른 방식으로 사용하나 보군
-            cookie.setSecure(true);     // https 에서 사용한다.
-            response.addCookie(cookie); // 이거만 있으면 프론트에서 받을 수 있다.
+//            cookie.setHttpOnly(true);   // 프론트에서 헤더에 있는 토큰을 못 꺼내서 쓴다. 애초에 헤더에서 꺼내서 사용하는게 아니라 다른 방식으로 사용하나 보군
+//            cookie.setSecure(true);     // https 에서 사용한다.
+//            response.addCookie(cookie); // 이거만 있으면 프론트에서 받을 수 있다.
 
-
+            response.addHeader("X-AUTH-TOKEN", token);
             return ResponseEntity.ok(loginResponseDto);
         }
     }
+
+    public ResponseEntity<LoginResponseDto> kakaoLogin(String accessToken, HttpServletResponse response) {
+        // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
+        KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
+        Long kakaoId = userInfo.getId();
+        String nickname = userInfo.getNickname();
+        String email = userInfo.getEmail();
+
+
+
+        // DB 에 중복된 Kakao Id 가 있는지 확인
+        User kakaoUser = userRepository.findByUsername(email)
+                .orElse(null);
+
+        // 카카오 정보로 회원가입
+        if (kakaoUser == null) {
+            // 카카오 이메일과 동일한 이메일을 가진 회원이 있는지 확인
+            User sameEmailUser = null;
+
+            if (email != null) {
+                sameEmailUser = userRepository.findByUsername(email).orElse(null);
+            }
+            if (sameEmailUser != null) {
+                kakaoUser = sameEmailUser;
+                // 카카오 이메일과 동일한 이메일 회원이 있는 경우
+                // 카카오 Id 를 회원정보에 저장
+                kakaoUser.setKakaoId(kakaoId);
+                userRepository.save(kakaoUser);
+            } else {
+                // 카카오 정보로 회원가입
+                // username = 카카오 nickname
+                String username = nickname;
+                // password = 카카오 Id + ADMIN TOKEN
+                String password = kakaoId + String.valueOf(UUID.randomUUID());;
+                System.out.println("password:"+ password);
+                // 패스워드 인코딩
+                String encodedPassword = passwordEncoder.encode(password);
+
+
+
+                if (email != null) {
+                    kakaoUser = new User(username, encodedPassword, email, kakaoId);
+                } else {
+                    kakaoUser = new User(username, encodedPassword, kakaoId);
+                }
+                userRepository.save(kakaoUser);
+            }
+        }
+
+        // 스프링 시큐리티 통해 로그인 처리
+        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getId()));
+
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto();
+        loginResponseDto.setUserKey(kakaoUser.getId());
+        loginResponseDto.setUsername(kakaoUser.getUsername());
+        loginResponseDto.setNickname(kakaoUser.getNickName());
+        loginResponseDto.setUserProfileImage(kakaoUser.getUserProfileImage());
+        loginResponseDto.setIntroduction(kakaoUser.getIntroduction());
+
+        String tokenString = jsonObj.toString();
+
+        String token = tokenString.substring(10,tokenString.length()-2);
+
+//        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
+//        System.out.println(cookie);
+
+//        cookie.setPath("/");    // 이 경로에 바로 넣어줘야지 모든 경로에서 쿠키를 사용할 수 있다.
+        // https에서 setHttpOnly(true) 를 사용하는지 안하는지 검색해보자
+//        cookie.setHttpOnly(true);   // 프론트에서 헤더에 있는 토큰을 못 꺼내서 쓴다. 애초에 헤더에서 꺼내서 사용하는게 아니라 다른 방식으로 사용하나 보군
+//        cookie.setSecure(true);     // https 에서 사용한다.
+//        response.addCookie(cookie); // 이거만 있으면 프론트에서 받을 수 있다.
+        response.addHeader("X-AUTH-TOKEN", token);
+        return ResponseEntity.ok(loginResponseDto);
+    }
+
 
     //유저정보 전달
     public UserInfoResponseDto userInfo(UserDetailsImpl userDetails) {
@@ -245,59 +321,64 @@ public class UserService {
         return userInfoResponseDto;
     }
 
-    public JsonObject kakaoLogin(String accessToken) {
-        // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
-        KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
-        Long kakaoId = userInfo.getId();
-        String nickname = userInfo.getNickname();
-        String email = userInfo.getEmail();
-
-        // DB 에 중복된 Kakao Id 가 있는지 확인
-        User kakaoUser = userRepository.findByKakaoId(email)
-                .orElse(null);
-
-        // 카카오 정보로 회원가입
-        if (kakaoUser == null) {
-            // 카카오 이메일과 동일한 이메일을 가진 회원이 있는지 확인
-            User sameEmailUser = null;
-
-            if (email != null) {
-                sameEmailUser = userRepository.findByUsername(email).orElse(null);
-            }
-            if (sameEmailUser != null) {
-                kakaoUser = sameEmailUser;
-                // 카카오 이메일과 동일한 이메일 회원이 있는 경우
-                // 카카오 Id 를 회원정보에 저장
-                kakaoUser.setKakaoId(kakaoId);
-                userRepository.save(kakaoUser);
-            } else {
-                // 카카오 정보로 회원가입
-                // username = 카카오 nickname
-                String username = nickname;
-                // password = 카카오 Id + ADMIN TOKEN
-                String password = kakaoId + "a442";
-                // 패스워드 인코딩
-                String encodedPassword = passwordEncoder.encode(password);
-
-
-
-                if (email != null) {
-                    kakaoUser = new User(username, encodedPassword, email, kakaoId);
-                } else {
-                    kakaoUser = new User(username, encodedPassword, kakaoId);
-                }
-                userRepository.save(kakaoUser);
-            }
-        }
-
-        // 스프링 시큐리티 통해 로그인 처리
-        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        JsonObject jsonObj = new JsonObject();
-        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getId()));
-        return jsonObj;
-    }
+//    public JsonObject kakaoLogin(String accessToken) {
+//        // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
+//        System.out.println(accessToken);
+//        KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
+//        Long kakaoId = userInfo.getId();
+//        String nickname = userInfo.getNickname();
+//        String email = userInfo.getEmail();
+//        System.out.println(kakaoId);
+//        System.out.println(nickname);
+//        System.out.println(email);
+//
+//
+//        // DB 에 중복된 Kakao Id 가 있는지 확인
+//        User kakaoUser = userRepository.findByUsername(email)
+//                .orElse(null);
+//
+//        // 카카오 정보로 회원가입
+//        if (kakaoUser == null) {
+//            // 카카오 이메일과 동일한 이메일을 가진 회원이 있는지 확인
+//            User sameEmailUser = null;
+//
+//            if (email != null) {
+//                sameEmailUser = userRepository.findByUsername(email).orElse(null);
+//            }
+//            if (sameEmailUser != null) {
+//                kakaoUser = sameEmailUser;
+//                // 카카오 이메일과 동일한 이메일 회원이 있는 경우
+//                // 카카오 Id 를 회원정보에 저장
+//                kakaoUser.setKakaoId(kakaoId);
+//                userRepository.save(kakaoUser);
+//            } else {
+//                // 카카오 정보로 회원가입
+//                // username = 카카오 nickname
+//                String username = nickname;
+//                // password = 카카오 Id + ADMIN TOKEN
+//                String password = kakaoId + "a442";
+//                // 패스워드 인코딩
+//                String encodedPassword = passwordEncoder.encode(password);
+//
+//
+//
+//                if (email != null) {
+//                    kakaoUser = new User(username, encodedPassword, email, kakaoId);
+//                } else {
+//                    kakaoUser = new User(username, encodedPassword, kakaoId);
+//                }
+//                userRepository.save(kakaoUser);
+//            }
+//        }
+//
+//        // 스프링 시큐리티 통해 로그인 처리
+//        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
+//        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        JsonObject jsonObj = new JsonObject();
+//        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getId()));
+//        return jsonObj;
+//    }
 
 
 

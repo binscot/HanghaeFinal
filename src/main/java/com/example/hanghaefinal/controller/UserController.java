@@ -7,14 +7,11 @@ import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.EmailService;
 import com.example.hanghaefinal.service.UserService;
-import com.google.gson.JsonObject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -78,6 +75,16 @@ public class UserController {
         return userService.login(requestDto, response);
     }
 
+
+    // 카카오 로그인
+    // 프론트엔드에서 처리 후 카카오 토큰을 백으로 넘겨 주어 JWT token, username, userid 반환
+    @PostMapping("/login/kakaoLogin")
+    public ResponseEntity<LoginResponseDto> loginUser(@RequestBody Map<String, Object> param,
+                                                      HttpServletResponse response) {
+        return userService.kakaoLogin(param.get("kakaoToken").toString(), response);
+
+    }
+
     // 유저정보 전달
     @ApiOperation(value = "유저정보 전달.", notes = "유저정보 전달.")
     @PostMapping("/user/myInfo")
@@ -112,16 +119,9 @@ public class UserController {
     }
 
 
-    // 카카오 로그인
-    // 프론트엔드에서 처리 후 카카오 토큰을 백으로 넘겨 주어 JWT token, username, userid 반환
-    @PostMapping("/kakaoLogin")
-    public Object loginUser(@RequestBody Map<String, Object> param) {
-        JsonObject jsonObj = userService.kakaoLogin(param.get("kakaoToken").toString());
-        return ResponseEntity.ok().body(jsonObj.toString());
 
-    }
 
-    @GetMapping("/mypostList")
+    @GetMapping("/myPostList")
     public List<PostResponseDto> viewMyPost(@AuthenticationPrincipal UserDetailsImpl userDetails){
         return userService.viewMyPost(userDetails);
     }
@@ -131,5 +131,7 @@ public class UserController {
     public List<Post> search(String keyword){
         return userService.search(keyword);
     }
+
+
 
 }
