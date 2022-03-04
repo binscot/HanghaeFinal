@@ -2,8 +2,6 @@ package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.*;
 import com.example.hanghaefinal.dto.responseDto.*;
-import com.example.hanghaefinal.model.Post;
-import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.EmailService;
 import com.example.hanghaefinal.service.UserService;
@@ -29,26 +27,12 @@ public class UserController {
     private final EmailService emailService;
 
     // 회원 가입 요청 처리
-//    @ApiOperation(value = "회원가입", notes = "회원가입요청")
-//    @PostMapping("/user/signup")
-//    public ResponseEntity<User> registerUser(
-//            @RequestPart(value = "userInfo") SignupRequestDto requestDto,
-//            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile) throws IOException {
-//
-//        String userProfile = "";
-//        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
-//
-//        User user = userService.registerUser(requestDto, userProfile);
-//        return ResponseEntity.ok(user);
-//    }
-
-    // 회원 가입 요청 처리
     @ApiOperation(value = "회원가입", notes = "회원가입요청")
     @PostMapping("/user/signup")
-    public ResponseEntity<User> registerUser(
+    public ResponseEntity<Boolean> registerUser(
             @ModelAttribute SignupRequestDto requestDto) throws IOException {
-        User user = userService.registerUser(requestDto);
-        return ResponseEntity.ok(user);
+        userService.registerUser(requestDto);
+        return ResponseEntity.ok(true);
     }
 
     // ID 중복 체크.
@@ -128,8 +112,8 @@ public class UserController {
 
     //게시글 검색
     @GetMapping("/search")
-    public List<Post> search(String keyword){
-        return userService.search(keyword);
+    public ResponseEntity<List<PostResponseDto>> search(@RequestBody SearchRequestDto requestDto){
+        return ResponseEntity.ok(userService.search(requestDto));
     }
 
 
