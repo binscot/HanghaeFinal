@@ -37,9 +37,10 @@ public class Post extends Timestamped {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public Post(PostRequestDto requestDto, User user){
+    public Post(PostRequestDto requestDto, User user, String defaultImg){
         this.title = requestDto.getTitle();
-        this.postImageUrl = requestDto.getPostImageUrl();
+        //this.postImageUrl = requestDto.getPostImageUrl();
+        this.postImageUrl = defaultImg;
         this.color = requestDto.getColor();
         this.limitCnt = requestDto.getLimitCnt();
         this.user = user;

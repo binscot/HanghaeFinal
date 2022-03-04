@@ -191,7 +191,7 @@ public class PostService {
         for (Post post: postList ) {
             otherUserList.add(new OtherUserPostListResDto(post));
         }
-
+        
         //OtherUserResDto otherUserResDto = new OtherUserResDto(user, postList);
         return new OtherUserResDto(user, otherUserList);
     }

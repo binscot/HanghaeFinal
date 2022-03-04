@@ -61,7 +61,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .and()
                 .authorizeRequests()
-                .antMatchers("/**").permitAll()
+                .antMatchers("/**","/").permitAll()
                 .anyRequest().permitAll()
 
                 //.and().cors().configurationSource(corsConfigurationSource())    // 추가

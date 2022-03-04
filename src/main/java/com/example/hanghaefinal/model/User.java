@@ -1,9 +1,7 @@
 package com.example.hanghaefinal.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,6 +9,8 @@ import javax.persistence.*;
 @Getter // get 함수를 일괄적으로 만들어줍니다.
 @NoArgsConstructor // 기본 생성자를 만들어줍니다.
 @Entity // DB 테이블 역할을 합니다.
+@AllArgsConstructor
+@Builder
 public class User extends Timestamped{
 
     // ID가 자동으로 생성 및 증가합니다.
@@ -36,6 +36,10 @@ public class User extends Timestamped{
     @Column(nullable = true)
     private String introduction;
 
+    @Column
+    private Long kakaoId;
+
+
 
     public User(String username, String password, String nickName, String introduction, String userProfile) {
         this.username = username;
@@ -43,7 +47,23 @@ public class User extends Timestamped{
         this.nickName = nickName;
         this.introduction = introduction;
         this.userProfileImage = userProfile;
+        this.kakaoId = null;
     }
+
+    public User(String username, String encodedPassword, String email, Long kakaoId) {
+        this.username=email;
+        this.password=encodedPassword;
+        this.nickName=username;
+        this.kakaoId=kakaoId;
+
+    }
+
+    public User(String username, String encodedPassword, Long kakaoId) {
+        this.username=username;
+        this.password=encodedPassword;
+        this.kakaoId=kakaoId;
+    }
+
 
     public void updateUser(String nickName, String password, String introduction, String userProfile) {
         this.nickName=nickName;

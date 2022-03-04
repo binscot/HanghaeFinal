@@ -1,5 +1,8 @@
 package com.example.hanghaefinal.model;
 
+import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
+import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import lombok.*;
 import com.example.hanghaefinal.dto.requestDto.CommentRequestDto;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.Timestamped;
@@ -9,15 +12,19 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "comment")
 public class Comment extends Timestamped {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -31,6 +38,16 @@ public class Comment extends Timestamped {
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
+    /*public CommentResponseDto toResponseDto() {
+        return CommentResponseDto.builder()
+                .commentId(this.id)
+                .comment(this.comment)
+                .commentModifiedAt(this.getModifiedAt().toString())
+                .commentUserId(this.user.getId())
+                .userInfoResponseDto(new UserInfoResponseDto(this.user))
+                .build();
+    }*/
 
     public Comment(CommentRequestDto commentRequestDto, Post post, User user) {
         this.comment = commentRequestDto.getComment();
