@@ -26,6 +26,7 @@ public class PostService {
     private final CommentRepository commentRepository;
     private final CommentLikesRepository commentLikesRepository;
     private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
     private final S3Uploader s3Uploader;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
@@ -47,7 +48,9 @@ public class PostService {
 
     public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg){
         Post post = new Post(postRequestDto, user, defaultImg);
+        Category category = new Category(postRequestDto.getCategory(), post);
         postRepository.save(post);
+        categoryRepository.save(category);
 
         return true;
     }

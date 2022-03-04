@@ -21,10 +21,7 @@ public class PostController {
 
     private final PostService postService;
 
-//    @PostMapping("/posts")
-//    public Boolean savePost(@RequestPart(value = "file") MultipartFile multipartFile,
-//                            @RequestPart(value = "data") PostRequestDto postRequestDto,
-//                            @AuthenticationPrincipal UserDetailsImpl userDetails
+    // 미완성 게시글 생성 요청
     @PostMapping("/posts")
     public Boolean savePost(@ModelAttribute PostRequestDto postRequestDto,
                             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -39,7 +36,7 @@ public class PostController {
         return true;
     }
 
-    // 게시글 상세 페이지 조회
+    // 게시글 상세 페이지 조회 (완성/미완성)
     @GetMapping("/posts/{postId}")
     public PostDetailResponseDto viewPostDetail(@PathVariable Long postId){
         return postService.viewPostDetail(postId);
