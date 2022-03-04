@@ -62,6 +62,7 @@ public class PostController {
         return postService.viewPostIncomplete();
     }
 
+    // 다른 유저 페이지
     @GetMapping("/posts/userPage/{userKey}")
     public OtherUserResDto viewUserPage(@PathVariable Long userKey){
         return postService.viewUserPage(userKey);

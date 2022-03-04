@@ -12,13 +12,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.fasterxml.jackson.databind.type.LogicalType.Collection;
 
 @Slf4j
 @Service
@@ -145,20 +140,18 @@ public class PostService {
             postResponseDtoList.add(postResponseDto);
         }
 
-        // 삽입 정렬 할까..
-        /*List<PostResponseDto> tmpDtoList;
-        tmpDtoList = postResponseDtoList;
-        for(PostResponseDto responseDto : postResponseDtoList){
-            responseDto.getPostLikesCnt();
-            for(PostResponseDto tmpResDto : tmpDtoList){
-                tmpResDto.getPostLikesCnt()
-            }
-        }
+        // post좋아요 순으로 내림차순 정렬(좋아요 많은게 위에 보이게끔)
+        Comparator<PostResponseDto> comparator = Comparator.comparing(PostResponseDto::getPostLikesCnt, Comparator.reverseOrder());
+        List<PostResponseDto> responseDtoList = postResponseDtoList.stream().sorted(comparator).collect(Collectors.toList());
+        // 결과 출력
+        /*postResponseDtoList.stream().sorted(comparator)
+                .forEach(o -> {
+                    System.out.println("~~~ o.getPostLikesCnt() : " + o.getPostLikesCnt());
+                });
+        System.out.println("-----------------------------------------------");*/
 
-        // 이제 다시 for문 돌려서 좋아요순 정렬 가나요?
-        Collections.sort(postResponseDtoList , Collections.reverseOrder());*/
-
-        return postResponseDtoList;
+        return responseDtoList;
+        //return postResponseDtoList;
     }
 
     // 미완성 게시글 전체 조회 - 최신순
@@ -186,6 +179,7 @@ public class PostService {
         return postResponseDtoList;
     }
 
+    // 다른 유저 페이지
     public OtherUserResDto viewUserPage(Long userKey){
         User user = userRepository.findById(userKey).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
