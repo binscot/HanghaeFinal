@@ -26,22 +26,35 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
 
     @Transactional
-    public void createNotice(NoticeRequestDto requestDto, UserDetailsImpl userDetails) throws IOException {
+    public void createNotice(
+            NoticeRequestDto requestDto,
+            UserDetailsImpl userDetails
+    ) throws IOException {
+
         if (!checkAdmin(userDetails)){
            throw new IllegalArgumentException("관리자만 작성 할 수 있습니다!");
         }
         MultipartFile multipartFile = requestDto.getNoticeImg();
         //로고 이미지로 수정 해야함
         String noticeImg = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
-        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) noticeImg = s3Uploader.upload(multipartFile, "static");
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
+            noticeImg = s3Uploader.upload(multipartFile, "static");
 
-        Notice notice = new Notice(requestDto.getTitle(),requestDto.getContent(),noticeImg);
+        Notice notice = new Notice(requestDto.getTitle(),
+                requestDto.getContent(),
+                noticeImg
+        );
         noticeRepository.save(notice);
 
     }
 
     @Transactional
-    public void updateNotice(NoticeRequestDto requestDto, UserDetailsImpl userDetails, Long noticeId) throws IOException{
+    public void updateNotice(
+            NoticeRequestDto requestDto,
+            UserDetailsImpl userDetails,
+            Long noticeId
+    ) throws IOException{
+
         if (!checkAdmin(userDetails)){
             throw new IllegalArgumentException("관리자만 수정 할 수 있습니다!");
         }
@@ -51,8 +64,13 @@ public class NoticeService {
         MultipartFile multipartFile = requestDto.getNoticeImg();
         //로고 이미지로 수정 해야함
         String noticeImg = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
-        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) noticeImg = s3Uploader.upload(multipartFile, "static");
-        notice.updateNotice(requestDto.getTitle(),requestDto.getContent(),noticeImg);
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
+            noticeImg = s3Uploader.upload(multipartFile, "static");
+
+        notice.updateNotice(requestDto.getTitle(),
+                requestDto.getContent(),
+                noticeImg
+        );
         noticeRepository.save(notice);
     }
 
@@ -75,7 +93,13 @@ public class NoticeService {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(
                 () -> new IllegalArgumentException("공지가 존재하지 않습니다.")
         );
-        return new NoticeResponseDto(notice.getTitle(),notice.getContent(),notice.getNoticeImg(),notice.getCreatedAt(),notice.getModifiedAt());
+        return new NoticeResponseDto(
+                notice.getTitle(),
+                notice.getContent(),
+                notice.getNoticeImg(),
+                notice.getCreatedAt(),
+                notice.getModifiedAt()
+        );
     }
 
 
@@ -83,7 +107,13 @@ public class NoticeService {
         List<NoticeResponseDto> noticeResponseDtoList = new ArrayList<>();
         List<Notice> noticeList = noticeRepository.findAll();
         for (Notice notice:noticeList){
-            NoticeResponseDto noticeResponseDto = new NoticeResponseDto(notice.getTitle(),notice.getContent(),notice.getNoticeImg(),notice.getCreatedAt(),notice.getModifiedAt());
+            NoticeResponseDto noticeResponseDto = new NoticeResponseDto(
+                    notice.getTitle(),
+                    notice.getContent(),
+                    notice.getNoticeImg(),
+                    notice.getCreatedAt(),
+                    notice.getModifiedAt()
+            );
             noticeResponseDtoList.add(noticeResponseDto);
         }
         return noticeResponseDtoList;

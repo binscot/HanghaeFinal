@@ -26,4 +26,20 @@ public class UserInfoResponseDto {
         this.introduction = user.getIntroduction();
     }
 
+    public UserInfoResponseDto(Long id, String username, String nickName, String userProfileImage, String introduction, List<BookmarkResponseDto> bookmarkResponseDtoList) {
+        this.userKey=id;
+        this.username=username;
+        this.nickname=nickName;
+        this.userProfileImage=userProfileImage;
+        this.introduction=introduction;
+        this.bookmarkResponseDtoList=bookmarkResponseDtoList;
+    }
+
+    public UserInfoResponseDto(Long id, String username, String nickName, String userProfileImage, String introduction) {
+        this.userKey=id;
+        this.username=username;
+        this.nickname=nickName;
+        this.userProfileImage=userProfileImage;
+        this.introduction=introduction;
+    }
 }

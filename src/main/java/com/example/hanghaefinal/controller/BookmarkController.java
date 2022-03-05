@@ -24,7 +24,6 @@ public class BookmarkController {
         return bookmarkService.getBookmark(user);
     }
 
-
     @PostMapping("/bookmark/{postId}")
     public boolean addBookmarks(@PathVariable Long postId,
                            @AuthenticationPrincipal UserDetailsImpl userDetails){
