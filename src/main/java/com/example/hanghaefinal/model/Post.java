@@ -30,7 +30,7 @@ public class Post extends Timestamped {
     @Column(name = "limit_cnt")
     private int limitCnt;
 
-    @Column(name = "complete")
+    @Column(name = "complete")  // nullable 고민하자
     private boolean complete;
 
     @ManyToOne

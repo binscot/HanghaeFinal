@@ -14,4 +14,10 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     // modifiedAt 은 Timestamped 에 있다.
     List<Post> findByTitleContaining(String keyword);
     List<Post> findAllByUserIdOrderByModifiedAtDesc(Long userId);
+
+    //List<Post> findAllByCompleteOrderByModifiedAt(boolean complete);
+    //List<Post> findAllByCompleteAndOrderByModifiedAt(boolean complete);
+    //List<Post> findAllByOrderByModifiedAtDescAndCompleteTrue();
+    List<Post> findAllByCompleteTrueOrderByModifiedAtDesc();
+    List<Post> findAllByCompleteFalseOrderByModifiedAtDesc();
 }
