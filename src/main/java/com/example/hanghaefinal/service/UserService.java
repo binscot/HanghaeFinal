@@ -62,17 +62,18 @@ public class UserService {
         if (found.isPresent()) {
             throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
         }
-        if (requestDto.getUsername() == null) {
-            throw new NullPointerException("아이디를 입력해주세요");
-        }
+        //To do Validation으로 변경
         if (Objects.equals(requestDto.getUsername(), "")) {
-            throw new NullPointerException("아이디를 입력해주세요!!!!!!!!!");
-        }
-        if (requestDto.getPassword() == null) {
-            throw new NullPointerException("비밀번호를 입력해주세요");
+            throw new NullPointerException("아이디를 입력해주세요!");
         }
         if (Objects.equals(requestDto.getPassword(), "")) {
-            throw new NullPointerException("비밀번호를 입력해주세요!!!!!!!!!!!!");
+            throw new NullPointerException("비밀번호를 입력해주세요!");
+        }
+        if (Objects.equals(requestDto.getCheckPassword(), "")) {
+            throw new NullPointerException("비밀번호 확인을 입력해주세요!");
+        }
+        if (!requestDto.getPassword().matches(requestDto.getCheckPassword())){
+            throw new IllegalArgumentException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
         }
         String nickName = requestDto.getNickName();
         Optional<User> foundNickName = userRepository.findByNickName(nickName);
