@@ -31,8 +31,7 @@ public class UserController {
     @PostMapping("/user/signup")
     public ResponseEntity<Boolean> registerUser(
             @ModelAttribute SignupRequestDto requestDto) throws IOException {
-        userService.registerUser(requestDto);
-        return ResponseEntity.ok(true);
+        return ResponseEntity.ok(userService.registerUser(requestDto));
     }
 
     // ID 중복 체크.

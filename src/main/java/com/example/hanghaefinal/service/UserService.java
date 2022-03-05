@@ -40,46 +40,6 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final CommentLikesRepository commentLikesRepository;
 
-
-
-
-//    @Transactional
-//    public User registerUser(SignupRequestDto requestDto, String userProfile) {
-//
-//        //유효성 체크 추가해야함
-//        String username = requestDto.getUsername();
-//        Optional<User> found = userRepository.findByUsername(username);
-//        if (found.isPresent()) {
-//            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
-//        }
-//        if (requestDto.getUsername() == null) {
-//            throw new NullPointerException("아이디를 입력해주세요");
-//        }
-//        if (Objects.equals(requestDto.getUsername(), "")) {
-//            throw new NullPointerException("아이디를 입력해주세요!!!!!!!!!");
-//        }
-//        if (requestDto.getPassword() == null) {
-//            throw new NullPointerException("비밀번호를 입력해주세요");
-//        }
-//        if (Objects.equals(requestDto.getPassword(), "")) {
-//            throw new NullPointerException("비밀번호를 입력해주세요!!!!!!!!!!!!");
-//        }
-//        String nickName = requestDto.getNickName();
-//        Optional<User> foundNickName = userRepository.findByNickName(nickName);
-//        if (foundNickName.isPresent()) {
-//            throw new IllegalArgumentException("중복된 사용자 닉네임이 존재합니다.");
-//        }
-//        String introduction = requestDto.getIntroduction();
-//        if (introduction.length()>300){
-//            throw new IllegalArgumentException("소개는 300자 이하로 작성해주세요!");
-//        }
-//// 패스워드 암호화
-//        String password = passwordEncoder.encode(requestDto.getPassword());
-//
-//        User user = new User(username, password, nickName, introduction, userProfile);
-//        return userRepository.save(user);
-//    }
-
     @Transactional
     public Boolean registerUser(SignupRequestDto requestDto) throws IOException {
         //        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
@@ -93,7 +53,7 @@ public class UserService {
 //            userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
 //        }
         MultipartFile multipartFile = requestDto.getUserProfile();
-        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
+        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
         if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
 
         //유효성 체크 추가해야함
@@ -259,15 +219,6 @@ public class UserService {
         String tokenString = jsonObj.toString();
 
         String token = tokenString.substring(10,tokenString.length()-2);
-
-//        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
-//        System.out.println(cookie);
-
-//        cookie.setPath("/");    // 이 경로에 바로 넣어줘야지 모든 경로에서 쿠키를 사용할 수 있다.
-        // https에서 setHttpOnly(true) 를 사용하는지 안하는지 검색해보자
-//        cookie.setHttpOnly(true);   // 프론트에서 헤더에 있는 토큰을 못 꺼내서 쓴다. 애초에 헤더에서 꺼내서 사용하는게 아니라 다른 방식으로 사용하나 보군
-//        cookie.setSecure(true);     // https 에서 사용한다.
-//        response.addCookie(cookie); // 이거만 있으면 프론트에서 받을 수 있다.
         response.addHeader("X-AUTH-TOKEN", token);
         return ResponseEntity.ok(loginResponseDto);
     }
@@ -302,7 +253,7 @@ public class UserService {
 //        String userProfile = "";
 //        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
         MultipartFile multipartFile = updateDto.getUserProfile();
-        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
+        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
         if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
                 () -> new IllegalArgumentException("유저가 존재하지 않습니다.")
