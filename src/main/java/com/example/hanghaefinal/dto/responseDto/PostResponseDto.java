@@ -23,6 +23,7 @@ public class PostResponseDto {
     //private double postScore;
     //private List<CommentResponseDto> commnetList;
     private int postLikesCnt;
+    private List<CategoryResponseDto> categoryList;
     private List<CommentResponseDto> commentList;
 
     // public PostResponseDto(Post post){

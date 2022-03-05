@@ -46,6 +46,7 @@ public class PostService {
         return defaultImg;
     }
 
+    // 게시글 최초 생성 -> 미완성 게시글 생성
     public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg){
         Post post = new Post(postRequestDto, user, defaultImg);
         Category category = new Category(postRequestDto.getCategory(), post);
@@ -53,6 +54,46 @@ public class PostService {
         categoryRepository.save(category);
 
         return true;
+    }
+
+    // 마지막 파라그래프 작성 후 게시글 완성 버튼 누름 -> 완성 게시글로 변경
+    public PostDetailResponseDto completePost(Long postId, PostRequestDto postRequestDto){
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
+        );
+
+        // 마지막 문단 작성자가 카테고리를 생성하면 새로운 카테고리 등록, category가 안비어 있으면 생성
+        if(postRequestDto.getCategory() != null){
+            Category category = new Category(postRequestDto.getCategory(), post);
+            categoryRepository.save(category);
+        } else {
+            log.info("~~~ category is null");
+        }
+
+        // 어차피 true지만  postRequestDto.isComplete() 이걸 인자로 넣어도 된다.
+        post.updatePost(true);
+
+        List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+
+        // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+        for(Category category: categoryList){
+            categoryResDtoList.add(new CategoryResponseDto(category));
+        }
+
+        List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+        // List<Comment>에 있는 정보를 List<CommentResponseDto> 에 담는다
+        for (Comment comment:commentList ) {
+            Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+        }
+
+        Long postLikesCnt =  postLikesRepository.countByPost(post);
+
+        return new PostDetailResponseDto(post, commentResDtoList, categoryResDtoList, postLikesCnt);
+        //return true;
     }
 
     // 게시글 상세조회
@@ -66,10 +107,13 @@ public class PostService {
         //List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         // 위처럼 commentList로 조회하면 안된다. Comment안에 user랑 post있고 post안에 user 가 있다.. (궁금하면 다시 해봐)
 
-        // map은 요소들을 특정조건에 해당하는 값으로 변환해 준다 즉 여기서는 jpa 구문으로 가져온걸
-        // toResponseDto를 사용해서 CommentResponseDto로 변환해 준다. ( 여기서 (postId) 까지만 작성했으면 타입이 안맞는다 )
-        /*List<CommentResponseDto> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId).stream()
-                .map(comment -> comment.toResponseDto()).collect(Collectors.toList());*/
+        List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+
+        // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+        for(Category category: categoryList){
+            categoryResDtoList.add(new CategoryResponseDto(category));
+        }
 
         List<Comment> commentList2 = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         List<CommentResponseDto> commentResDtoList = new ArrayList<>();
@@ -89,7 +133,7 @@ public class PostService {
         // comment를 작성한 유저와 좋아요가 필요하다.
 
         // limitCnt와 paragraph의 개수가 같으면 complete를 true로 반환해라
-        return new PostDetailResponseDto(post, commentResDtoList, postLikesCnt);
+        return new PostDetailResponseDto(post, commentResDtoList, categoryResDtoList, postLikesCnt);
 //        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 

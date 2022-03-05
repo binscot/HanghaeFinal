@@ -45,4 +45,8 @@ public class Post extends Timestamped {
         this.limitCnt = requestDto.getLimitCnt();
         this.user = user;
     }
+
+    public void updatePost(boolean bool){
+        this.complete = bool;
+    }
 }

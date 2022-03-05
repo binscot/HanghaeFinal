@@ -36,6 +36,15 @@ public class PostController {
         return true;
     }
 
+    // 미완성 게시글을 -> 완성 게시글로 변경 ( complete 컴럼만 수정할 것이므로 patch 사용)
+    // 최초 게시글 생성자와 미완성을 완성으로 바꾸는 사용자가 같을 필요는 없고
+    // 마지막 문단을 단 사람과 게시글 완성 버튼을 누른 사람이 일치하면 완성 되도록???
+    @PatchMapping("/posts/complete/{postId}")
+    public PostDetailResponseDto completePost(@PathVariable Long postId,
+                                PostRequestDto postRequestDto){
+        return postService.completePost(postId, postRequestDto);
+    }
+
     // 게시글 상세 페이지 조회 (완성/미완성)
     @GetMapping("/posts/{postId}")
     public PostDetailResponseDto viewPostDetail(@PathVariable Long postId){

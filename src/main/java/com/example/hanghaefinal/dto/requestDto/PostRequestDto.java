@@ -12,4 +12,5 @@ public class PostRequestDto {
     private String color;
     private int limitCnt;
     private String category;
+    private boolean complete;
 }
