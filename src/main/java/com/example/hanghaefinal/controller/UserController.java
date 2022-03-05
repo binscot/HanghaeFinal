@@ -10,6 +10,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -30,24 +32,24 @@ public class UserController {
     @ApiOperation(value = "회원가입", notes = "회원가입요청")
     @PostMapping("/user/signup")
     public ResponseEntity<Boolean> registerUser(
-            @ModelAttribute SignupRequestDto requestDto) throws IOException {
-        return ResponseEntity.ok(userService.registerUser(requestDto));
+            @Validated
+            @ModelAttribute SignupRequestDto requestDto,
+            BindingResult bindingResult) throws IOException {
+        return ResponseEntity.ok(userService.registerUser(requestDto,bindingResult));
     }
 
     // ID 중복 체크.
     @ApiOperation(value = "ID 중복 체크", notes = "ID 중복 체크")
     @PostMapping("/user/signup/checkID")
-    public ResponseEntity<CheckIdResponseDto> checkId(@RequestBody SignupRequestDto requestDto){
-        CheckIdResponseDto checkIdResponseDto = userService.checkId(requestDto);
-        return ResponseEntity.ok(checkIdResponseDto);
+    public ResponseEntity<Boolean> checkId(@RequestBody SignupRequestDto requestDto){
+        return ResponseEntity.ok(userService.checkId(requestDto));
     }
 
     //닉네임 중복체크
     @ApiOperation(value = "닉네임 중복 체크", notes = "닉네임 중복 체크")
     @PostMapping("/user/signup/checkNick")
-    public ResponseEntity<CheckNickResponseDto> checkNick(@RequestBody SignupRequestDto requestDto){
-        CheckNickResponseDto checkNickResponseDto = userService.checkNick(requestDto);
-        return ResponseEntity.ok(checkNickResponseDto);
+    public ResponseEntity<Boolean> checkNick(@RequestBody SignupRequestDto requestDto){
+        return ResponseEntity.ok(userService.checkNick(requestDto));
     }
 
     // 로그인

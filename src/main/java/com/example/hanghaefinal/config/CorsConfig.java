@@ -1,4 +1,4 @@
-package com.example.hanghaefinal.security;
+package com.example.hanghaefinal.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

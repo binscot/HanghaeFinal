@@ -6,7 +6,7 @@ import com.example.hanghaefinal.kakao.KakaoOAuth2;
 import com.example.hanghaefinal.kakao.KakaoUserInfo;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
-import com.example.hanghaefinal.security.JwtTokenProvider;
+import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.util.S3Uploader;
 import com.google.gson.JsonObject;
@@ -17,6 +17,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
@@ -41,116 +42,72 @@ public class UserService {
     private final CommentLikesRepository commentLikesRepository;
 
     @Transactional
-    public Boolean registerUser(SignupRequestDto requestDto) throws IOException {
-        //        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+    public Boolean registerUser(SignupRequestDto requestDto, BindingResult bindingResult) throws IOException {
 
-//        String userProfile = "";
-//        if (requestDto.getUserProfile()!=null){
-//            MultipartFile multipartFile = requestDto.getUserProfile();
-//            userProfile = s3Uploader.upload(multipartFile, "static");
-//        } else {
-//
-//            userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/static/photo.png";
-//        }
         MultipartFile multipartFile = requestDto.getUserProfile();
         String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
         if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
 
         //유효성 체크 추가해야함
         String username = requestDto.getUsername();
-        Optional<User> found = userRepository.findByUsername(username);
-        if (found.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
-        }
-        //To do Validation으로 변경
-        if (Objects.equals(requestDto.getUsername(), "")) {
-            throw new NullPointerException("아이디를 입력해주세요!");
-        }
-        if (Objects.equals(requestDto.getPassword(), "")) {
-            throw new NullPointerException("비밀번호를 입력해주세요!");
-        }
-        if (Objects.equals(requestDto.getCheckPassword(), "")) {
-            throw new NullPointerException("비밀번호 확인을 입력해주세요!");
+        String nickName = requestDto.getNickName();
+        String introduction = requestDto.getIntroduction();
+        String password = passwordEncoder.encode(requestDto.getPassword());
+
+        if (bindingResult.hasErrors()) {
+            throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
         }
         if (!requestDto.getPassword().matches(requestDto.getCheckPassword())){
             throw new IllegalArgumentException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
         }
-        String nickName = requestDto.getNickName();
-        Optional<User> foundNickName = userRepository.findByNickName(nickName);
-        if (foundNickName.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자 닉네임이 존재합니다.");
-        }
-        String introduction = requestDto.getIntroduction();
         if (introduction.length()>300){
             throw new IllegalArgumentException("소개는 300자 이하로 작성해주세요!");
         }
-        // 패스워드 암호화
-        String password = passwordEncoder.encode(requestDto.getPassword());
 
         User user = new User(username, password, nickName, introduction, userProfile);
         userRepository.save(user);
         return true;
     }
 
-
     //아이디 중복확인
-    public CheckIdResponseDto checkId(SignupRequestDto requestDto) {
-        CheckIdResponseDto checkIdResponseDto = new CheckIdResponseDto();
+    public Boolean checkId(SignupRequestDto requestDto) {
         Optional<User> user = userRepository.findByUsername(requestDto.getUsername());
         if (user.isPresent()) {
-            checkIdResponseDto.setOk(false);
-            checkIdResponseDto.setMsg("중복된 ID가 존재합니다.");
-        } else {
-            checkIdResponseDto.setOk(true);
-            checkIdResponseDto.setMsg("사용 가능한 ID 입니다.");
+            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
         }
-        return checkIdResponseDto;
+        return true;
     }
 
     //닉네임 중복확인
-    public CheckNickResponseDto checkNick(SignupRequestDto requestDto) {
-        CheckNickResponseDto checkNickResponseDto = new CheckNickResponseDto();
+    public Boolean checkNick(SignupRequestDto requestDto) {
         Optional<User> foundNickName = userRepository.findByNickName(requestDto.getNickName());
-        System.out.println(foundNickName.isPresent());
         if (foundNickName.isPresent()){
-            checkNickResponseDto.setOk(false);
-            checkNickResponseDto.setMsg("중복된 닉네임이 존재합니다!");
-        } else {
-            checkNickResponseDto.setOk(true);
-            checkNickResponseDto.setMsg("사용가능한 닉네임입니다!");
+            throw new IllegalArgumentException("중복된 사용자 닉네임이 존재합니다.");
         }
-        return checkNickResponseDto;
+        return true;
     }
 
 
     //로그인 서비스
-    //존재하지 않거나 비밀번호가 맞지 않을시 오류를 내주고 그렇지 않을경우 토큰을 발행합니다.
     public ResponseEntity<LoginResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
-        LoginResponseDto loginResponseDto = new LoginResponseDto();
-        {
-            User user = userRepository.findByUsername(loginRequestDto.getUsername())
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
-            if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-                throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요.");
-            }
-            loginResponseDto.setUserKey(user.getId());
-            loginResponseDto.setUsername(user.getUsername());
-            loginResponseDto.setNickname(user.getNickName());
-            loginResponseDto.setUserProfileImage(user.getUserProfileImage());
-            loginResponseDto.setIntroduction(user.getIntroduction());
+        User user = userRepository.findByUsername(loginRequestDto.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
 
-
-            String token = jwtTokenProvider.createToken(user.getUsername());
-//            Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
-//            cookie.setPath("/");    // 이 경로에 바로 넣어줘야지 모든 경로에서 쿠키를 사용할 수 있다.
-            // https에서 setHttpOnly(true) 를 사용하는지 안하는지 검색해보자
-//            cookie.setHttpOnly(true);   // 프론트에서 헤더에 있는 토큰을 못 꺼내서 쓴다. 애초에 헤더에서 꺼내서 사용하는게 아니라 다른 방식으로 사용하나 보군
-//            cookie.setSecure(true);     // https 에서 사용한다.
-//            response.addCookie(cookie); // 이거만 있으면 프론트에서 받을 수 있다.
-
-            response.addHeader("X-AUTH-TOKEN", token);
-            return ResponseEntity.ok(loginResponseDto);
+        if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요.");
         }
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getNickName(),
+                user.getUserProfileImage(),
+                user.getIntroduction());
+
+        String token = jwtTokenProvider.createToken(user.getUsername());
+
+        response.addHeader("X-AUTH-TOKEN", token);
+        return ResponseEntity.ok(loginResponseDto);
     }
 
     @Transactional
@@ -160,8 +117,6 @@ public class UserService {
         Long kakaoId = userInfo.getId();
         String nickname = userInfo.getNickname();
         String email = userInfo.getEmail();
-
-
 
         // DB 에 중복된 Kakao Id 가 있는지 확인
         User kakaoUser = userRepository.findByUsername(email)
@@ -186,8 +141,7 @@ public class UserService {
                 // username = 카카오 nickname
                 String username = nickname;
                 // password = 카카오 Id + ADMIN TOKEN
-                String password = kakaoId + String.valueOf(UUID.randomUUID());;
-                System.out.println("password:"+ password);
+                String password = kakaoId + String.valueOf(UUID.randomUUID());
                 // 패스워드 인코딩
                 String encodedPassword = passwordEncoder.encode(password);
 
@@ -301,7 +255,6 @@ public class UserService {
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
-
     }
 
     //회원 탈퇴
@@ -319,6 +272,7 @@ public class UserService {
     }
 
 
+    //내가 작성한 게시글 조회
     public List<PostResponseDto> viewMyPost(UserDetailsImpl userDetails) {
         User user = userDetails.getUser();
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
@@ -343,7 +297,6 @@ public class UserService {
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
-
     }
 
     @Transactional
