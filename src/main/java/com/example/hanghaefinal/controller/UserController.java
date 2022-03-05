@@ -98,10 +98,10 @@ public class UserController {
     //이메일 인증
     @PostMapping("/mailCheck")
     @ApiOperation(value = "회원 가입시 이메인 인증", notes = "기존사용하고 있는 이메일을 통해 인증")
-    public String mailCheck(@RequestBody EmailRequestDto requestDto){
-        return emailService.mailCheck(requestDto);
+    public ResponseEntity<MailKeyResponseDto> mailCheck(@RequestBody EmailRequestDto requestDto){
+        MailKeyResponseDto mailKeyResponseDto = emailService.mailCheck(requestDto);
+        return ResponseEntity.ok(mailKeyResponseDto);
     }
-
 
 
 
