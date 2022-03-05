@@ -123,7 +123,7 @@ public class UserService {
         if (introduction.length()>300){
             throw new IllegalArgumentException("소개는 300자 이하로 작성해주세요!");
         }
-// 패스워드 암호화
+        // 패스워드 암호화
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         User user = new User(username, password, nickName, introduction, userProfile);
@@ -295,6 +295,8 @@ public class UserService {
         return userInfoResponseDto;
     }
 
+
+    //유저 정보 변경
     @Transactional
     public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
 //        String userProfile = "";
@@ -390,6 +392,20 @@ public class UserService {
         }
         return postResponseDtoList;
 
+    }
+
+    @Transactional
+    public Boolean updatePassword(PasswordRequestDto requestDto) {
+        User user = userRepository.findByUsername(requestDto.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다.")
+        );
+        if (!requestDto.getPassword().matches(requestDto.getCheckPassword())){
+            throw new IllegalArgumentException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
+        }
+        String password = passwordEncoder.encode(requestDto.getPassword());
+        user.updateUser(password);
+        userRepository.save(user);
+        return true;
     }
 }
 

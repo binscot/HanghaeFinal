@@ -71,4 +71,8 @@ public class User extends Timestamped{
         this.introduction=introduction;
         this.userProfileImage=userProfile;
     }
+
+    public void updateUser(String password) {
+        this.password=password;
+    }
 }

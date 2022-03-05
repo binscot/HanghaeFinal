@@ -104,10 +104,11 @@ public class UserController {
     }
 
 
-
+    //내가 쓴 게시물 검색
     @GetMapping("/myPostList")
-    public List<PostResponseDto> viewMyPost(@AuthenticationPrincipal UserDetailsImpl userDetails){
-        return userService.viewMyPost(userDetails);
+    public ResponseEntity<List<PostResponseDto>> viewMyPost(@AuthenticationPrincipal UserDetailsImpl userDetails){
+        List<PostResponseDto> postResponseDtoList = userService.viewMyPost(userDetails);
+        return ResponseEntity.ok(postResponseDtoList);
     }
 
     //게시글 검색
@@ -116,6 +117,10 @@ public class UserController {
         return ResponseEntity.ok(userService.search(requestDto));
     }
 
-
+    //비밀번호 찾기
+    @PutMapping("/findPassword")
+    public ResponseEntity<Boolean> updatePassword(@RequestBody PasswordRequestDto requestDto){
+        return ResponseEntity.ok(userService.updatePassword(requestDto));
+    }
 
 }
