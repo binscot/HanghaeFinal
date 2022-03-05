@@ -140,7 +140,9 @@ public class PostService {
     // 완성작 게시글 전체 조회 - 최신순
     public List<PostResponseDto> viewPostRecent(){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-        List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+        //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+        // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
+        List<Post> posts = postRepository.findAllByCompleteTrueOrderByModifiedAtDesc();
 
         int postLikeCnt = 0;
         for (Post post: posts ) {
@@ -156,8 +158,16 @@ public class PostService {
                 commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
+            List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+
+            // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+            for(Category category: categoryList){
+                categoryResDtoList.add(new CategoryResponseDto(category));
+            }
+
             //PostResponseDto postResponseDto = new PostResponseDto(post);
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, categoryResDtoList, postLikeCnt);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
@@ -166,7 +176,9 @@ public class PostService {
     // 완성작 게시글 전체 조회 - 추천순(좋아요순)
     public List<PostResponseDto> viewPostRecommend(){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-        List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+        //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+        // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
+        List<Post> posts = postRepository.findAllByCompleteTrueOrderByModifiedAtDesc();
 
         int postLikeCnt = 0;
         for (Post post: posts ) {
@@ -182,7 +194,15 @@ public class PostService {
                 commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+
+            // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+            for(Category category: categoryList){
+                categoryResDtoList.add(new CategoryResponseDto(category));
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, categoryResDtoList, postLikeCnt);
             //postResponseDto.getPostLikesCnt();
             postResponseDtoList.add(postResponseDto);
         }
@@ -204,7 +224,9 @@ public class PostService {
     // 미완성 게시글 전체 조회 - 최신순
     public List<PostResponseDto> viewPostIncomplete(){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
-        List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+        //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+        // complete 가 false이며(미완성작품) 최근 수정한 시간순으로 불러온다.
+        List<Post> posts = postRepository.findAllByCompleteFalseOrderByModifiedAtDesc();
 
         int postLikeCnt = 0;
         for (Post post: posts ) {
@@ -220,7 +242,15 @@ public class PostService {
                 commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+
+            // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+            for(Category category: categoryList){
+                categoryResDtoList.add(new CategoryResponseDto(category));
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, categoryResDtoList, postLikeCnt);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
