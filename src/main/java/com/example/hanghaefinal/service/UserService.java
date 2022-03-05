@@ -42,11 +42,15 @@ public class UserService {
     private final CommentLikesRepository commentLikesRepository;
 
     @Transactional
-    public Boolean registerUser(SignupRequestDto requestDto, BindingResult bindingResult) throws IOException {
+    public Boolean registerUser(
+            SignupRequestDto requestDto,
+            BindingResult bindingResult
+    ) throws IOException {
 
         MultipartFile multipartFile = requestDto.getUserProfile();
         String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
+            userProfile = s3Uploader.upload(multipartFile, "static");
 
         //유효성 체크 추가해야함
         String username = requestDto.getUsername();
@@ -55,7 +59,9 @@ public class UserService {
         String password = passwordEncoder.encode(requestDto.getPassword());
 
         if (bindingResult.hasErrors()) {
-            throw new IllegalArgumentException(Objects.requireNonNull(bindingResult.getFieldError()).getDefaultMessage());
+            throw new IllegalArgumentException(
+                    Objects.requireNonNull(bindingResult.getFieldError()
+                    ).getDefaultMessage());
         }
         if (!requestDto.getPassword().matches(requestDto.getCheckPassword())){
             throw new IllegalArgumentException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
@@ -89,7 +95,11 @@ public class UserService {
 
 
     //로그인 서비스
-    public ResponseEntity<LoginResponseDto> login(LoginRequestDto loginRequestDto, HttpServletResponse response) {
+    public ResponseEntity<LoginResponseDto> login(
+            LoginRequestDto loginRequestDto,
+            HttpServletResponse response
+    ) {
+
         User user = userRepository.findByUsername(loginRequestDto.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
 
@@ -110,122 +120,57 @@ public class UserService {
         return ResponseEntity.ok(loginResponseDto);
     }
 
-    @Transactional
-    public ResponseEntity<LoginResponseDto> kakaoLogin(String accessToken, HttpServletResponse response) {
-        // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
-        KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
-        Long kakaoId = userInfo.getId();
-        String nickname = userInfo.getNickname();
-        String email = userInfo.getEmail();
-
-        // DB 에 중복된 Kakao Id 가 있는지 확인
-        User kakaoUser = userRepository.findByUsername(email)
-                .orElse(null);
-
-        // 카카오 정보로 회원가입
-        if (kakaoUser == null) {
-            // 카카오 이메일과 동일한 이메일을 가진 회원이 있는지 확인
-            User sameEmailUser = null;
-
-            if (email != null) {
-                sameEmailUser = userRepository.findByUsername(email).orElse(null);
-            }
-            if (sameEmailUser != null) {
-                kakaoUser = sameEmailUser;
-                // 카카오 이메일과 동일한 이메일 회원이 있는 경우
-                // 카카오 Id 를 회원정보에 저장
-                kakaoUser.setKakaoId(kakaoId);
-                userRepository.save(kakaoUser);
-            } else {
-                // 카카오 정보로 회원가입
-                // username = 카카오 nickname
-                String username = nickname;
-                // password = 카카오 Id + ADMIN TOKEN
-                String password = kakaoId + String.valueOf(UUID.randomUUID());
-                // 패스워드 인코딩
-                String encodedPassword = passwordEncoder.encode(password);
-
-
-
-                if (email != null) {
-                    kakaoUser = new User(username, encodedPassword, email, kakaoId);
-                } else {
-                    kakaoUser = new User(username, encodedPassword, kakaoId);
-                }
-                userRepository.save(kakaoUser);
-            }
-        }
-
-        // 스프링 시큐리티 통해 로그인 처리
-        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
-        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        JsonObject jsonObj = new JsonObject();
-        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getUsername()));
-
-
-        LoginResponseDto loginResponseDto = new LoginResponseDto();
-        loginResponseDto.setUserKey(kakaoUser.getId());
-        loginResponseDto.setUsername(kakaoUser.getUsername());
-        loginResponseDto.setNickname(kakaoUser.getNickName());
-        loginResponseDto.setUserProfileImage(kakaoUser.getUserProfileImage());
-        loginResponseDto.setIntroduction(kakaoUser.getIntroduction());
-
-        String tokenString = jsonObj.toString();
-
-        String token = tokenString.substring(10,tokenString.length()-2);
-        response.addHeader("X-AUTH-TOKEN", token);
-        return ResponseEntity.ok(loginResponseDto);
-    }
-
-
     //유저정보 전달
     public UserInfoResponseDto userInfo(UserDetailsImpl userDetails) {
         if (userDetails==null){
             throw new NullPointerException("유저정보가 없습니다!");
         }
-        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto();
         User user = userDetails.getUser();
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByUser(user);
         List<BookmarkResponseDto> bookmarkResponseDtoList = new ArrayList<>();
         for (Bookmark bookmark:bookmarkList){
-            BookmarkResponseDto bookmarkResponseDto = new BookmarkResponseDto(bookmark.getId(),bookmark.getPost().getId(),bookmark.getUser().getId());
+            BookmarkResponseDto bookmarkResponseDto = new BookmarkResponseDto(
+                    bookmark.getId(),
+                    bookmark.getPost().getId(),
+                    bookmark.getUser().getId()
+            );
             bookmarkResponseDtoList.add(bookmarkResponseDto);
         }
-        userInfoResponseDto.setUserKey(user.getId());
-        userInfoResponseDto.setUsername(user.getUsername());
-        userInfoResponseDto.setNickname(user.getNickName());
-        userInfoResponseDto.setUserProfileImage(user.getUserProfileImage());
-        userInfoResponseDto.setIntroduction(user.getIntroduction());
-        userInfoResponseDto.setBookmarkResponseDtoList(bookmarkResponseDtoList);
-        return userInfoResponseDto;
+
+        return new UserInfoResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getNickName(),
+                user.getUserProfileImage(),
+                user.getIntroduction(),
+                bookmarkResponseDtoList
+        );
     }
 
 
     //유저 정보 변경
     @Transactional
     public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
-//        String userProfile = "";
-//        if(!multipartFile.isEmpty()) userProfile = s3Uploader.upload(multipartFile, "static");
+
         MultipartFile multipartFile = updateDto.getUserProfile();
         String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt")) userProfile = s3Uploader.upload(multipartFile, "static");
-        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
-                () -> new IllegalArgumentException("유저가 존재하지 않습니다.")
-        );
+        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
+            userProfile = s3Uploader.upload(multipartFile, "static");
 
+        User user = userDetails.getUser();
         String nickName = updateDto.getNickName();
         String password = passwordEncoder.encode(updateDto.getPassword());
         String introduction = updateDto.getIntroduction();
         user.updateUser(nickName,password,introduction,userProfile);
         userRepository.save(user);
-        UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto();
-        userInfoResponseDto.setUserKey(user.getId());
-        userInfoResponseDto.setUsername(user.getUsername());
-        userInfoResponseDto.setNickname(user.getNickName());
-        userInfoResponseDto.setUserProfileImage(user.getUserProfileImage());
-        userInfoResponseDto.setIntroduction(user.getIntroduction());
-        return userInfoResponseDto;
+
+        return new UserInfoResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getNickName(),
+                user.getUserProfileImage(),
+                user.getIntroduction()
+        );
     }
 
 
@@ -244,14 +189,16 @@ public class UserService {
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
-            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
                 commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
-            //PostResponseDto postResponseDto = new PostResponseDto(post);
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            PostResponseDto postResponseDto = new PostResponseDto(
+                    post,
+                    commentResDtoList,
+                    postLikeCnt
+            );
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
@@ -286,19 +233,22 @@ public class UserService {
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
-            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
                 commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
-            //PostResponseDto postResponseDto = new PostResponseDto(post);
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, postLikeCnt);
+            PostResponseDto postResponseDto = new PostResponseDto(
+                    post,
+                    commentResDtoList,
+                    postLikeCnt
+            );
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
     }
 
+    //비밀번호 찾기
     @Transactional
     public Boolean updatePassword(PasswordRequestDto requestDto) {
         User user = userRepository.findByUsername(requestDto.getUsername())
@@ -311,6 +261,73 @@ public class UserService {
         user.updateUser(password);
         userRepository.save(user);
         return true;
+    }
+
+    @Transactional
+    public ResponseEntity<LoginResponseDto> kakaoLogin(
+            String accessToken,
+            HttpServletResponse response
+    ) {
+        // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
+        KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
+        Long kakaoId = userInfo.getId();
+        String nickname = userInfo.getNickname();
+        String email = userInfo.getEmail();
+        // DB 에 중복된 Kakao Id 가 있는지 확인
+        User kakaoUser = userRepository.findByUsername(email)
+                .orElse(null);
+        // 카카오 정보로 회원가입
+        if (kakaoUser == null) {
+            // 카카오 이메일과 동일한 이메일을 가진 회원이 있는지 확인
+            User sameEmailUser = null;
+            if (email != null) {
+                sameEmailUser = userRepository.findByUsername(email).orElse(null);
+            }
+            if (sameEmailUser != null) {
+                kakaoUser = sameEmailUser;
+                // 카카오 이메일과 동일한 이메일 회원이 있는 경우
+                // 카카오 Id 를 회원정보에 저장
+                kakaoUser.setKakaoId(kakaoId);
+                userRepository.save(kakaoUser);
+            } else {
+                // 카카오 정보로 회원가입
+                // password = 카카오 Id + UUID
+                String password = kakaoId + String.valueOf(UUID.randomUUID());
+                // 패스워드 인코딩
+                String encodedPassword = passwordEncoder.encode(password);
+
+                if (email != null) {
+                    kakaoUser = new User(nickname, encodedPassword, email, kakaoId);
+                } else {
+                    kakaoUser = new User(nickname, encodedPassword, kakaoId);
+                }
+                userRepository.save(kakaoUser);
+            }
+        }
+
+        // 스프링 시큐리티 통해 로그인 처리
+        UserDetailsImpl userDetails = new UserDetailsImpl(kakaoUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                userDetails,
+                null,
+                userDetails.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        JsonObject jsonObj = new JsonObject();
+        jsonObj.addProperty("token", jwtTokenProvider.createToken(userDetails.getUser().getUsername()));
+
+        LoginResponseDto loginResponseDto = new LoginResponseDto(
+                kakaoUser.getId(),
+                kakaoUser.getUsername(),
+                kakaoUser.getNickName(),
+                kakaoUser.getUserProfileImage(),
+                kakaoUser.getIntroduction()
+        );
+
+        String tokenString = jsonObj.toString();
+        String token = tokenString.substring(10,tokenString.length()-2);
+        response.addHeader("X-AUTH-TOKEN", token);
+        return ResponseEntity.ok(loginResponseDto);
     }
 }
 

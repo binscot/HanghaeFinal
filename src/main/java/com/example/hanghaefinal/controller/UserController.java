@@ -104,7 +104,6 @@ public class UserController {
         return ResponseEntity.ok(mailKeyResponseDto);
     }
 
-
     //내가 쓴 게시물 검색
     @GetMapping("/myPostList")
     public ResponseEntity<List<PostResponseDto>> viewMyPost(@AuthenticationPrincipal UserDetailsImpl userDetails){
