@@ -11,4 +11,6 @@ public class PostRequestDto {
     private MultipartFile postImageUrl;
     private String color;
     private int limitCnt;
+    private String category;
+    private boolean complete;
 }
