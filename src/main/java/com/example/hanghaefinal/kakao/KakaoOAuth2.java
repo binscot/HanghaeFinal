@@ -1,6 +1,5 @@
 package com.example.hanghaefinal.kakao;
 
-import com.google.gson.JsonObject;
 import org.json.JSONObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -15,9 +14,7 @@ public class KakaoOAuth2 {
 
     public KakaoUserInfo getUserInfo(String accessToken) {
         // 2. 액세스 토큰 -> 카카오 사용자 정보
-        KakaoUserInfo userInfo = getUserInfoByToken(accessToken);
-
-        return userInfo;
+        return getUserInfoByToken(accessToken);
     }
 
     private KakaoUserInfo getUserInfoByToken(String accessToken) {

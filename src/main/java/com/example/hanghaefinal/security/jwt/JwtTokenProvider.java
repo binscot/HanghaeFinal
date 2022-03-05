@@ -1,4 +1,4 @@
-package com.example.hanghaefinal.security;
+package com.example.hanghaefinal.security.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -15,16 +15,23 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Base64;
 import java.util.Date;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider { // 토큰 생성, 검증
 
-    private String secretKey = "ABCA7D35A0B04018B865E0817E1A41374FB06737CF00641E2A781F631B61C9AC";
+    private static final int SEC = 1;
+    private static final int MINUTE = 60 * SEC;
+    private static final int HOUR = 60 * MINUTE;
+    private static final int DAY = 24 * HOUR;
 
-    private long tokenValidTime = 60*60*1000L; // token 발급 후 유효시간 30분
+    // JWT 토큰의 유효기간: 3일 (단위: seconds)
+    private static final int JWT_TOKEN_VALID_SEC = 3 * DAY;
+    // JWT 토큰의 유효기간: 3일 (단위: milliseconds)
+    private static final int JWT_TOKEN_VALID_MILLI_SEC = JWT_TOKEN_VALID_SEC * 1000;
+    private String secretKey = String.valueOf(UUID.randomUUID());
     private final UserDetailsService userDetailsService;//토큰에 저장된 유저 정보를 활용해야 하기 때문에 CustomUserDetatilService 라는 이름의 클래스를 만들고 UserDetailsService를 상속받아 재정의 하는 과정을 진행합니다.
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
 
     @PostConstruct // 서버가 돌아가면 제일 먼저 실행시키는 어노테이션
     protected void init(){
@@ -37,26 +44,11 @@ public class JwtTokenProvider { // 토큰 생성, 검증
         return Jwts.builder()
                 .setClaims(claims) // 정보 저장
                 .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
+                .setExpiration(new Date(now.getTime() + JWT_TOKEN_VALID_MILLI_SEC)) // set Expire Time
                 .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
                 // signature 에 들어갈 secret값 세팅
                 .compact();
     }
-
-    // JWT 토큰 생성
-    public String createToken(Long userPk) {
-        String stringUserPk = userPk.toString();
-        Claims claims = Jwts.claims().setSubject(stringUserPk); // JWT payload 에 저장되는 정보단위
-        Date now = new Date();
-        return Jwts.builder()
-                .setClaims(claims) // 정보 저장
-                .setIssuedAt(now) // 토큰 발행 시간 정보
-                .setExpiration(new Date(now.getTime() + tokenValidTime)) // set Expire Time
-                .signWith(SignatureAlgorithm.HS256, secretKey)  // 사용할 암호화 알고리즘과
-                // signature 에 들어갈 secret값 세팅
-                .compact();
-    }
-
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String token) {

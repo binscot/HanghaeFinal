@@ -27,7 +27,6 @@ public class CommentController {
         return commentService.getComment(postId);
     }
 
-
     //코멘트 작성
     @PostMapping("/comment/{postId}")
     public Comment addComment(

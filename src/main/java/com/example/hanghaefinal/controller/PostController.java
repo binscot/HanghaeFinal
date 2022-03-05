@@ -32,7 +32,6 @@ public class PostController {
             //postService.uploadImageFile(multipartFile, postRequestDto);
             postService.savePost(postRequestDto ,user, defaultImg);
         } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");
-
         return true;
     }
 
