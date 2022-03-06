@@ -20,7 +20,7 @@ bin/
 ### IntelliJ IDEA ###
 .idea
 *.iws
-*.yml
+#*.yml
 *.iml
 *.ipr
 out/
@@ -37,4 +37,4 @@ out/
 ### VS Code ###
 .vscode/
 
-src/main/resources/aws.yml
+#src/main/resources/aws.yml

@@ -1,0 +1,11 @@
+cloud:
+  aws:
+    credentials:
+      accessKey: ${{ secrets.ACCESSKEY }}
+      secretKey: ${{ secrets.SECRETKEY }}
+    s3:
+      bucket: binscot-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
