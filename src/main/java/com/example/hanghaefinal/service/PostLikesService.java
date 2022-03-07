@@ -41,8 +41,6 @@ public class PostLikesService {
         } else{
             postLikesRepository.deleteById(findLike.getId());
         }
-
         return new PostLikesResponseDto(postId, postLikesRepository.countByPost(post));
-
     }
 }
