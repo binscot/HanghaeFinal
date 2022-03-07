@@ -11,6 +11,7 @@ import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
 import com.example.hanghaefinal.util.S3Uploader;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -75,7 +76,7 @@ public class UserService {
         userRepository.save(user);
 
         Badge firstBadge = new Badge();
-        firstBadge.setBadgeName("시작이반");
+        firstBadge.setBadgeName("시작이 반");
         firstBadge.setUser(user);
         badgeRepository.save(firstBadge);
 
@@ -113,6 +114,7 @@ public class UserService {
     public ResponseEntity<LoginResponseDto> login(
             LoginRequestDto loginRequestDto,
             HttpServletResponse response
+
     ) {
 
         User user = userRepository.findByUsername(loginRequestDto.getUsername())
@@ -141,6 +143,7 @@ public class UserService {
         List<Integer> dateList = new ArrayList<>();
         for (AttendanceCheck userAttendanceCheck: attendanceCheckList){
             if (dateList.size()==0){
+                //오픈날 정해지면 오픈 일자 확인 로직 추가 해야함
                 dateList.add(userAttendanceCheck.getDate());
                 System.out.println(dateList.size());
                 System.out.println(dateList.get(0));
@@ -156,6 +159,7 @@ public class UserService {
             badgeRepository.save(badge);
         }
 
+
         LoginResponseDto loginResponseDto = new LoginResponseDto(
                 user.getId(),
                 user.getUsername(),
@@ -165,9 +169,21 @@ public class UserService {
 
         String token = jwtTokenProvider.createToken(user.getUsername());
 
-        response.addHeader("X-AUTH-TOKEN", token);
+        response.addHeader("Authorization", token);
         return ResponseEntity.ok(loginResponseDto);
     }
+
+    public HttpHeaders tokenToHeader(LoginRequestDto requestDto) {
+        User user = userRepository.findByUsername(requestDto.getUsername())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
+        String token = jwtTokenProvider.createToken(user.getUsername());
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", token);
+
+        return headers;
+    }
+
+
 
     //유저정보 전달
     public UserInfoResponseDto userInfo(UserDetailsImpl userDetails) {
@@ -398,7 +414,7 @@ public class UserService {
 
         String tokenString = jsonObj.toString();
         String token = tokenString.substring(10,tokenString.length()-2);
-        response.addHeader("X-AUTH-TOKEN", token);
+        response.addHeader("Authorization", token);
         return ResponseEntity.ok(loginResponseDto);
     }
 }

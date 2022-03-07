@@ -57,7 +57,7 @@ public class BookmarkService {
         Bookmark bookmark = new Bookmark(user, post);
         bookmarkRepository.save(bookmark);
 
-        //북마크 뱃지
+        //북마크 뱃지 로직 구현
         User postUser = post.getUser();
         List<Bookmark> bookmarkList = bookmarkRepository.findAll();
         List<Bookmark> bookmarkPostUserList = new ArrayList<>();
