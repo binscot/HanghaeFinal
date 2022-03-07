@@ -40,6 +40,7 @@ public class UserService {
     private final PostLikesRepository postLikesRepository;
     private final CommentRepository commentRepository;
     private final CommentLikesRepository commentLikesRepository;
+    private final BadgeRepository badgeRepository;
 
     @Transactional
     public Boolean registerUser(
@@ -52,7 +53,6 @@ public class UserService {
         if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
             userProfile = s3Uploader.upload(multipartFile, "static");
 
-        //유효성 체크 추가해야함
         String username = requestDto.getUsername();
         String nickName = requestDto.getNickName();
         String introduction = requestDto.getIntroduction();
@@ -72,6 +72,16 @@ public class UserService {
 
         User user = new User(username, password, nickName, introduction, userProfile);
         userRepository.save(user);
+
+
+        String createdAt = String.valueOf(user.getCreatedAt());
+        String createdDate = createdAt.substring(8,10);
+        if (createdDate.equals("07")){
+            Badge badge = new Badge();
+            badge.setBadgeName("알파테스터");
+            badge.setUser(user);
+            badgeRepository.save(badge);
+        }
         return true;
     }
 
@@ -137,13 +147,21 @@ public class UserService {
             bookmarkResponseDtoList.add(bookmarkResponseDto);
         }
 
+        List<Badge> badgeList = badgeRepository.findAllByUser(user);
+        List<BadgeResponseDto> badgeResponseDtoList = new ArrayList<>();
+        for (Badge badge:badgeList){
+            BadgeResponseDto badgeResponseDto = new BadgeResponseDto(badge.getBadgeName());
+            badgeResponseDtoList.add(badgeResponseDto);
+        }
+
         return new UserInfoResponseDto(
                 user.getId(),
                 user.getUsername(),
                 user.getNickName(),
                 user.getUserProfileImage(),
                 user.getIntroduction(),
-                bookmarkResponseDtoList
+                bookmarkResponseDtoList,
+                badgeResponseDtoList
         );
     }
 
@@ -302,6 +320,16 @@ public class UserService {
                     kakaoUser = new User(nickname, encodedPassword, kakaoId);
                 }
                 userRepository.save(kakaoUser);
+
+                String createdAt = String.valueOf(kakaoUser.getCreatedAt());
+                String createdDate = createdAt.substring(8,10);
+
+                if (createdDate.equals("07")){
+                    Badge badge = new Badge();
+                    badge.setBadgeName("알파테스터");
+                    badge.setUser(kakaoUser);
+                    badgeRepository.save(badge);
+                }
             }
         }
 
