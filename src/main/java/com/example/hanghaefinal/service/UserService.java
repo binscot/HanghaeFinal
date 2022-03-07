@@ -6,8 +6,8 @@ import com.example.hanghaefinal.kakao.KakaoOAuth2;
 import com.example.hanghaefinal.kakao.KakaoUserInfo;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
-import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
 import com.example.hanghaefinal.security.UserDetailsImpl;
+import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
 import com.example.hanghaefinal.util.S3Uploader;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
@@ -23,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -41,6 +41,7 @@ public class UserService {
     private final CommentRepository commentRepository;
     private final CommentLikesRepository commentLikesRepository;
     private final BadgeRepository badgeRepository;
+    private final AttendanceCheckRepository attendanceCheckRepository;
 
     @Transactional
     public Boolean registerUser(
@@ -73,14 +74,18 @@ public class UserService {
         User user = new User(username, password, nickName, introduction, userProfile);
         userRepository.save(user);
 
+        Badge firstBadge = new Badge();
+        firstBadge.setBadgeName("시작이반");
+        firstBadge.setUser(user);
+        badgeRepository.save(firstBadge);
 
         String createdAt = String.valueOf(user.getCreatedAt());
         String createdDate = createdAt.substring(8,10);
         if (createdDate.equals("07")){
-            Badge badge = new Badge();
-            badge.setBadgeName("알파테스터");
-            badge.setUser(user);
-            badgeRepository.save(badge);
+            Badge alphaBadge = new Badge();
+            alphaBadge.setBadgeName("알파테스터");
+            alphaBadge.setUser(user);
+            badgeRepository.save(alphaBadge);
         }
         return true;
     }
@@ -113,8 +118,42 @@ public class UserService {
         User user = userRepository.findByUsername(loginRequestDto.getUsername())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
 
+
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요.");
+        }
+
+        LocalDateTime localDateTime = LocalDateTime.now();
+        String YY = String.valueOf(localDateTime).substring(0,4);
+        String MM = String.valueOf(localDateTime).substring(5,7);
+        String DD = String.valueOf(localDateTime).substring(8,10);
+        String YYMMDD = YY+MM+DD;
+
+        //개근상 뱃지 로직
+        AttendanceCheck attendanceCheck = new AttendanceCheck();
+        attendanceCheck.setDate(Integer.parseInt(YYMMDD));
+        attendanceCheck.setUser(user);
+        Optional<AttendanceCheck> foundDate = attendanceCheckRepository.findByDate(attendanceCheck.getDate());
+        if (!foundDate.isPresent()){
+            attendanceCheckRepository.save(attendanceCheck);
+        }
+        List<AttendanceCheck> attendanceCheckList = attendanceCheckRepository.findAllByUser(user);
+        List<Integer> dateList = new ArrayList<>();
+        for (AttendanceCheck userAttendanceCheck: attendanceCheckList){
+            if (dateList.size()==0){
+                dateList.add(userAttendanceCheck.getDate());
+                System.out.println(dateList.size());
+                System.out.println(dateList.get(0));
+            } else if (userAttendanceCheck.getDate() - (dateList.get(dateList.size()-1))==1){
+                dateList.add(userAttendanceCheck.getDate());
+            }
+        }
+
+        if (dateList.size()==7){
+            Badge badge = new Badge();
+            badge.setBadgeName("개근상");
+            badge.setUser(user);
+            badgeRepository.save(badge);
         }
 
         LoginResponseDto loginResponseDto = new LoginResponseDto(
@@ -320,6 +359,11 @@ public class UserService {
                     kakaoUser = new User(nickname, encodedPassword, kakaoId);
                 }
                 userRepository.save(kakaoUser);
+
+                Badge firstBadge = new Badge();
+                firstBadge.setBadgeName("시작이반");
+                firstBadge.setUser(kakaoUser);
+                badgeRepository.save(firstBadge);
 
                 String createdAt = String.valueOf(kakaoUser.getCreatedAt());
                 String createdDate = createdAt.substring(8,10);
