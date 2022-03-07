@@ -1,9 +1,11 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.responseDto.BookmarkResponseDto;
+import com.example.hanghaefinal.model.Badge;
 import com.example.hanghaefinal.model.Bookmark;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.repository.BadgeRepository;
 import com.example.hanghaefinal.repository.BookmarkRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
@@ -22,6 +24,7 @@ public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
     private final PostRepository postRepository;
+    private final BadgeRepository badgeRepository;
 
 
     //북마크조회
@@ -53,6 +56,22 @@ public class BookmarkService {
 
         Bookmark bookmark = new Bookmark(user, post);
         bookmarkRepository.save(bookmark);
+
+        //북마크 뱃지
+        User postUser = post.getUser();
+        List<Bookmark> bookmarkList = bookmarkRepository.findAll();
+        List<Bookmark> bookmarkPostUserList = new ArrayList<>();
+        for (Bookmark bookmark1:bookmarkList){
+            if (bookmark1.getUser()==postUser){
+                bookmarkPostUserList.add(bookmark1);
+            }
+        }
+        if (bookmarkPostUserList.size()==9){
+            Badge badge = new Badge();
+            badge.setBadgeName("인기쟁이");
+            badge.setUser(postUser);
+            badgeRepository.save(badge);
+        }
         return true;
     }
 
