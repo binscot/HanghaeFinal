@@ -192,14 +192,14 @@ public class UserService {
         }
         User user = userDetails.getUser();
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByUser(user);
-        List<BookmarkResponseDto> bookmarkResponseDtoList = new ArrayList<>();
+        List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList = new ArrayList<>();
         for (Bookmark bookmark:bookmarkList){
-            BookmarkResponseDto bookmarkResponseDto = new BookmarkResponseDto(
+            BookmarkInfoResponseDto bookmarkInfoResponseDto = new BookmarkInfoResponseDto(
                     bookmark.getId(),
                     bookmark.getPost().getId(),
                     bookmark.getUser().getId()
             );
-            bookmarkResponseDtoList.add(bookmarkResponseDto);
+            bookmarkInfoResponseDtoList.add(bookmarkInfoResponseDto);
         }
 
         List<Badge> badgeList = badgeRepository.findAllByUser(user);
@@ -215,7 +215,7 @@ public class UserService {
                 user.getNickName(),
                 user.getUserProfileImage(),
                 user.getIntroduction(),
-                bookmarkResponseDtoList,
+                bookmarkInfoResponseDtoList,
                 badgeResponseDtoList
         );
     }
