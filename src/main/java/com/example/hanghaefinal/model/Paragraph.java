@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -8,6 +9,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "paragraph")
 public class Paragraph {
     @Id
@@ -25,5 +27,11 @@ public class Paragraph {
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
+
+    public Paragraph(String paragraph, User user, Post post){
+        this.paragraph = paragraph;
+        this.user = user;
+        this.post = post;
+    }
 
 }
