@@ -135,18 +135,15 @@ public class UserService {
         AttendanceCheck attendanceCheck = new AttendanceCheck();
         attendanceCheck.setDate(Integer.parseInt(YYMMDD));
         attendanceCheck.setUser(user);
-        Optional<AttendanceCheck> foundDate = attendanceCheckRepository.findByDate(attendanceCheck.getDate());
-        if (!foundDate.isPresent()){
-            attendanceCheckRepository.save(attendanceCheck);
-        }
+
+
+        attendanceCheckRepository.save(attendanceCheck);
         List<AttendanceCheck> attendanceCheckList = attendanceCheckRepository.findAllByUser(user);
         List<Integer> dateList = new ArrayList<>();
         for (AttendanceCheck userAttendanceCheck: attendanceCheckList){
             if (dateList.size()==0){
                 //오픈날 정해지면 오픈 일자 확인 로직 추가 해야함
                 dateList.add(userAttendanceCheck.getDate());
-                System.out.println(dateList.size());
-                System.out.println(dateList.get(0));
             } else if (userAttendanceCheck.getDate() - (dateList.get(dateList.size()-1))==1){
                 dateList.add(userAttendanceCheck.getDate());
             }
@@ -158,6 +155,7 @@ public class UserService {
             badge.setUser(user);
             badgeRepository.save(badge);
         }
+
 
 
         LoginResponseDto loginResponseDto = new LoginResponseDto(
