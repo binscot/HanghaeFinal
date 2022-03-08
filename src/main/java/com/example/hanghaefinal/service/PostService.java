@@ -41,7 +41,6 @@ public class PostService {
             defaultImg = s3Uploader.upload(multipartFile, "image");
         //String uploadUrl =  s3Uploader.upload(multipartFile, dirName);
         //requestDto.setPostImageUrl(defaultImg);
-        //log.info("~~~ uploadUrl : " + uploadUrl );
         //requestDto.setPostImageUrl(uploadUrl);
         return defaultImg;
     }
