@@ -37,7 +37,7 @@ public class BookmarkService {
             if(bookmark.getUser().getId().equals(user.getId())){
                 BookmarkResponseDto bookmarkResponseDto = new BookmarkResponseDto(
                         bookmark.getId(),
-                        bookmark.getPost().getId(),
+                        bookmark.getPost(),
                         bookmark.getUser().getId()
                 );
 

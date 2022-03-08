@@ -6,14 +6,14 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BookmarkResponseDto {
+public class BookmarkInfoResponseDto {
     private final Long id;
-    private final Post post;
+    private final Long postId;
     private final Long userId;
 
-    public BookmarkResponseDto(Long id, Post post, Long userId){
+    public BookmarkInfoResponseDto(Long id, Long postId, Long userId){
         this.id = id;
-        this.post = post;
+        this.postId = postId;
         this.userId = userId;
     }
 }

@@ -16,7 +16,7 @@ public class UserInfoResponseDto {
     private String nickname;
     private String userProfileImage;
     private String introduction;
-    private List<BookmarkResponseDto> bookmarkResponseDtoList;
+    private List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList;
     private List<BadgeResponseDto> badgeResponseDtoList;
 
     public UserInfoResponseDto(User user){
@@ -27,13 +27,13 @@ public class UserInfoResponseDto {
         this.introduction = user.getIntroduction();
     }
 
-    public UserInfoResponseDto(Long id, String username, String nickName, String userProfileImage, String introduction, List<BookmarkResponseDto> bookmarkResponseDtoList, List<BadgeResponseDto> badgeResponseDtoList) {
+    public UserInfoResponseDto(Long id, String username, String nickName, String userProfileImage, String introduction, List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList, List<BadgeResponseDto> badgeResponseDtoList) {
         this.userKey=id;
         this.username=username;
         this.nickname=nickName;
         this.userProfileImage=userProfileImage;
         this.introduction=introduction;
-        this.bookmarkResponseDtoList=bookmarkResponseDtoList;
+        this.bookmarkInfoResponseDtoList=bookmarkInfoResponseDtoList;
         this.badgeResponseDtoList = badgeResponseDtoList;
     }
 
