@@ -22,6 +22,7 @@ public class PostDetailResponseDto {
     //private double postScore;
     //private List<CommentResponseDto> commnetList;
     private Long postLikesCnt;
+    private List<ParagraphResDto> paragraphResDtoList;
     private List<CategoryResponseDto> categoryList;
     private List<CommentResponseDto> commentList;
 
@@ -45,7 +46,11 @@ public class PostDetailResponseDto {
         this.commentList = commentList;
     }
 
-    public PostDetailResponseDto(Post post, List<CommentResponseDto> commentList, List<CategoryResponseDto> categoryList, Long postLikesCnt){
+    public PostDetailResponseDto(Post post,
+                                 List<ParagraphResDto> paragraphResDtoList,
+                                 List<CommentResponseDto> commentList,
+                                 List<CategoryResponseDto> categoryList,
+                                 Long postLikesCnt){
         this.postKey = post.getId();
         this.title = post.getTitle();
         this.postUsername = post.getUser().getUsername();
@@ -55,6 +60,7 @@ public class PostDetailResponseDto {
         this.limitCnt = post.getLimitCnt();
         this.complete = post.isComplete();  // boolean형은 get이 아니라 is로 가져온다.
 
+        this.paragraphResDtoList = paragraphResDtoList;
         this.postLikesCnt = postLikesCnt;
         this.categoryList = categoryList;
         this.commentList = commentList;
