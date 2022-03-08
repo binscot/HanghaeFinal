@@ -27,6 +27,7 @@ public class PostService {
     private final CommentLikesRepository commentLikesRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final ParagraphRepository paragraphRepository;
     private final S3Uploader s3Uploader;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
@@ -41,28 +42,31 @@ public class PostService {
             defaultImg = s3Uploader.upload(multipartFile, "image");
         //String uploadUrl =  s3Uploader.upload(multipartFile, dirName);
         //requestDto.setPostImageUrl(defaultImg);
-        //log.info("~~~ uploadUrl : " + uploadUrl );
         //requestDto.setPostImageUrl(uploadUrl);
         return defaultImg;
     }
 
     // 게시글 최초 생성 -> 미완성 게시글 생성
+    @Transactional
     public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg){
         Post post = new Post(postRequestDto, user, defaultImg);
         Category category = new Category(postRequestDto.getCategory(), post);
+        Paragraph paragraph = new Paragraph(postRequestDto.getParagraph(), user, post);
         postRepository.save(post);
         categoryRepository.save(category);
+        paragraphRepository.save(paragraph);
 
         return true;
     }
 
     // 마지막 파라그래프 작성 후 게시글 완성 버튼 누름 -> 완성 게시글로 변경
+    @Transactional
     public PostDetailResponseDto completePost(Long postId, PostRequestDto postRequestDto){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
 
-        // 마지막 문단 작성자가 카테고리를 생성하면 새로운 카테고리 등록, category가 안비어 있으면 생성
+        // 마지막 문단 작성자가 카테고리를 생성하면 새로운 카테고리 등록, category가 있으면 카테고리를 생성
         if(postRequestDto.getCategory() != null){
             Category category = new Category(postRequestDto.getCategory(), post);
             categoryRepository.save(category);

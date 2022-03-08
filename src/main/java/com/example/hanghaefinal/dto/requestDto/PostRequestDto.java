@@ -13,4 +13,5 @@ public class PostRequestDto {
     private int limitCnt;
     private String category;
     private boolean complete;
+    private String paragraph;
 }
