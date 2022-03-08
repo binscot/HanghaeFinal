@@ -59,7 +59,7 @@ public class PostService {
         return true;
     }
 
-    // 마지막 파라그래프 작성 후 게시글 완성 버튼 누름 -> 완성 게시글로 변경
+    // 마지막 파라그래프 작성 후 게시글 완성 버튼 누름 -> 완성 게시글로 변경 ( 완성 게시글 상세 조회)
     @Transactional
     public PostDetailResponseDto completePost(Long postId, PostRequestDto postRequestDto){
         Post post = postRepository.findById(postId).orElseThrow(
@@ -76,6 +76,13 @@ public class PostService {
 
         // 어차피 true지만  postRequestDto.isComplete() 이걸 인자로 넣어도 된다.
         post.updatePost(true);
+
+        List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+
+        for(Paragraph paragraph: paragraphList){
+            paragraphResDtoList.add(new ParagraphResDto(paragraph));
+        }
 
         List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
@@ -96,7 +103,7 @@ public class PostService {
 
         Long postLikesCnt =  postLikesRepository.countByPost(post);
 
-        return new PostDetailResponseDto(post, commentResDtoList, categoryResDtoList, postLikesCnt);
+        return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt);
         //return true;
     }
 
@@ -110,6 +117,13 @@ public class PostService {
         // commentList 조회
         //List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         // 위처럼 commentList로 조회하면 안된다. Comment안에 user랑 post있고 post안에 user 가 있다.. (궁금하면 다시 해봐)
+
+        List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+
+        for(Paragraph paragraph: paragraphList){
+            paragraphResDtoList.add(new ParagraphResDto(paragraph));
+        }
 
         List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
@@ -137,7 +151,7 @@ public class PostService {
         // comment를 작성한 유저와 좋아요가 필요하다.
 
         // limitCnt와 paragraph의 개수가 같으면 complete를 true로 반환해라
-        return new PostDetailResponseDto(post, commentResDtoList, categoryResDtoList, postLikesCnt);
+        return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt);
 //        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 
@@ -148,10 +162,17 @@ public class PostService {
         // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
         List<Post> posts = postRepository.findAllByCompleteTrueOrderByModifiedAtDesc();
 
-        int postLikeCnt = 0;
+        int postLikeCnt;
         for (Post post: posts ) {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
+
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+
+            for(Paragraph paragraph: paragraphList){
+                paragraphResDtoList.add(new ParagraphResDto(paragraph));
+            }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
@@ -171,7 +192,7 @@ public class PostService {
             }
 
             //PostResponseDto postResponseDto = new PostResponseDto(post);
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, categoryResDtoList, postLikeCnt);
+            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
@@ -188,6 +209,13 @@ public class PostService {
         for (Post post: posts ) {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
+
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+
+            for(Paragraph paragraph: paragraphList){
+                paragraphResDtoList.add(new ParagraphResDto(paragraph));
+            }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
@@ -206,7 +234,7 @@ public class PostService {
                 categoryResDtoList.add(new CategoryResponseDto(category));
             }
 
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, categoryResDtoList, postLikeCnt);
+            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt);
             //postResponseDto.getPostLikesCnt();
             postResponseDtoList.add(postResponseDto);
         }
@@ -237,6 +265,13 @@ public class PostService {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+
+            for(Paragraph paragraph: paragraphList){
+                paragraphResDtoList.add(new ParagraphResDto(paragraph));
+            }
+
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
@@ -254,7 +289,7 @@ public class PostService {
                 categoryResDtoList.add(new CategoryResponseDto(category));
             }
 
-            PostResponseDto postResponseDto = new PostResponseDto(post, commentResDtoList, categoryResDtoList, postLikeCnt);
+            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
