@@ -103,12 +103,17 @@ public class PostService {
 
         Long postLikesCnt =  postLikesRepository.countByPost(post);
 
-        return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt);
+        String postUsername = null;
+        if (post.getUser() != null) {
+            postUsername = post.getUser().getUsername();
+        }
+
+        return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt,postUsername);
         //return true;
     }
 
     // 게시글 상세조회
-    public PostDetailResponseDto viewPostDetail(Long postId){
+    public PostDetailResponseDto viewPostDetail(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
@@ -121,7 +126,7 @@ public class PostService {
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
-        for(Paragraph paragraph: paragraphList){
+        for (Paragraph paragraph : paragraphList) {
             paragraphResDtoList.add(new ParagraphResDto(paragraph));
         }
 
@@ -129,7 +134,7 @@ public class PostService {
         List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
 
         // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
-        for(Category category: categoryList){
+        for (Category category : categoryList) {
             categoryResDtoList.add(new CategoryResponseDto(category));
         }
 
@@ -137,7 +142,7 @@ public class PostService {
         List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
         // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
-        for (Comment comment:commentList2 ) {
+        for (Comment comment : commentList2) {
             Long commentLikesCnt = commentLikesRepository.countByComment(comment);
             commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
         }
@@ -146,12 +151,20 @@ public class PostService {
         // postLikes 조회
         //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
         // postId는 이미 알고 있으니까 totalCnt만 주면된다.
-        Long postLikesCnt =  postLikesRepository.countByPost(post);
+        Long postLikesCnt = postLikesRepository.countByPost(post);
         // paragraph를 작성한 유저와 좋아요
         // comment를 작성한 유저와 좋아요가 필요하다.
 
         // limitCnt와 paragraph의 개수가 같으면 complete를 true로 반환해라
-        return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt);
+
+
+        String postUsername = null;
+        if (post.getUser() != null) {
+            postUsername = post.getUser().getUsername();
+        }
+
+
+        return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt,postUsername);
 //        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 
@@ -191,8 +204,13 @@ public class PostService {
                 categoryResDtoList.add(new CategoryResponseDto(category));
             }
 
+            String postUsername = null;
+            if (post.getUser() != null) {
+                postUsername = post.getUser().getUsername();
+            }
+
             //PostResponseDto postResponseDto = new PostResponseDto(post);
-            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt);
+            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
@@ -234,7 +252,12 @@ public class PostService {
                 categoryResDtoList.add(new CategoryResponseDto(category));
             }
 
-            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt);
+            String postUsername = null;
+            if (post.getUser() != null) {
+                postUsername = post.getUser().getUsername();
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             //postResponseDto.getPostLikesCnt();
             postResponseDtoList.add(postResponseDto);
         }
@@ -289,7 +312,12 @@ public class PostService {
                 categoryResDtoList.add(new CategoryResponseDto(category));
             }
 
-            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt);
+            String postUsername = null;
+            if (post.getUser() != null) {
+                postUsername = post.getUser().getUsername();
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;

@@ -51,10 +51,12 @@ public class PostResponseDto {
                            List<ParagraphResDto> paragraphResList,
                            List<CommentResponseDto> commentList,
                            List<CategoryResponseDto> categoryList,
-                           int postLikesCnt){
+                           int postLikesCnt,
+                           String postUsername
+    ){
         this.postKey = post.getId();
         this.title = post.getTitle();
-        this.postUsername = post.getUser().getUsername();
+        this.postUsername = postUsername;
         this.postModifiedAt = post.getModifiedAt().toString();
         this.postImageUrl = post.getPostImageUrl();
         this.color = post.getColor();

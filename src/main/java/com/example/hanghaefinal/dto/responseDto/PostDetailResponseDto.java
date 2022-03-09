@@ -50,10 +50,10 @@ public class PostDetailResponseDto {
                                  List<ParagraphResDto> paragraphResDtoList,
                                  List<CommentResponseDto> commentList,
                                  List<CategoryResponseDto> categoryList,
-                                 Long postLikesCnt){
+                                 Long postLikesCnt, String postUsername){
         this.postKey = post.getId();
         this.title = post.getTitle();
-        this.postUsername = post.getUser().getUsername();
+        this.postUsername = postUsername;
         this.postModifiedAt = post.getModifiedAt().toString();
         this.postImageUrl = post.getPostImageUrl();
         this.color = post.getColor();
@@ -65,4 +65,5 @@ public class PostDetailResponseDto {
         this.categoryList = categoryList;
         this.commentList = commentList;
     }
+
 }
