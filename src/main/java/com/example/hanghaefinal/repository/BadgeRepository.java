@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface BadgeRepository extends JpaRepository<Badge, Long> {
     List<Badge> findAllByUser(User user);
+
+    void deleteAllByUser(User user);
 }

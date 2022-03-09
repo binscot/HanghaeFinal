@@ -12,5 +12,7 @@ public interface CommentLikesRepository extends JpaRepository<CommentLikes, Long
 
     Optional<CommentLikes> findByUserAndComment(User user, Comment comment);
     Long countByComment(Comment comment);
+
+    void deleteAllByUser(User user);
 }
 
