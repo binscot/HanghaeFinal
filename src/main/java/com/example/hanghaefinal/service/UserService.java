@@ -43,6 +43,7 @@ public class UserService {
     private final CommentLikesRepository commentLikesRepository;
     private final BadgeRepository badgeRepository;
     private final AttendanceCheckRepository attendanceCheckRepository;
+    private final ParagraphRepository paragraphRepository;
 
     @Transactional
     public Boolean registerUser(
@@ -82,7 +83,7 @@ public class UserService {
 
         String createdAt = String.valueOf(user.getCreatedAt());
         String createdDate = createdAt.substring(8,10);
-        if (createdDate.equals("07")){
+        if (createdDate.equals("09")){
             Badge alphaBadge = new Badge();
             alphaBadge.setBadgeName("알파테스터");
             alphaBadge.setUser(user);
@@ -125,13 +126,14 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요.");
         }
 
+        //개근상 뱃지 로직
         LocalDateTime localDateTime = LocalDateTime.now();
         String YY = String.valueOf(localDateTime).substring(0,4);
         String MM = String.valueOf(localDateTime).substring(5,7);
         String DD = String.valueOf(localDateTime).substring(8,10);
         String YYMMDD = YY+MM+DD;
 
-        //개근상 뱃지 로직
+
         AttendanceCheck attendanceCheck = new AttendanceCheck();
         attendanceCheck.setDate(Integer.parseInt(YYMMDD));
         attendanceCheck.setUser(user);
@@ -286,6 +288,26 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요!");
         }
+//        List<Badge> badgeList = badgeRepository.findAllByUser(user);
+        badgeRepository.deleteAllByUser(user);
+        attendanceCheckRepository.deleteAllByUser(user);
+        bookmarkRepository.deleteAllByUser(user);
+        commentRepository.deleteAllByUser(user);
+        commentLikesRepository.deleteAllByUser(user);
+        postLikesRepository.deleteAllByUser(user);
+
+        List<Post> postList = postRepository.findAllByUser(user);
+        for (Post post : postList){
+            post.setUser(null);
+            postRepository.save(post);
+        }
+        List<Paragraph> paragraphList = paragraphRepository.findAllByUser(user);
+        for (Paragraph paragraph:paragraphList){
+            paragraph.setUser(null);
+            paragraphRepository.save(paragraph);
+        }
+
+
         userRepository.delete(user);
     }
 
