@@ -12,6 +12,13 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "paragraph")
 public class Paragraph extends Timestamped{
+    public enum MessageType {
+        ENTER, // 문단 작성 시작
+        TALK, // 문단 작성 완료
+        QUIT,
+        DELETE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -31,7 +38,7 @@ public class Paragraph extends Timestamped{
     public Paragraph(String paragraph, User user, Post post){
         this.paragraph = paragraph;
         this.user = user;
-        this.post = post;
+        this.post = post;   // roomId를 postId로 대체하자
     }
 
 }
