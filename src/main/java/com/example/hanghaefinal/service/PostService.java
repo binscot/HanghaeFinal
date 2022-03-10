@@ -1,5 +1,6 @@
 package com.example.hanghaefinal.service;
 
+import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.*;
@@ -63,14 +64,14 @@ public class PostService {
 
     // 마지막 파라그래프 작성 후 게시글 완성 버튼 누름 -> 완성 게시글로 변경 ( 완성 게시글 상세 조회)
     @Transactional
-    public PostDetailResponseDto completePost(Long postId, PostRequestDto postRequestDto){
+    public PostDetailResponseDto completePost(Long postId, CategoryRequestDto categoryRequestDto){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
 
         // 마지막 문단 작성자가 카테고리를 생성하면 새로운 카테고리 등록, category가 있으면 카테고리를 생성
-        if(postRequestDto.getCategory() != null){
-            Category category = new Category(postRequestDto.getCategory(), post);
+        if(categoryRequestDto.getCategory() != null){
+            Category category = new Category(categoryRequestDto.getCategory(), post);
             categoryRepository.save(category);
         } else {
             log.info("~~~ category is null");
