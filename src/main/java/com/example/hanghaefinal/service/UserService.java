@@ -397,7 +397,7 @@ public class UserService {
                 userRepository.save(kakaoUser);
 
                 Badge firstBadge = new Badge();
-                firstBadge.setBadgeName("시작이반");
+                firstBadge.setBadgeName("시작이 반");
                 firstBadge.setUser(kakaoUser);
                 badgeRepository.save(firstBadge);
 

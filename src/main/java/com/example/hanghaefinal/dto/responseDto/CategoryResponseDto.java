@@ -8,6 +8,6 @@ public class CategoryResponseDto {
     private String category;
 
     public CategoryResponseDto(Category category){
-        this.category = category.getCategory();
+        this.category = category.getCategoryName();
     }
 }
