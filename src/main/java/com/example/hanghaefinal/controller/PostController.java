@@ -52,25 +52,35 @@ public class PostController {
 
     // 완성작 게시글 전체 조회 - 최신순
     @GetMapping("/posts/recent")
-    public List<PostResponseDto> viewPostRecent(){
-        return postService.viewPostRecent();
+    public List<PostResponseDto> viewPostRecent(
+            @RequestParam int page,
+            @RequestParam int size){
+        return postService.viewPostRecent(page, size);
     }
 
     // 완성작 게시글 전체 조회 - 추천순(좋아요순)
     @GetMapping("/posts/recommend")
-    public List<PostResponseDto> viewPostRecommend(){
-        return postService.viewPostRecommend();
+    public List<PostResponseDto> viewPostRecommend(
+            @RequestParam int page,
+            @RequestParam int size){
+        return postService.viewPostRecommend(page, size);
     }
 
     // 미완성 게시글 전체 조회 - 최신순
     @GetMapping("/posts/incomplete")
-    public List<PostResponseDto> viewPostIncomplete(){
-        return postService.viewPostIncomplete();
+    public List<PostResponseDto> viewPostIncomplete(
+            @RequestParam int page,
+            @RequestParam int size
+    ){
+        return postService.viewPostIncomplete(page, size);
     }
 
     // 다른 유저 페이지
     @GetMapping("/posts/userPage/{userKey}")
-    public OtherUserResDto viewUserPage(@PathVariable Long userKey){
-        return postService.viewUserPage(userKey);
+    public OtherUserResDto viewUserPage(
+            @PathVariable Long userKey,
+            @RequestParam int page,
+            @RequestParam int size){
+        return postService.viewUserPage(userKey,page, size);
     }
 }

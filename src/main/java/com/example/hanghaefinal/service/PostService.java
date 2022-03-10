@@ -7,10 +7,12 @@ import com.example.hanghaefinal.repository.*;
 import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.awt.print.Pageable;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -169,7 +171,7 @@ public class PostService {
     }
 
     // 완성작 게시글 전체 조회 - 최신순
-    public List<PostResponseDto> viewPostRecent(){
+    public List<PostResponseDto> viewPostRecent(int page, int size){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
@@ -217,7 +219,7 @@ public class PostService {
     }
 
     // 완성작 게시글 전체 조회 - 추천순(좋아요순)
-    public List<PostResponseDto> viewPostRecommend(){
+    public List<PostResponseDto> viewPostRecommend(int page, int size){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
@@ -277,7 +279,7 @@ public class PostService {
     }
 
     // 미완성 게시글 전체 조회 - 최신순
-    public List<PostResponseDto> viewPostIncomplete(){
+    public List<PostResponseDto> viewPostIncomplete(int page, int size){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 false이며(미완성작품) 최근 수정한 시간순으로 불러온다.
@@ -324,12 +326,14 @@ public class PostService {
     }
 
     // 다른 유저 페이지
-    public OtherUserResDto viewUserPage(Long userKey){
+    public OtherUserResDto viewUserPage(Long userKey,int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
 
-        List<Post> postList = postRepository.findAllByUserIdOrderByModifiedAtDesc(userKey);
+        PageRequest pageable = PageRequest.of(page,size);
+
+        List<Post> postList = postRepository.findAllByUserIdOrderByModifiedAtDesc(userKey, pageable);
         List<OtherUserPostListResDto> otherUserList = new ArrayList<>();
 
         for (Post post: postList ) {
