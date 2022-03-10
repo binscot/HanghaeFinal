@@ -18,14 +18,14 @@ public class Category extends Timestamped{
     private Long id;
 
     @Column(name = "category")
-    private String category;
+    private String categoryName;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
     private Post post;
 
     public Category(String category, Post post){
-        this.category = category;
+        this.categoryName = category;
         this.post = post;
     }
 }

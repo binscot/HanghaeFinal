@@ -1,5 +1,6 @@
 package com.example.hanghaefinal.controller;
 
+import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.OtherUserResDto;
 import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
@@ -40,8 +41,8 @@ public class PostController {
     // 마지막 문단을 단 사람과 게시글 완성 버튼을 누른 사람이 일치하면 완성 되도록???
     @PatchMapping("/posts/complete/{postId}")
     public PostDetailResponseDto completePost(@PathVariable Long postId,
-                                PostRequestDto postRequestDto){
-        return postService.completePost(postId, postRequestDto);
+                                              CategoryRequestDto categoryRequestDto){
+        return postService.completePost(postId, categoryRequestDto);
     }
 
     // 게시글 상세 페이지 조회 (완성/미완성)
