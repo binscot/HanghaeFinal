@@ -8,12 +8,13 @@ import com.example.hanghaefinal.repository.*;
 import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
-import java.awt.print.Pageable;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -176,7 +177,8 @@ public class PostService {
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
-        List<Post> posts = postRepository.findAllByCompleteTrueOrderByModifiedAtDesc();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> posts = postRepository.findAllByCompleteTrueOrderByModifiedAtDesc(pageable);
 
         int postLikeCnt;
         for (Post post: posts ) {
@@ -224,7 +226,8 @@ public class PostService {
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
-        List<Post> posts = postRepository.findAllByCompleteTrueOrderByModifiedAtDesc();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> posts = postRepository.findAllByCompleteTrueOrderByModifiedAtDesc(pageable);
 
         int postLikeCnt = 0;
         for (Post post: posts ) {
@@ -284,7 +287,8 @@ public class PostService {
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 false이며(미완성작품) 최근 수정한 시간순으로 불러온다.
-        List<Post> posts = postRepository.findAllByCompleteFalseOrderByModifiedAtDesc();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Post> posts = postRepository.findAllByCompleteFalseOrderByModifiedAtDesc(pageable);
 
         int postLikeCnt = 0;
         for (Post post: posts ) {
@@ -332,9 +336,9 @@ public class PostService {
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
 
-        PageRequest pageable = PageRequest.of(page,size);
+        Pageable pageable = PageRequest.of(page,size);
 
-        List<Post> postList = postRepository.findAllByUserIdOrderByModifiedAtDesc(userKey, pageable);
+        Page<Post> postList = postRepository.findAllByUserIdOrderByModifiedAtDesc(userKey, pageable);
         List<OtherUserPostListResDto> otherUserList = new ArrayList<>();
 
         for (Post post: postList ) {
