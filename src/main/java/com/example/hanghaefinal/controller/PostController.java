@@ -5,10 +5,13 @@ import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.OtherUserResDto;
 import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
+import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,25 +56,36 @@ public class PostController {
 
     // 완성작 게시글 전체 조회 - 최신순
     @GetMapping("/posts/recent")
-    public List<PostResponseDto> viewPostRecent(){
-        return postService.viewPostRecent();
+    public List<PostResponseDto> viewPostRecent(
+            @RequestParam int page,
+            @RequestParam int size){
+        return postService.viewPostRecent(page, size);
     }
 
     // 완성작 게시글 전체 조회 - 추천순(좋아요순)
     @GetMapping("/posts/recommend")
-    public List<PostResponseDto> viewPostRecommend(){
-        return postService.viewPostRecommend();
+    public List<PostResponseDto> viewPostRecommend(
+            @RequestParam int page,
+            @RequestParam int size
+    ){
+        return postService.viewPostRecommend(page, size);
     }
 
     // 미완성 게시글 전체 조회 - 최신순
     @GetMapping("/posts/incomplete")
-    public List<PostResponseDto> viewPostIncomplete(){
-        return postService.viewPostIncomplete();
+    public List<PostResponseDto> viewPostIncomplete(
+            @RequestParam int page,
+            @RequestParam int size
+    ){
+        return postService.viewPostIncomplete(page, size);
     }
 
     // 다른 유저 페이지
     @GetMapping("/posts/userPage/{userKey}")
-    public OtherUserResDto viewUserPage(@PathVariable Long userKey){
-        return postService.viewUserPage(userKey);
+    public OtherUserResDto viewUserPage(
+            @PathVariable Long userKey,
+            @RequestParam int page,
+            @RequestParam int size){
+        return postService.viewUserPage(userKey,page, size);
     }
 }
