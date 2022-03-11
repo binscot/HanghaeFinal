@@ -1,3 +1,4 @@
+/*
 package com.example.hanghaefinal.security.jwt;
 
 import com.auth0.jwt.JWT;
@@ -58,3 +59,4 @@ public final class JwtTokenUtils {
         return Algorithm.HMAC256(JWT_SECRET);
     }
 }
+*/

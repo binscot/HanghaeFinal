@@ -1,19 +1,21 @@
 package com.example.hanghaefinal.service;
 
+import com.example.hanghaefinal.dto.requestDto.ParagraphCompleteReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphResDto;
-import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.example.hanghaefinal.dto.requestDto.ParagraphStartReqDto;
+import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.repository.ParagraphRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
+import com.example.hanghaefinal.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -28,6 +30,7 @@ public class ParagraphService {
     private final ParagraphRepository paragraphRepository;
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
+    private final SimpMessageSendingOperations messagingTemplate;
 
     @Transactional
     public Paragraph saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
@@ -85,5 +88,21 @@ public class ParagraphService {
         ParagraphResDto paragraphResDto = new ParagraphResDto(paragraph, postId, userInfoResDto);
 
         redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphResDto);
+    }
+
+    public void paragraphStart(ParagraphStartReqDto paragraphStartReqDto){
+        ParagraphStartResDto paragraphStartResDto = new ParagraphStartResDto(paragraphStartReqDto);
+        messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphStartReqDto.getPostId(),
+                paragraphStartResDto
+        );
+        //return new ParagraphStartResDto(paragraphStartReqDto);
+    }
+
+    public void paragraphComplete(ParagraphCompleteReqDto paragraphCompleteReqDto){
+        ParagraphCompleteResDto paragraphCompleteResDto = new ParagraphCompleteResDto(paragraphCompleteReqDto);
+        messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphCompleteReqDto.getPostId(),
+                paragraphCompleteResDto
+        );
+        //return new ParagraphCompleteResDto(paragraphCompleteReqDto);
     }
 }

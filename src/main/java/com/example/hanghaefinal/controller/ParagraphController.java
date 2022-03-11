@@ -1,11 +1,14 @@
 package com.example.hanghaefinal.controller;
 
+import com.example.hanghaefinal.dto.requestDto.ParagraphCompleteReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
+import com.example.hanghaefinal.dto.requestDto.ParagraphStartReqDto;
+import com.example.hanghaefinal.dto.responseDto.ParagraphCompleteResDto;
+import com.example.hanghaefinal.dto.responseDto.ParagraphStartResDto;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
-import com.example.hanghaefinal.security.jwt.JwtDecoder;
 import com.example.hanghaefinal.service.ParagraphService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,8 +24,7 @@ public class ParagraphController {
 
     private final ParagraphService paragraphService;
     private final UserRepository userRepository;
-
-    private final JwtDecoder jwtDecoder;
+    //private final JwtDecoder jwtDecoder;
 
     @PostMapping("/paragraph/{postId}")
     public Boolean saveParagraph(@PathVariable Long postId,
@@ -36,6 +38,16 @@ public class ParagraphController {
         return true;
     }
 
+    @MessageMapping("/paragraph/start")
+    public void paragraphStart(
+            @RequestBody ParagraphStartReqDto paragraphStartReqDto
+    ){
+
+        paragraphService.paragraphStart(paragraphStartReqDto);
+        /*if(userDetails != null){
+            return paragraphService.paragraphStart(paragraphStartReqDto, userDetails);
+        } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");*/
+    }
 
     // 예를들어 좋아요 알림 같은 것도 controller에 @PostMapping으로 만들 수 있다.
 
@@ -43,18 +55,25 @@ public class ParagraphController {
     // 채팅 메시지를 @MessageMapping 형태로 받는다
     // 웹소켓으로 publish 된 메시지를 받는 곳이다 ( 프론트에서 '/pub/api/chat/message', 이런식으로 pub 준다.)
     // 이게 pub로 받는 api이다 이거 알림 같은 경우는 @PostMapping 해야할듯
-    @MessageMapping("/chat/message/{postId}")   // 참고하느 코드는 roomId ReqDto에 넣었다. 즉, 연관관계를 안맺음
-    public void message(@PathVariable Long postId,
-                        @RequestBody ParagraphReqDto paragraphReqDto
+    //@MessageMapping("/chat/message")   // 참고하느 코드는 roomId ReqDto에 넣었다. 즉, 연관관계를 안맺음
+    @MessageMapping("/paragraph/complete")
+    public void message(
+                        @RequestBody ParagraphCompleteReqDto paragraphCompleteReqDto
                         //@Header("Authorization") String rawToken
                         //@AuthenticationPrincipal UserDetailsImpl userDetails
                         //userDetails 이거 못쓰면 토큰에서 가져와야 할듯
                         ) {
+        paragraphService.paragraphComplete(paragraphCompleteReqDto);
+        /*if(userDetails != null){
+            return paragraphService.paragraphComplete(paragraphCompleteReqDto, userDetails);
+        } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");*/
+
+        //log.info("~~~~~~~~~ㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎㅎ~~~~~~~~~~~~~~~");
         //String token = rawToken.substring(7); // Bearer 때문에 한듯
         //String token = rawToken;
         //log.info("~~~~~~~~~~~~~~~~~~~~~~/chat/message/ 안에서 token : " + token+"\n");
-        log.info("~~~~~~~~~~~~~~~~~ paragraphReqDto : " + paragraphReqDto);
-        log.info("~~~~~~~~~~~~~~~~~ paragraphReqDto.getParagraph() : " + paragraphReqDto.getParagraph());
+        //log.info("~~~~~~~~~~~~~~~~~ paragraphReqDto : " + paragraphReqDto);
+        //log.info("~~~~~~~~~~~~~~~~~ paragraphReqDto.getParagraph() : " + paragraphReqDto.getParagraph());
         // 로그인 회원 정보를 들어온 메시지에 값 세팅
         //paragraphReqDto.setUserId(Long.parseLong(jwtDecoder.decodeUserId(token)));
         //Long userId = Long.parseLong(jwtDecoder.decodeUserId(token));

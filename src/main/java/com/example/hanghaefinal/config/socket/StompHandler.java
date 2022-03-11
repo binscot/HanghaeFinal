@@ -4,7 +4,6 @@ package com.example.hanghaefinal.config.socket;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.repository.RedisRepository;
-import com.example.hanghaefinal.security.jwt.JwtDecoder;
 import com.example.hanghaefinal.service.ParagraphService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 public class StompHandler implements ChannelInterceptor {
-    private final JwtDecoder jwtDecoder;
+    //private final JwtDecoder jwtDecoder;
     private final ParagraphService paragraphService;
     private final RedisRepository redisRepository;
 
@@ -87,6 +86,7 @@ public class StompHandler implements ChannelInterceptor {
                     // 구독했다는 것은 처음 입장했다는 것이므로 입장 메시지를 발송한다.
                     // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
                     // 이 코드 필요없음
+
                     //paragraphService.accessChatMessage(ParagraphReqDto.builder().type(Paragraph.MessageType.ENTER).postId(postId).userId(userId).build());
                     log.info("~~~~~~~~ TYPE Enter 일 때");
                 }
@@ -99,6 +99,10 @@ public class StompHandler implements ChannelInterceptor {
 //            User user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
 //            String nickname = user.getNickname();
 //            chatMessageService.itemChatMessage(ChatMessageRequestDto.builder().build());
+        } else if(StompCommand.SEND == accessor.getCommand()){
+            log.info("~~~~~~~~~~~~ accessor.getCommand() : " + accessor.getCommand());
+            log.info("~~~~~~~~~~~~ accesoor : " + accessor);
+            log.info("~~~~~~~~~~~~ StompCommand.SEND.getMessageType()" + StompCommand.SEND.getMessageType());
         }
         // disconnect 확인
         else if (StompCommand.DISCONNECT == accessor.getCommand()) {
@@ -107,7 +111,7 @@ public class StompHandler implements ChannelInterceptor {
                     Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId")
             );
             log.info("~~~~~~~~~~~~~~~~~~~~ ");
-            Long userId = Long.parseLong(jwtDecoder.decodeUserId(userName));
+            //Long userId = Long.parseLong(jwtDecoder.decodeUserId(userName));
             String sessionId = (String) message.getHeaders().get("simpSessionId");
 //            String findInOutKey = redisRepository.getSessionUserInfo(sessionId);
 
@@ -116,7 +120,7 @@ public class StompHandler implements ChannelInterceptor {
 //            }
 //            redisRepository.removeUserEnterInfo(sessionId);
             // disconnect 됐다는 메시지는 주지 말자
-            paragraphService.accessChatMessage(ParagraphReqDto.builder().type(Paragraph.MessageType.QUIT).postId(postId).userId(userId).build());
+            //paragraphService.accessChatMessage(ParagraphReqDto.builder().type(Paragraph.MessageType.QUIT).postId(postId).userId(userId).build());
         }
         return message;
     }
