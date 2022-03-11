@@ -36,7 +36,8 @@ public class ParagraphService {
         );
 
         // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
-        Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
+        //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
+        Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
         return paragraphRepository.save(paragraph);
     }
 
@@ -74,16 +75,29 @@ public class ParagraphService {
     }
 
     // 채팅방에서 메세지 발송
-    public void sendChatMessage(Paragraph paragraph, ParagraphReqDto paragraphReqDto, Long postId) {
+    public void paragraphStartAndComplete(Paragraph paragraph, ParagraphReqDto paragraphReqDto, Long postId) {
         User user = userRepository.findById(paragraph.getUser().getId()).orElseThrow(
                 ()-> new IllegalArgumentException("로그인한 사용자가 존재하지 않습니다.")
         );
 
+        log.info("--------------------------- sendChatMessage user.getUsername() : " + user.getUsername());
         log.info("sendChatMessage user= {}", user);
         //Boolean bigFont = paragraphReqDto.getBigFont();
         UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(user);
-        ParagraphResDto paragraphResDto = new ParagraphResDto(paragraph, postId, userInfoResDto);
+        ParagraphResDto paragraphResDto = new ParagraphResDto(paragraph, postId, user);
+        ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto, userInfoResDto);
 
-        redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphResDto);
+        log.info("-------------- paragraphAccessResDto :  " + paragraphAccessResDto);
+        log.info("-------------------- userInfoResDto : " + userInfoResDto);
+        /*
+        log.info("--------------paragraphResDto.getType()-------------- : " + paragraphResDto.getType());
+        log.info("--------------paragraphResDto.getParagraph()-------- : " + paragraphResDto.getParagraph());
+        log.info("--------------paragraphResDto.getPostId()------------ : " + paragraphResDto.getPostId());
+        log.info("--------------paragraphResDto.getUsername()---- : " + paragraphResDto.getUsername());
+        log.info("--------------paragraphResDto.getNickName()---- : " + paragraphResDto.getNickName());
+        log.info("--------------paragraphResDto.getUserProfileImage()---- : " + paragraphResDto.getUserProfileImage());
+*/
+        redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
     }
+
 }

@@ -25,13 +25,15 @@ public class RedisSubscriber {
     // 즉, redisTemplate.convertAndSend 안에 있는 인자 paragraphAccessResDto를 sendMessage의 인자로 String으로 풀어버린다.
     public void sendMessage(String publishMessage) {
         log.info("RedisSubscriber sendMessage publishMessage = {}", publishMessage);
+        log.info("---------------- publishMessage 새롭게 자른거 = {} :", publishMessage.startsWith("TALK"));
         log.info("publishMessage 새롭게 자른거 = {}", publishMessage.startsWith("ENTER", 9));
         log.info("publishMessage 새롭게 자른거 = {}", publishMessage.startsWith("TALK", 9));
-        log.info("publishMessage 새롭게 자른거 = {}", publishMessage.startsWith("ITEM", 9));
+        log.info("publishMessage 새롭게 자른거 = {}", publishMessage.startsWith("START", 9));
         try {
             // if 타입이 alarm 이면 똑같이 원하는 주소로 dto를 보내주면 된다. ㅇㅇ
 
             if (publishMessage.startsWith("ENTER", 9) || publishMessage.startsWith("QUIT", 9)) {
+                log.info("------------------------ RedisSubscriber ENTER ----------- ");
                 // 위에서 인자로 String으로 풀려져있는 publishMessage를 다시 Dto형태로 바꿔서 담는다.
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
                 // 아래 desination이 프론트에서 구독한 주소이고 우리가 보내면 프론트에서 paragraphAccessResDto를 콜백으로 받는다 ㅇㅇ 그런듯
@@ -40,12 +42,16 @@ public class RedisSubscriber {
 
             // 채팅방에서 채팅 시 메세지 보내기
             else if(publishMessage.startsWith("TALK", 9)){
+                log.info("------------------------ RedisSubscriber TALK ----------- ");
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
                 messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
+                //ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
+                //messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             }
 
             // 채팅방에서 아이템 사용시 메세지 보내기
-            else if(publishMessage.startsWith("ITEM", 9)){
+            else if(publishMessage.startsWith("START", 9)){
+                log.info("------------------------ RedisSubscriber START ----------- ");
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
                 messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             }

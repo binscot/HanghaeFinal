@@ -3,8 +3,10 @@ package com.example.hanghaefinal.config.socket;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.model.Paragraph;
+import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.repository.RedisRepository;
-import com.example.hanghaefinal.security.jwt.JwtDecoder;
+import com.example.hanghaefinal.repository.UserRepository;
+import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
 import com.example.hanghaefinal.service.ParagraphService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,9 +25,10 @@ import java.util.Optional;
 @Transactional
 @Slf4j
 public class StompHandler implements ChannelInterceptor {
-    private final JwtDecoder jwtDecoder;
     private final ParagraphService paragraphService;
     private final RedisRepository redisRepository;
+    private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     // websocket 을 통해 들어온 요청이 처리 되기전 실행된다.
     @Override
@@ -34,30 +37,37 @@ public class StompHandler implements ChannelInterceptor {
         // substring 해줘야 토큰만 제대로 빼내올 수 있을 거다 - 이건 확인하자
         //String token = accessor.getFirstNativeHeader("Authorization").substring(7);
         // 토큰의 값만 확인 (로그인 여부를 확인하기 위함) - 헤더의 토큰값을 빼오기
-        //log.info("~~~~~~~~ message : "+message);
-        //log.info("~~~~~~~~ accessor : " + accessor);
-        log.info("~~~~~~~~ accessor.getLogin : " + accessor.getLogin());
-        log.info("~~~~~~~~ accessor.getFirstNativeHeader(\"Authorization\") : " + accessor.getFirstNativeHeader("Authorization"));
+        log.info("~~~~~~~~~~~~~~~~~~~~ message : "+message);
+        log.info("~~~~~~~~~~~~~~~~~~~~ accessor : " + accessor);
+
 
         String token = accessor.getFirstNativeHeader("Authorization");
-        log.info("~~~~~~~~ Web Socket 들어올 때 token 검증 = {}", token);
+
+        String username = jwtTokenProvider.getAuthentication(token).getName();
+        Optional<User> user = userRepository.findByUsername(username);
+        log.info("---------------------------유저정보"+user.get().getUsername());
+        log.info("---------------------------유저정보"+user.get().getIntroduction());
+        log.info("---------------------------유저정보"+user.get().getNickName());
+        log.info("---------------------------유저정보"+user.get().getUserProfileImage());
+
+
+
+
         // websocket 연결시 헤더의 jwt token 검증 ( 만약 CONNECT라면 -> 초기 연결임 )
 
-        log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n");
-        log.info("~~~~~~~~~~~~~~ accessor.getCommand() : " + accessor.getCommand()+"\n");
+
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            log.info("~~~~~~~~~~ StompCommand.CONNECT 로 들어옴\n");
-            log.info("~~~~~~~~~~ token : " + token+"\n");
+
 
             //
-            String username = jwtDecoder.decodeUsername(token); // decodeUsername에서 이미 토큰 validation 검사를 한다.
+//            String username = jwtDecoder.decodeUsername(token); // decodeUsername에서 이미 토큰 validation 검사를 한다.
             log.info("~~~~~~~~ CONNECT 할 때 username = {}", username);
             // 여기왜 validateToken은 왜 안하지?
-            if(username == null) {
-                log.info("~~~~~~~~ CONNECT 할 때");
-                throw new IllegalArgumentException("로그인을 해주세요");
-                //throw new LoginUserNotFoundException("로그인을 해주시기 바랍니다.");
-            }
+//            if(username == null) {
+//                log.info("~~~~~~~~ CONNECT 할 때");
+//                throw new IllegalArgumentException("로그인을 해주세요");
+//                //throw new LoginUserNotFoundException("로그인을 해주시기 바랍니다.");
+//            }
         }
 
         // 구독 했는지 확인
@@ -68,8 +78,8 @@ public class StompHandler implements ChannelInterceptor {
             );
             // 채팅방에 들어온 클라이언트 sessionId를 roomId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
             if (postId != null) {
-                String username = jwtDecoder.decodeUsername(token);
-                Long userId = Long.parseLong(jwtDecoder.decodeUserId(token));
+//                String username = jwtDecoder.decodeUsername(token);
+                Long userId = user.get().getId();
                 String sessionId = (String) message.getHeaders().get("simpSessionId");
                 // 채팅방에 들어온 클라이언트 sessionId를 roomId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
                 if(username != null) {
@@ -106,7 +116,7 @@ public class StompHandler implements ChannelInterceptor {
                     Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId")
             );
             log.info("~~~~~~~~~~~~~~~~~~~~ ");
-            Long userId = Long.parseLong(jwtDecoder.decodeUserId(token));
+            Long userId = user.get().getId();
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String findInOutKey = redisRepository.getSessionUserInfo(sessionId);
 
@@ -115,7 +125,7 @@ public class StompHandler implements ChannelInterceptor {
             }
             redisRepository.removeUserEnterInfo(sessionId);
             // disconnect 됐다는 메시지는 주지 말자
-            paragraphService.accessChatMessage(ParagraphReqDto.builder().type(Paragraph.MessageType.QUIT).postId(postId).userId(userId).build());
+            //paragraphService.accessChatMessage(ParagraphReqDto.builder().type(Paragraph.MessageType.QUIT).postId(postId).userId(userId).build());
         }
         return message;
     }

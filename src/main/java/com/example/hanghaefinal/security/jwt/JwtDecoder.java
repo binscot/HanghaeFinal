@@ -1,4 +1,4 @@
-package com.example.hanghaefinal.security.jwt;
+/*package com.example.hanghaefinal.security.jwt;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -72,5 +72,5 @@ public class JwtDecoder {
 
         return Optional.ofNullable(jwt);
     }
-}
+}*/
 

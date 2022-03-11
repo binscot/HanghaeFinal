@@ -13,14 +13,19 @@ public class ParagraphAccessResDto {
     private Paragraph.MessageType type;
     private String postId;
     private String paragraph;
-    private String nickName;
+    private UserInfoResponseDto userInfoResponseDto;
 
     public ParagraphAccessResDto(ParagraphReqDto paragraphReqDto) {
         this.type = paragraphReqDto.getType();
         this.postId = paragraphReqDto.getPostId();
         this.paragraph = paragraphReqDto.getParagraph();
-        this.nickName = paragraphReqDto.getNickName();
     }
 
+    public ParagraphAccessResDto(ParagraphReqDto paragraphReqDto, UserInfoResponseDto userInfoResponseDto){
+        this.type = paragraphReqDto.getType();
+        this.postId = paragraphReqDto.getPostId();
+        this.paragraph = paragraphReqDto.getParagraph();
+        this.userInfoResponseDto = userInfoResponseDto;
+    }
 
 }
