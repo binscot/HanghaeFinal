@@ -45,29 +45,31 @@ public class ParagraphController {
     // 이게 pub로 받는 api이다 이거 알림 같은 경우는 @PostMapping 해야할듯
     @MessageMapping("/chat/message/{postId}")   // 참고하느 코드는 roomId ReqDto에 넣었다. 즉, 연관관계를 안맺음
     public void message(@PathVariable Long postId,
-                        @RequestBody ParagraphReqDto paragraphReqDto,
-                        @Header("Authorization") String rawToken
+                        @RequestBody ParagraphReqDto paragraphReqDto
+                        //@Header("Authorization") String rawToken
                         //@AuthenticationPrincipal UserDetailsImpl userDetails
                         //userDetails 이거 못쓰면 토큰에서 가져와야 할듯
                         ) {
         //String token = rawToken.substring(7); // Bearer 때문에 한듯
-        String token = rawToken;
-        log.info("~~~~~~~~~~~~~~~~~~~~~~/chat/message/ 안에서 token : " + token+"\n");
+        //String token = rawToken;
+        //log.info("~~~~~~~~~~~~~~~~~~~~~~/chat/message/ 안에서 token : " + token+"\n");
+        log.info("~~~~~~~~~~~~~~~~~ paragraphReqDto : " + paragraphReqDto);
+        log.info("~~~~~~~~~~~~~~~~~ paragraphReqDto.getParagraph() : " + paragraphReqDto.getParagraph());
         // 로그인 회원 정보를 들어온 메시지에 값 세팅
-        paragraphReqDto.setUserId(Long.parseLong(jwtDecoder.decodeUserId(token)));
-        Long userId = Long.parseLong(jwtDecoder.decodeUserId(token));
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("로그인한 유저가 없습니다.")
-        );
+        //paragraphReqDto.setUserId(Long.parseLong(jwtDecoder.decodeUserId(token)));
+        //Long userId = Long.parseLong(jwtDecoder.decodeUserId(token));
+//        User user = userRepository.findById(userId).orElseThrow(
+//                () -> new IllegalArgumentException("로그인한 유저가 없습니다.")
+//        );
 
         // MySql DB에 채팅 메시지 저장
         // redis에 만 저장하면 다른 사람이 새로고침하면 날라가니까.. 저장을 해야한다.
-        Paragraph paragraph = paragraphService.saveParagraph(paragraphReqDto, postId, user);
+//        Paragraph paragraph = paragraphService.saveParagraph(paragraphReqDto, postId, user);
         //ChatMessage chatMessage = chatMessageService.save(chatMessageRequestDto);
 
         // 웹소켓 통신으로 채팅방 토픽 구독자들에게 메시지 보내기
-        if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK))
-            paragraphService.sendChatMessage(paragraph, paragraphReqDto, postId);
+//        if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK))
+//            paragraphService.sendChatMessage(paragraph, paragraphReqDto, postId);
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
 //            paragraphService.sendChatMessage();
     }
