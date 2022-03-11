@@ -10,15 +10,17 @@ public class ParagraphResDto {
     private Paragraph.MessageType type;
     private String paragraph;
     private Long postId;
-    private Long userKey;
-    private String username;
-    private String nickName;
-    private String userProfileImage;
     private UserInfoResponseDto userInfoResDto;
 
     public ParagraphResDto(Paragraph paragraph){
         this.paragraph = paragraph.getParagraph();
     }
+
+    public ParagraphResDto(Paragraph paragraph, UserInfoResponseDto userInfoResponseDto){
+        this.paragraph = paragraph.getParagraph();
+        this.userInfoResDto = userInfoResponseDto;
+    }
+
 
     public ParagraphResDto(Paragraph paragraph, Long postId, UserInfoResponseDto userInfoResDto){
         this.type = paragraph.getType();
@@ -27,7 +29,7 @@ public class ParagraphResDto {
         this.userInfoResDto = userInfoResDto;
     }
 
-    public ParagraphResDto(Paragraph paragraph, Long postId, User user){
+    /*public ParagraphResDto(Paragraph paragraph, Long postId, User user){
         this.type = paragraph.getType();
         this.paragraph = paragraph.getParagraph();
         this.postId = postId;
@@ -35,5 +37,5 @@ public class ParagraphResDto {
         this.username = user.getUsername();
         this.nickName = user.getNickName();
         this.userProfileImage = user.getUserProfileImage();
-    }
+    }*/
 }

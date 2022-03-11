@@ -78,11 +78,13 @@ public class PostService {
         // 어차피 true지만  postRequestDto.isComplete() 이걸 인자로 넣어도 된다.
         post.updatePost(true);
 
+
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
         for(Paragraph paragraph: paragraphList){
-            paragraphResDtoList.add(new ParagraphResDto(paragraph));
+            UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+            paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
         }
 
         List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
@@ -128,7 +130,8 @@ public class PostService {
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
         for (Paragraph paragraph : paragraphList) {
-            paragraphResDtoList.add(new ParagraphResDto(paragraph));
+            UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+            paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
         }
 
         List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
@@ -185,7 +188,8 @@ public class PostService {
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
-                paragraphResDtoList.add(new ParagraphResDto(paragraph));
+                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
             }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -233,7 +237,8 @@ public class PostService {
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
-                paragraphResDtoList.add(new ParagraphResDto(paragraph));
+                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
             }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -293,7 +298,8 @@ public class PostService {
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
-                paragraphResDtoList.add(new ParagraphResDto(paragraph));
+                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
             }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());

@@ -82,21 +82,14 @@ public class ParagraphService {
 
         log.info("--------------------------- sendChatMessage user.getUsername() : " + user.getUsername());
         log.info("sendChatMessage user= {}", user);
-        //Boolean bigFont = paragraphReqDto.getBigFont();
+
         UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(user);
-        ParagraphResDto paragraphResDto = new ParagraphResDto(paragraph, postId, user);
+        //ParagraphResDto paragraphResDto = new ParagraphResDto(paragraph, postId, user);
         ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto, userInfoResDto);
 
         log.info("-------------- paragraphAccessResDto :  " + paragraphAccessResDto);
         log.info("-------------------- userInfoResDto : " + userInfoResDto);
-        /*
-        log.info("--------------paragraphResDto.getType()-------------- : " + paragraphResDto.getType());
-        log.info("--------------paragraphResDto.getParagraph()-------- : " + paragraphResDto.getParagraph());
-        log.info("--------------paragraphResDto.getPostId()------------ : " + paragraphResDto.getPostId());
-        log.info("--------------paragraphResDto.getUsername()---- : " + paragraphResDto.getUsername());
-        log.info("--------------paragraphResDto.getNickName()---- : " + paragraphResDto.getNickName());
-        log.info("--------------paragraphResDto.getUserProfileImage()---- : " + paragraphResDto.getUserProfileImage());
-*/
+
         redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
     }
 
