@@ -36,7 +36,7 @@ public class PostController {
             //postService.uploadImageFile(multipartFile, postRequestDto);
             postService.savePost(postRequestDto ,user, defaultImg);
         } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");
-        return true;
+        return true; // postId로 return 할지 고려하자
     }
 
     // 미완성 게시글을 -> 완성 게시글로 변경 ( complete 컴럼만 수정할 것이므로 patch 사용)
