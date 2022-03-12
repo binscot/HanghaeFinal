@@ -56,6 +56,7 @@ public class ParagraphService {
 
     // 채팅방 입출입 시 메시지 발송
     public void accessChatMessage(ParagraphReqDto paragraphReqDto) {
+
         log.info("채팅방 출입 메세지 발송 시 roomID = {}", paragraphReqDto.getPostId());
         User user = userRepository.findById(paragraphReqDto.getUserId())
                 .orElseThrow(IllegalAccessError::new);
