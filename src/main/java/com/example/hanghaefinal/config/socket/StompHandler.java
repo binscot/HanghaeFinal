@@ -43,6 +43,7 @@ public class StompHandler implements ChannelInterceptor {
 
         String token = accessor.getFirstNativeHeader("Authorization");
 
+        // 로그인 안한 사용자 예외처리 필요
         String username = jwtTokenProvider.getAuthentication(token).getName();
         Optional<User> user = userRepository.findByUsername(username);
         log.info("---------------------------유저정보"+user.get().getUsername());
@@ -57,8 +58,6 @@ public class StompHandler implements ChannelInterceptor {
 
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
-
-
             //
 //            String username = jwtDecoder.decodeUsername(token); // decodeUsername에서 이미 토큰 validation 검사를 한다.
             log.info("~~~~~~~~ CONNECT 할 때 username = {}", username);
@@ -76,7 +75,7 @@ public class StompHandler implements ChannelInterceptor {
             String postId = paragraphService.getPostId(
                     Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId")
             );
-            // 채팅방에 들어온 클라이언트 sessionId를 roomId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
+            // 채팅방에 들어온 클라이언트 sessionId를 postId와 맵핑해 놓는다.(나중에 특정 세션이 어떤 채팅방에 들어가 있는지 알기 위함)
             if (postId != null) {
 //                String username = jwtDecoder.decodeUsername(token);
                 Long userId = user.get().getId();
@@ -94,7 +93,7 @@ public class StompHandler implements ChannelInterceptor {
 
                     // 구독했다는 것은 처음 입장했다는 것이므로 입장 메시지를 발송한다.
                     // 클라이언트 입장 메시지를 채팅방에 발송한다.(redis publish)
-                    // 이 코드 필요없음
+                    // 이 코드 필요없음 ( 프론트에서 안쓰면 그만 )
                     paragraphService.accessChatMessage(ParagraphReqDto.builder().type(Paragraph.MessageType.ENTER).postId(postId).userId(userId).build());
                     log.info("~~~~~~~~ TYPE Enter 일 때");
                 } else throw new IllegalArgumentException("로그인을 해주시기 바랍니다.");
@@ -102,7 +101,9 @@ public class StompHandler implements ChannelInterceptor {
             }
 
 //        } else if (StompCommand.SEND == accessor.getCommand()) {
-//
+//            log.info("-------------------------StompCommand.SEND: "+StompCommand.SEND);
+//            log.info("-------------------------accessor.getCommand(): "+accessor.getCommand());
+//            log.info("-------------------------accessor.getCommand(): "+accessor);
 //            String username = jwtDecoder.decodeUsername(token);
 //            User user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
 //            String nickname = user.getNickname();
