@@ -25,6 +25,7 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     public String bucket;  // S3 버킷 이름
 
+
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
@@ -48,6 +49,7 @@ public class S3Uploader {
 
     // S3로 파일 삭제
     public void deleteFile(String deleteFile) {
+        System.out.println(bucket+deleteFile);
         amazonS3Client.deleteObject(bucket, deleteFile);
     }
 
