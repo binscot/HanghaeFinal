@@ -102,7 +102,9 @@ public class StompHandler implements ChannelInterceptor {
             }
 
 //        } else if (StompCommand.SEND == accessor.getCommand()) {
-//
+//            log.info("-------------------------StompCommand.SEND: "+StompCommand.SEND);
+//            log.info("-------------------------accessor.getCommand(): "+accessor.getCommand());
+//            log.info("-------------------------accessor.getCommand(): "+accessor);
 //            String username = jwtDecoder.decodeUsername(token);
 //            User user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
 //            String nickname = user.getNickname();
