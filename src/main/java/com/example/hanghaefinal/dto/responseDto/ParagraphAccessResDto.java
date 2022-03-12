@@ -15,7 +15,8 @@ public class ParagraphAccessResDto {
     private Paragraph.MessageType type;
     private String postId;
     private String paragraph;
-    private LocalDateTime time;
+    //private LocalDateTime time;
+    private String times;
     private UserInfoResponseDto userInfoResponseDto;
 
     public ParagraphAccessResDto(ParagraphReqDto paragraphReqDto) {
@@ -28,7 +29,8 @@ public class ParagraphAccessResDto {
         this.type = paragraphReqDto.getType();
         this.postId = paragraphReqDto.getPostId();
         this.paragraph = paragraphReqDto.getParagraph();
-        this.time = LocalDateTime.now();
+        //this.time = LocalDateTime.now();
+        this.times = String.valueOf(LocalDateTime.now());
         this.userInfoResponseDto = userInfoResponseDto;
     }
 

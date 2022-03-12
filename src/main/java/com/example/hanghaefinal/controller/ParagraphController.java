@@ -69,6 +69,7 @@ public class ParagraphController {
 
         // MySql DB에 채팅 메시지 저장
         // redis에 만 저장하면 다른 사람이 새로고침하면 날라가니까.. 저장을 해야한다.
+        // TALK 할 때만 save 근데.. 여기서 save 해준 이유 확인하자...
         Paragraph paragraph = paragraphService.saveParagraph(paragraphReqDto, postId, user);
         //ChatMessage chatMessage = chatMessageService.save(chatMessageRequestDto);
 
@@ -79,6 +80,7 @@ public class ParagraphController {
         }
         else if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK)) {
             log.info("---------------TALK TALK TALK ----------------");
+            // Paragraph paragraph = paragraphService.saveParagraph(paragraphReqDto, postId, user);
             paragraphService.paragraphStartAndComplete(paragraph, paragraphReqDto, postId);
         }
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
