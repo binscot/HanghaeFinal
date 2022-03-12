@@ -1,5 +1,6 @@
 package com.example.hanghaefinal.model;
 
+import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -12,6 +13,14 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "paragraph")
 public class Paragraph extends Timestamped{
+    public enum MessageType {
+        ENTER, // 구독시작
+        START,  // 문단 작성 시작
+        TALK, // 문단 작성 완료
+        QUIT,
+        DELETE
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
@@ -19,6 +28,9 @@ public class Paragraph extends Timestamped{
 
     @Column(name = "paragraph")
     private String paragraph;
+
+    @Column
+    private MessageType type;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -30,6 +42,13 @@ public class Paragraph extends Timestamped{
 
     public Paragraph(String paragraph, User user, Post post){
         this.paragraph = paragraph;
+        this.user = user;
+        this.post = post;   // roomId를 postId로 대체하자
+    }
+
+    public Paragraph(ParagraphReqDto paragraphReqDto, User user, Post post){
+        this.type = paragraphReqDto.getType();
+        this.paragraph = paragraphReqDto.getParagraph();
         this.user = user;
         this.post = post;
     }
