@@ -75,6 +75,9 @@ public class PostService {
             log.info("~~~ category is null");
         }
 
+        // 백에서도 검사 해주려면 requestDto에서 limitCnt 값을 받아야 한다.
+        // if(post.getLimitCnt() == requestDto에서 받아온 limitCnt)
+
         // 어차피 true지만  postRequestDto.isComplete() 이걸 인자로 넣어도 된다.
         post.updatePost(true);
 
