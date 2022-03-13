@@ -1,15 +1,21 @@
 package com.example.hanghaefinal.dto.responseDto;
 
 import com.example.hanghaefinal.model.Paragraph;
+import com.example.hanghaefinal.model.ParagraphLikes;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class ParagraphResDto {
+    private Long paragraphKey;
     private Paragraph.MessageType type;
     private String paragraph;
-    private Long postId;
+    private Long postId;    // 없어도 될것같다
+    private Long paragraphLikesCnt;
+    private List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList;
     private UserInfoResponseDto userInfoResDto;
 
     public ParagraphResDto(Paragraph paragraph){
@@ -19,6 +25,16 @@ public class ParagraphResDto {
     public ParagraphResDto(Paragraph paragraph, UserInfoResponseDto userInfoResponseDto){
         this.paragraph = paragraph.getParagraph();
         this.userInfoResDto = userInfoResponseDto;
+    }
+
+    public ParagraphResDto(Paragraph paragraph,
+                           List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList,
+                           Long paragraphLikesCnt){
+        this.paragraphKey = paragraph.getId();
+        this.paragraph = paragraph.getParagraph();
+        this.paragraphLikesCnt = paragraphLikesCnt;
+        this.paragraphLikesClickUserKeyResDtoList = paragraphLikesClickUserKeyResDtoList;
+        this.userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
     }
 
 
