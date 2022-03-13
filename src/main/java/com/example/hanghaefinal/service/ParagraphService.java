@@ -1,15 +1,20 @@
 package com.example.hanghaefinal.service;
 
+import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
+import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphResDto;
 import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.model.Paragraph;
+import com.example.hanghaefinal.model.ParagraphLikes;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.repository.ParagraphLikesRepository;
 import com.example.hanghaefinal.repository.ParagraphRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
+import com.example.hanghaefinal.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,6 +31,7 @@ public class ParagraphService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final ParagraphRepository paragraphRepository;
+    private final ParagraphLikesRepository paragraphLikesRepository;
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
 
@@ -92,6 +98,29 @@ public class ParagraphService {
         log.info("-------------------- userInfoResDto : " + userInfoResDto);
 
         redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
+    }
+
+    @Transactional
+    public ParagraphLikesResDto paragraphLikes(Long paragraphId, Long userId){
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("유저 정보가 없습니다.")
+        );
+
+        Paragraph paragraph = paragraphRepository.findById(paragraphId).orElseThrow(
+                () -> new IllegalArgumentException("해당 문단이 없습니다.")
+        );
+
+        ParagraphLikes findParagraphLikes = paragraphLikesRepository.findByUserAndParagraph(user, paragraph).orElse(null);
+
+        if(findParagraphLikes == null){
+            ParagraphLikesReqDto paragraphLikesReqDto = new ParagraphLikesReqDto(user, paragraph);
+            ParagraphLikes paragraphLikes = new ParagraphLikes(paragraphLikesReqDto);
+            paragraphLikesRepository.save(paragraphLikes);
+        } else {
+            paragraphLikesRepository.deleteById(findParagraphLikes.getId());
+        }
+
+        return new ParagraphLikesResDto(paragraphId, paragraphLikesRepository.countByParagraph(paragraph));
     }
 
 }

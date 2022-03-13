@@ -32,6 +32,7 @@ public class PostService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final ParagraphRepository paragraphRepository;
+    private final ParagraphLikesRepository paragraphLikesRepository;
     private final S3Uploader s3Uploader;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
@@ -126,8 +127,6 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
-        // paragraphList 조회
-        // List<Paragraph> paragraphList =
         // commentList 조회
         //List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         // 위처럼 commentList로 조회하면 안된다. Comment안에 user랑 post있고 post안에 user 가 있다.. (궁금하면 다시 해봐)
@@ -136,8 +135,23 @@ public class PostService {
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
         for (Paragraph paragraph : paragraphList) {
-            UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
-            paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+            // a. 이거는 UserInfoResponseDto를 여기서 생성해서 ParagraphResDto로 가져가고
+//            UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+//            paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+            
+            // b. 이거는 UserInfoResponseDto를 ParagraphResDto로 가서 생성한다. ㅇㅇ
+            // 각 문단에 좋아요를 한 userKey(PK)의 리스트
+            Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+            Long paragraphKey = paragraph.getId();
+
+            List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+            List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+            for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+            }
+
+            paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
         }
 
         List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
@@ -148,11 +162,11 @@ public class PostService {
             categoryResDtoList.add(new CategoryResponseDto(category));
         }
 
-        List<Comment> commentList2 = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
         List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
         // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
-        for (Comment comment : commentList2) {
+        for (Comment comment : commentList) {
             Long commentLikesCnt = commentLikesRepository.countByComment(comment);
             commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
         }
@@ -167,14 +181,13 @@ public class PostService {
 
         // limitCnt와 paragraph의 개수가 같으면 complete를 true로 반환해라
 
-
         String postUsername = null;
         if (post.getUser() != null) {
             postUsername = post.getUser().getUsername();
         }
 
 
-        return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt,postUsername);
+        return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
 //        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 

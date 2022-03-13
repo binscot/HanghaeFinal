@@ -40,7 +40,7 @@ public class RedisSubscriber {
                 messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             }
 
-            // 채팅방에서 채팅 시 메세지 보내기
+            // '문단 완료' 버튼 누를 시 responseDto 보내기 보내기
             else if(publishMessage.startsWith("TALK", 9)){
                 log.info("------------------------ RedisSubscriber TALK ----------- ");
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
@@ -49,7 +49,7 @@ public class RedisSubscriber {
                 //messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             }
 
-            // 채팅방에서 아이템 사용시 메세지 보내기
+            // '문단 시작' 버튼 누를 시 responseDto 보내기
             else if(publishMessage.startsWith("START", 9)){
                 log.info("------------------------ RedisSubscriber START ----------- ");
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
