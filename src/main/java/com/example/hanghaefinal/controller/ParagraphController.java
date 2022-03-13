@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
+import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.repository.UserRepository;
@@ -87,4 +88,8 @@ public class ParagraphController {
 //            paragraphService.sendChatMessage();
     }
 
+    @PostMapping("/paragraph/likes/{paragraphId}")
+    public ParagraphLikesResDto paragraphLikes(@PathVariable Long paragraphId, @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return paragraphService.paragraphLikes(paragraphId, userDetails.getUser().getId());
+    }
 }
