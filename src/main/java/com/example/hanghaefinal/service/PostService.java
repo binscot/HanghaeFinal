@@ -90,8 +90,18 @@ public class PostService {
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
         for(Paragraph paragraph: paragraphList){
-            UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
-            paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+            //UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+            //paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+            Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+            Long paragraphKey = paragraph.getId();
+
+            List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+            List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+            for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+            }
+
+            paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
         }
 
         List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
