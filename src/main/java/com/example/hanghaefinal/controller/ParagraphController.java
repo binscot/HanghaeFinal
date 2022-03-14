@@ -15,8 +15,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -26,6 +24,7 @@ public class ParagraphController {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
 
+    // 문단 생성
     @PostMapping("/paragraph/{postId}")
     public Boolean saveParagraph(@PathVariable Long postId,
                                  @RequestBody ParagraphReqDto paragraphReqDto,

@@ -5,6 +5,7 @@ import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
+import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class PostService {
     private final CategoryRepository categoryRepository;
     private final ParagraphRepository paragraphRepository;
     private final ParagraphLikesRepository paragraphLikesRepository;
+    private final AlarmService alarmService;
     private final S3Uploader s3Uploader;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
@@ -66,7 +68,11 @@ public class PostService {
 
     // 마지막 파라그래프 작성 후 게시글 완성 버튼 누름 -> 완성 게시글로 변경 ( 완성 게시글 상세 조회)
     @Transactional
-    public PostDetailResponseDto completePost(Long postId, CategoryRequestDto categoryRequestDto){
+    public PostDetailResponseDto completePost(Long postId, CategoryRequestDto categoryRequestDto, UserDetailsImpl userDetails){
+        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+                () -> new IllegalArgumentException("userId가 존재하지 않습니다.")
+        );
+
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
@@ -117,6 +123,9 @@ public class PostService {
         if (post.getUser() != null) {
             postUsername = post.getUser().getUsername();
         }
+
+        // 알람 호출
+        alarmService.generateCompletePostAlarm(user, post);
 
         return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt,postUsername);
         //return true;

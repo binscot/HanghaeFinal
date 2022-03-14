@@ -34,6 +34,7 @@ public class ParagraphService {
     private final ParagraphLikesRepository paragraphLikesRepository;
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
+    private final AlarmService alarmService;
 
     @Transactional
     public Paragraph saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
@@ -44,7 +45,14 @@ public class ParagraphService {
         // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
         //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
         Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
-        return paragraphRepository.save(paragraph);
+
+        paragraph = paragraphRepository.save(paragraph);
+
+        // 알림 발생,  문단을 작성한 유저 = user
+        alarmService.generateNewParagraphAlarm(user, post);
+
+        return paragraph;
+        //return paragraphRepository.save(paragraph);
     }
 
     // destination 정보에서 postId 추출
@@ -62,6 +70,12 @@ public class ParagraphService {
 
     // 채팅방 입출입 시 메시지 발송
     public void accessChatMessage(ParagraphReqDto paragraphReqDto) {
+        // 1. START한 사람 이 있으면
+        // START한 사람의 닉네임을 보내주면 되고
+        // START한 사람이 없으면 보내줄게 없음
+        //
+        // 2. 프론트에서 START 한사람의 닉네임을(A) 알고 있긴한데..
+        // B라는 사람이 게시글에 들어가면 A의 닉네임과 달라서 블록을 해주던지 하면 될 듯
 
         log.info("채팅방 출입 메세지 발송 시 roomID = {}", paragraphReqDto.getPostId());
         User user = userRepository.findById(paragraphReqDto.getUserId())
@@ -119,6 +133,10 @@ public class ParagraphService {
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
         }
+
+
+        // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
+        alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
 
         return new ParagraphLikesResDto(paragraphId, paragraphLikesRepository.countByParagraph(paragraph));
     }
