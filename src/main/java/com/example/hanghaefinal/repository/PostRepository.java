@@ -28,5 +28,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByUser(User user);
 
-    Persistable<Object> findByPubUserIdAndSubUserId(Long pubId, Long id);
 }
