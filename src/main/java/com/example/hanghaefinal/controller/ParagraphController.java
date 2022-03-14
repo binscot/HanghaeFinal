@@ -25,7 +25,7 @@ public class ParagraphController {
     private final JwtTokenProvider jwtTokenProvider;
 
     // 문단 생성
-    @PostMapping("/paragraph/{postId}")
+    /*@PostMapping("/paragraph/{postId}")
     public Boolean saveParagraph(@PathVariable Long postId,
                                  @RequestBody ParagraphReqDto paragraphReqDto,
                                  @AuthenticationPrincipal UserDetailsImpl userDetails)
@@ -35,7 +35,7 @@ public class ParagraphController {
             paragraphService.saveParagraph(paragraphReqDto, postId, user);
         } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");
         return true;
-    }
+    }*/
 
 
     // 예를들어 좋아요 알림 같은 것도 controller에 @PostMapping으로 만들 수 있다.
@@ -44,6 +44,7 @@ public class ParagraphController {
     // 채팅 메시지를 @MessageMapping 형태로 받는다
     // 웹소켓으로 publish 된 메시지를 받는 곳이다 ( 프론트에서 '/pub/api/chat/message', 이런식으로 pub 준다.)
     // 이게 pub로 받는 api이다 이거 알림 같은 경우는 @PostMapping 해야할듯
+    // '문단 생성 완료' 버튼 누를 때
     @MessageMapping("/paragraph/complete")   // 참고하느 코드는 roomId ReqDto에 넣었다. 즉, 연관관계를 안맺음
     public void message(
                         @RequestBody ParagraphReqDto paragraphReqDto,

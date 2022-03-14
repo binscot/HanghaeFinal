@@ -12,6 +12,7 @@ import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -24,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class AlarmService {
@@ -185,6 +187,9 @@ public class AlarmService {
                         + "] 소설에 작성한 문단에 좋아요가 달렸습니다.")
                 .build();
 
+        // 조건문 없으니 밑에서 alarm.getId()를 찾기위해선 여기서 먼저 저장해야한다.
+        alarmRepository.save(alarm);
+
         /* 알림 메시지를 보낼 DTO 생성 */
         AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
                 .alarmId(alarm.getId().toString())
@@ -200,7 +205,6 @@ public class AlarmService {
          * redis로 알림메시지 pub, alarmRepository에 저장
          * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
          */
-        alarmRepository.save(alarm);
         redisTemplate.convertAndSend(channelTopic.getTopic(),
                 alarmResponseDto);
 
@@ -222,6 +226,10 @@ public class AlarmService {
                             + "]에 좋아요가 등록되었습니다.")
                     .build();
 
+            log.info("--------------- alarmRepository.save(alarm); 직전");
+            // 조건문 없으니 밑에서 alarm.getId()를 찾기위해선 여기서 먼저 저장해야한다.
+            alarmRepository.save(alarm);
+
             /* 알림 메시지를 보낼 DTO 생성 */
             AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
                     .alarmId(alarm.getId().toString())
@@ -237,7 +245,6 @@ public class AlarmService {
              * redis로 알림메시지 pub, alarmRepository에 저장
              * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
              */
-            alarmRepository.save(alarm);
             redisTemplate.convertAndSend(channelTopic.getTopic(),
                     alarmResponseDto);
         }

@@ -39,12 +39,12 @@ public class PostLikesService {
             PostLikesRequestDto postLikesRequestDto = new PostLikesRequestDto(user, post);
             PostLikes postLikes = new PostLikes(postLikesRequestDto);
             postLikesRepository.save(postLikes);
+
+            // 내가 참여한 게시글에 좋아요를 받았을 때
+            alarmService.generatePostLikesAlarm(post);
         } else{
             postLikesRepository.deleteById(findLike.getId());
         }
-
-        // 내가 참여한 게시글에 좋아요를 받았을 때
-        alarmService.generatePostLikesAlarm(post);
 
         return new PostLikesResponseDto(postId, postLikesRepository.countByPost(post));
     }
