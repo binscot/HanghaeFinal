@@ -10,10 +10,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserUpdateDto {
+public class ProfileUpdateDto {
 
     private String nickName;
 
-    private String introduction;
+    private MultipartFile userProfile;
 
 }
+
+

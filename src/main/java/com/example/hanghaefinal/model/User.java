@@ -65,14 +65,25 @@ public class User extends Timestamped{
     }
 
 
-    public void updateUser(String nickName, String password, String introduction, String userProfile) {
-        this.nickName=nickName;
-        this.password=password;
-        this.introduction=introduction;
+//    public void updateUser(String nickName, String password, String introduction, String userProfile) {
+//        this.nickName=nickName;
+//        this.password=password;
+//        this.introduction=introduction;
+//        this.userProfileImage=userProfile;
+//    }
+
+//    public void updateUser(String password) {
+//        this.password=password;
+//    }
+
+    public void updateUser(String userProfile) {
         this.userProfileImage=userProfile;
     }
 
-    public void updateUser(String password) {
-        this.password=password;
+    public void updateUser(String nickName,  String introduction) {
+        this.nickName=nickName;
+        this.introduction=introduction;
     }
+
+
 }

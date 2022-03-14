@@ -222,19 +222,48 @@ public class UserService {
 
 
     //유저 정보 변경
+//    @Transactional
+//    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
+//
+//        MultipartFile multipartFile = updateDto.getUserProfile();
+//        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
+//        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
+//            userProfile = s3Uploader.upload(multipartFile, "static");
+//
+//        User user = userDetails.getUser();
+//        String nickName = updateDto.getNickName();
+//        String password = passwordEncoder.encode(updateDto.getPassword());
+//        String introduction = updateDto.getIntroduction();
+//        user.updateUser(nickName,password,introduction,userProfile);
+//        userRepository.save(user);
+//
+//        return new UserInfoResponseDto(
+//                user.getId(),
+//                user.getUsername(),
+//                user.getNickName(),
+//                user.getUserProfileImage(),
+//                user.getIntroduction()
+//        );
+//    }
+
     @Transactional
-    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
-
-        MultipartFile multipartFile = updateDto.getUserProfile();
-        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
-            userProfile = s3Uploader.upload(multipartFile, "static");
-
+    public UserInfoResponseDto updateUserProfile(MultipartFile file, UserDetailsImpl userDetails) throws IOException {
         User user = userDetails.getUser();
-        String nickName = updateDto.getNickName();
-        String password = passwordEncoder.encode(updateDto.getPassword());
-        String introduction = updateDto.getIntroduction();
-        user.updateUser(nickName,password,introduction,userProfile);
+
+        String userProfile = "";
+        if (file == null){
+            userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
+        } else {
+            userProfile = s3Uploader.upload(file, "static");
+        }
+
+//        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
+//        if (!Objects.equals(file.getOriginalFilename(), "foo.txt"))
+//            userProfile = s3Uploader.upload(file, "static");
+
+        System.out.println(userProfile);
+
+        user.updateUser(userProfile);
         userRepository.save(user);
 
         return new UserInfoResponseDto(
@@ -243,6 +272,26 @@ public class UserService {
                 user.getNickName(),
                 user.getUserProfileImage(),
                 user.getIntroduction()
+        );
+    }
+
+
+    @Transactional
+    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) {
+
+        User user = userDetails.getUser();
+        String nickName = updateDto.getNickName();
+        String introduction = updateDto.getIntroduction();
+        user.updateUser(nickName,introduction);
+        userRepository.save(user);
+
+        return new UserInfoResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getNickName(),
+                user.getUserProfileImage(),
+                user.getIntroduction()
+
         );
     }
 
@@ -437,6 +486,8 @@ public class UserService {
         response.addHeader("Authorization", token);
         return ResponseEntity.ok(loginResponseDto);
     }
+
+
 }
 
 
