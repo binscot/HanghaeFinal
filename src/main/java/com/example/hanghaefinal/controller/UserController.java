@@ -14,6 +14,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -80,15 +81,48 @@ public class UserController {
     }
 
     //회원정보 수정
+//    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
+//    @PutMapping("/user/update")
+//    public ResponseEntity<UserInfoResponseDto> updateUser(
+//            @ModelAttribute UserUpdateDto updateDto,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+//    ) throws IOException {
+//        UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails);
+//        return ResponseEntity.ok(userInfoResponseDto);
+//    }
+
     @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
     @PutMapping("/user/update")
     public ResponseEntity<UserInfoResponseDto> updateUser(
-            @ModelAttribute UserUpdateDto updateDto,
+            @RequestBody UserUpdateDto updateDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) throws IOException {
+    ) {
         UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails);
         return ResponseEntity.ok(userInfoResponseDto);
     }
+
+    //유저 프로필 수정
+//    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
+//    @PutMapping("/user/updateProfile")
+//    public ResponseEntity<UserInfoResponseDto> updateUserProfile(
+//            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+//    ) throws IOException {
+//        UserInfoResponseDto userInfoResponseDto = userService.updateUserProfile(multipartFile,userDetails);
+//        return ResponseEntity.ok(userInfoResponseDto);
+//    }
+
+    //유저 사진 수정
+    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
+    @PostMapping("/user/updateProfile")
+    public ResponseEntity<UserInfoResponseDto> updateUserProfile(
+            MultipartFile file,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) throws IOException {
+        UserInfoResponseDto userInfoResponseDto = userService.updateUserProfile(file, userDetails);
+        return ResponseEntity.ok(userInfoResponseDto);
+    }
+
 
     //회원 정보 삭제
     @ApiOperation(value = "회원정보 삭제.", notes = "회원정보 삭제.")
