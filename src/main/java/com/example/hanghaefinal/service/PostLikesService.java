@@ -19,6 +19,7 @@ public class PostLikesService {
     private final PostLikesRepository postLikesRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final AlarmService alarmService;
 
     //좋아요 등록
     @Transactional
@@ -41,6 +42,10 @@ public class PostLikesService {
         } else{
             postLikesRepository.deleteById(findLike.getId());
         }
+
+        // 내가 참여한 게시글에 좋아요를 받았을 때
+        alarmService.generatePostLikesAlarm(post);
+
         return new PostLikesResponseDto(postId, postLikesRepository.countByPost(post));
     }
 }
