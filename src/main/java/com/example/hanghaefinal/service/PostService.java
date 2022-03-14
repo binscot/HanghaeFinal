@@ -208,8 +208,19 @@ public class PostService {
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
-                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
-                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+//                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+//                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+                Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+                Long paragraphKey = paragraph.getId();
+
+                List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+                for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                    // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                    paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+                }
+
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
             }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -258,8 +269,19 @@ public class PostService {
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
-                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
-                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+//                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+//                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+                Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+                Long paragraphKey = paragraph.getId();
+
+                List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+                for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                    // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                    paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+                }
+
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
             }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -320,8 +342,19 @@ public class PostService {
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
-                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
-                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+//                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+//                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+                Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+                Long paragraphKey = paragraph.getId();
+
+                List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+                for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                    // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                    paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+                }
+
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
             }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -353,7 +386,7 @@ public class PostService {
     }
 
     // 다른 유저 페이지
-    public OtherUserResDto viewUserPage(Long userKey,int page, int size){
+    /*public OtherUserResDto viewUserPage(Long userKey,int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
@@ -369,6 +402,77 @@ public class PostService {
         
         //OtherUserResDto otherUserResDto = new OtherUserResDto(user, postList);
         return new OtherUserResDto(user, otherUserList);
+    }*/
+
+
+    // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
+    public OtherUserResDto2 viewUserPage2(Long userKey, int page, int size){
+        User user = userRepository.findById(userKey).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+        );
+
+        Pageable pageable = PageRequest.of(page,size);
+
+        Page<Post> postList = postRepository.findAllByUserIdOrderByModifiedAtDesc(user.getId(), pageable);
+        //List<OtherUserPostListResDto> otherUserList = new ArrayList<>();
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
+        // complete 가 false이며(미완성작품) 최근 수정한 시간순으로 불러온다.
+
+        //List<OtherUserResDto2> otherUserResDto2List2 = new ArrayList<>();
+
+        int postLikeCnt = 0;
+        for (Post post: postList ) {
+            List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            postLikeCnt = postLikesList.size();
+
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+
+            for(Paragraph paragraph: paragraphList){
+//                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+//                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+                Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+                Long paragraphKey = paragraph.getId();
+
+                List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+                for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                    // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                    paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+                }
+
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
+            }
+
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+            for (Comment comment:commentList ) {
+                Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+            }
+
+            List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+
+            // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+            for(Category category: categoryList){
+                categoryResDtoList.add(new CategoryResponseDto(category));
+            }
+
+            String postUsername = null;
+            if (post.getUser() != null) {
+                postUsername = post.getUser().getUsername();
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            postResponseDtoList.add(postResponseDto);
+        }
+
+        OtherUserResDto2 otherUserResDto2 = new OtherUserResDto2(user, postResponseDtoList);
+        return otherUserResDto2;
     }
 
 }
