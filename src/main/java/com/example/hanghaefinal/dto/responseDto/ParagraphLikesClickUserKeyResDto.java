@@ -5,10 +5,10 @@ import lombok.Getter;
 
 @Getter
 public class ParagraphLikesClickUserKeyResDto {
-    private Long paragraphLikesClickUserKey;
+    private Long userId;
 
     // 각 ParagraphLikes 의
     public ParagraphLikesClickUserKeyResDto(ParagraphLikes paragraphLikes){
-        this.paragraphLikesClickUserKey = paragraphLikes.getUser().getId();
+        this.userId = paragraphLikes.getUser().getId();
     }
 }
