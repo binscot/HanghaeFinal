@@ -44,7 +44,7 @@ public class CommentLikesService {
             commentLikesRepository.deleteById(findCommentLike.getId());
         }
 
-        List<CommentLikes> commentLikes = commentLikesRepository.findAllByPostId(commentId);
+        List<CommentLikes> commentLikes = commentLikesRepository.findAllByCommentId(commentId);
         List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtos = new ArrayList<>();
         for (CommentLikes commentLikesTemp : commentLikes) {
             commentLikeClickersResponseDtos.add(new CommentLikeClickersResponseDto(commentLikesTemp));
