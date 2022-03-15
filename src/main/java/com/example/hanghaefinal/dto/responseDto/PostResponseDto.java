@@ -23,6 +23,7 @@ public class PostResponseDto {
     //private double postScore;
     //private List<CommentResponseDto> commnetList;
     private int postLikesCnt;
+    private List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList;
     private List<ParagraphResDto> paragraphResList;
     private List<CategoryResponseDto> categoryList;
     private List<CommentResponseDto> commentList;
@@ -48,6 +49,7 @@ public class PostResponseDto {
     }
 
     public PostResponseDto(Post post,
+                           List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList,
                            List<ParagraphResDto> paragraphResList,
                            List<CommentResponseDto> commentList,
                            List<CategoryResponseDto> categoryList,
@@ -69,6 +71,7 @@ public class PostResponseDto {
         // paragraphList에서 userId 를 가지고 user 정보와 paragraphLike를 response 하고
         // commentList 에 있는 userId를 가지고 user정보를 와 commentLikes를 response 해라
         this.postLikesCnt = postLikesCnt;
+        this.postLikeClickersResponseDtoList = postLikeClickersResponseDtoList;
         this.paragraphResList = paragraphResList;
         this.categoryList = categoryList;
         this.commentList = commentList;

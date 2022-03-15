@@ -22,27 +22,30 @@ public class PostDetailResponseDto {
     //private double postScore;
     //private List<CommentResponseDto> commnetList;
     private Long postLikesCnt;
+    private List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList;
     private List<ParagraphResDto> paragraphResDtoList;
     private List<CategoryResponseDto> categoryList;
     private List<CommentResponseDto> commentList;
 
-    public PostDetailResponseDto(Post post, List<CommentResponseDto> commentList, Long postLikesCnt){
+    public PostDetailResponseDto(Post post,
+                                 List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList,
+                                 List<ParagraphResDto> paragraphResDtoList,
+                                 List<CommentResponseDto> commentList,
+                                 List<CategoryResponseDto> categoryList,
+                                 Long postLikesCnt, String postUsername){
         this.postKey = post.getId();
         this.title = post.getTitle();
-        this.postUsername = post.getUser().getUsername();
+        this.postUsername = postUsername;
         this.postModifiedAt = post.getModifiedAt().toString();
         this.postImageUrl = post.getPostImageUrl();
         this.color = post.getColor();
         this.limitCnt = post.getLimitCnt();
         this.complete = post.isComplete();  // boolean형은 get이 아니라 is로 가져온다.
-        // 문단을 작성한 유저와 댓글을 작성한 유저를 클릭했을때 해당 유저(다른 사용자)
-        // 페이지로 가기 위해서
-        // 문단을 작성한 user 정보와 댓글을 작성한 user 정보를 response해줘야한다.
-        // 즉,
-        // paragraphList에서 userId 를 가지고 user 정보와 paragraphLike를 response 하고
-        // commentList 에 있는 userId를 가지고 user정보를 와 commentLikes를 response 해라
+
+        this.postLikeClickersResponseDtoList = postLikeClickersResponseDtoList;
+        this.paragraphResDtoList = paragraphResDtoList;
         this.postLikesCnt = postLikesCnt;
-        //this.categoryList = categoryList;
+        this.categoryList = categoryList;
         this.commentList = commentList;
     }
 
@@ -63,6 +66,21 @@ public class PostDetailResponseDto {
         this.paragraphResDtoList = paragraphResDtoList;
         this.postLikesCnt = postLikesCnt;
         this.categoryList = categoryList;
+        this.commentList = commentList;
+    }
+
+
+    public PostDetailResponseDto(Post post, List<CommentResponseDto> commentList, Long postLikesCnt){
+        this.postKey = post.getId();
+        this.title = post.getTitle();
+        this.postUsername = post.getUser().getUsername();
+        this.postModifiedAt = post.getModifiedAt().toString();
+        this.postImageUrl = post.getPostImageUrl();
+        this.color = post.getColor();
+        this.limitCnt = post.getLimitCnt();
+        this.complete = post.isComplete();  // boolean형은 get이 아니라 is로 가져온다.
+        this.postLikesCnt = postLikesCnt;
+        //this.categoryList = categoryList;
         this.commentList = commentList;
     }
 

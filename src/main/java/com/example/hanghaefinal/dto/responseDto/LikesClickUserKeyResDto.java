@@ -1,5 +1,6 @@
 package com.example.hanghaefinal.dto.responseDto;
 
+import com.example.hanghaefinal.model.CommentLikes;
 import com.example.hanghaefinal.model.ParagraphLikes;
 import com.example.hanghaefinal.model.PostLikes;
 import lombok.Getter;
@@ -14,5 +15,9 @@ public class LikesClickUserKeyResDto {
 
     public LikesClickUserKeyResDto(PostLikes postLikes){
         this.userKey = postLikes.getUser().getId();
+    }
+
+    public LikesClickUserKeyResDto(CommentLikes commentLikes){
+        this.userKey = commentLikes.getUser().getId();
     }
 }
