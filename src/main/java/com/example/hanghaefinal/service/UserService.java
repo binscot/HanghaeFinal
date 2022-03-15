@@ -11,6 +11,7 @@ import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
 import com.example.hanghaefinal.util.S3Uploader;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -248,24 +250,30 @@ public class UserService {
 
     @Transactional
     public UserInfoResponseDto updateUserProfile(MultipartFile file, UserDetailsImpl userDetails) throws IOException {
-        User user = userDetails.getUser();
+        log.info("------------------------------userService11111111111111111111111111111111111111111111111111111111111111111111 ");
 
-        String userProfile = "";
-        if (file == null){
-            userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-        } else {
+        log.info("------------------------------userService22222222222222222222222222222222222222222 "+ file.getOriginalFilename());
+        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
+        log.info("------------------------------userService333333333333333333333333333333333333333");
+        if (!Objects.equals(file.getOriginalFilename(), "foo.txt")){
+            log.info("------------------------------userService4444444444444444444444444444444444444");
             userProfile = s3Uploader.upload(file, "static");
         }
+
+
 
 //        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
 //        if (!Objects.equals(file.getOriginalFilename(), "foo.txt"))
 //            userProfile = s3Uploader.upload(file, "static");
 
-        System.out.println(userProfile);
+        log.info("------------------------------userService22222222");
+
+
+        User user = userDetails.getUser();
 
         user.updateUser(userProfile);
+        log.info("------------------------------userService33333333");
         userRepository.save(user);
-
         return new UserInfoResponseDto(
                 user.getId(),
                 user.getUsername(),

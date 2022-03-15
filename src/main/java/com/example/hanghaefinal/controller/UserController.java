@@ -114,12 +114,12 @@ public class UserController {
 
     //유저 사진 수정
     @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
-    @PostMapping("/user/updateProfile")
+    @PutMapping("/user/updateProfile")
     public ResponseEntity<UserInfoResponseDto> updateUserProfile(
-            MultipartFile file,
+            @RequestParam("userProfile") MultipartFile userProfile,
             @AuthenticationPrincipal UserDetailsImpl userDetails
     ) throws IOException {
-        UserInfoResponseDto userInfoResponseDto = userService.updateUserProfile(file, userDetails);
+        UserInfoResponseDto userInfoResponseDto = userService.updateUserProfile(userProfile, userDetails);
         return ResponseEntity.ok(userInfoResponseDto);
     }
 

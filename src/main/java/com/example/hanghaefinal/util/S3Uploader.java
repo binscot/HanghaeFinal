@@ -27,6 +27,7 @@ public class S3Uploader {
 
 
     public String upload(MultipartFile multipartFile, String dirName) throws IOException {
+        log.info("------------------------------1번 업로드----------------------------------------");
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
 
@@ -35,6 +36,7 @@ public class S3Uploader {
 
     // S3로 파일 업로드하기
     private String upload(File uploadFile, String dirName) {
+        log.info("------------------------------2번 업로드---------------------------------------------");
         String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();   // S3에 저장된 파일 이름
         String uploadImageUrl = putS3(uploadFile, fileName); // s3로 업로드
         removeNewFile(uploadFile);
@@ -43,7 +45,9 @@ public class S3Uploader {
 
     // S3로 업로드
     private String putS3(File uploadFile, String fileName) {
+        log.info("------------------------------3번 putS3 업로드----------------------------------------");
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
+        log.info("------------------------------3.2 번 putS3 업로드----------------------------------------");
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
 
