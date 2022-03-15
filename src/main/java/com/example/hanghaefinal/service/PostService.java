@@ -5,6 +5,7 @@ import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
+import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,7 +84,7 @@ public class PostService {
         // if(post.getLimitCnt() == requestDto에서 받아온 limitCnt)
 
         // 어차피 true지만  postRequestDto.isComplete() 이걸 인자로 넣어도 된다.
-        post.updatePost(true);
+        post.updatePostComplete(true);
 
         List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);
         List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList = new ArrayList<>();
@@ -92,7 +93,7 @@ public class PostService {
         }
 
 
-        List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(postId);
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
         for(Paragraph paragraph: paragraphList){
@@ -161,7 +162,7 @@ public class PostService {
         }
 
 
-        List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(postId);
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
         for (Paragraph paragraph : paragraphList) {
@@ -249,7 +250,7 @@ public class PostService {
             postLikeCnt = postLikesList.size();
 
 
-            List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
@@ -324,7 +325,7 @@ public class PostService {
             postLikeCnt = postLikesList.size();
 
 
-            List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
@@ -411,7 +412,7 @@ public class PostService {
             postLikeCnt = postLikesList.size();
 
 
-            List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
@@ -514,7 +515,7 @@ public class PostService {
             postLikeCnt = postLikesList.size();
 
 
-            List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
@@ -567,8 +568,23 @@ public class PostService {
             postResponseDtoList.add(postResponseDto);
         }
 
-        OtherUserResDto2 otherUserResDto2 = new OtherUserResDto2(user, postResponseDtoList);
-        return otherUserResDto2;
+        return new OtherUserResDto2(user, postResponseDtoList);
     }
 
+    public void writingStatus(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("해당 게시글이 없습니다.")
+        );
+        post.updatePostWriting(!post.isWriting());
+    }
+
+    public Boolean cancelIsWriting(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("해당 게시글이 없습니다.")
+        );
+        if (post.isWriting()){
+            post.updatePostWriting(false);
+        }
+        return post.isWriting();
+    }
 }
