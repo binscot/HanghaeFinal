@@ -3,6 +3,7 @@ package com.example.hanghaefinal.controller;
 import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.OtherUserResDto;
+import com.example.hanghaefinal.dto.responseDto.OtherUserResDto2;
 import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
 import com.example.hanghaefinal.model.Post;
@@ -82,10 +83,20 @@ public class PostController {
 
     // 다른 유저 페이지
     @GetMapping("/posts/userPage/{userKey}")
+    public OtherUserResDto2 viewUserPage2(
+            @PathVariable Long userKey,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        return postService.viewUserPage2(userKey, page, size);
+    }
+
+    // 다른 유저 페이지
+/*    @GetMapping("/posts/userPage/{userKey}")
     public OtherUserResDto viewUserPage(
             @PathVariable Long userKey,
             @RequestParam int page,
             @RequestParam int size){
         return postService.viewUserPage(userKey,page, size);
-    }
+    }*/
 }

@@ -2,10 +2,7 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphResDto;
-import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.ParagraphLikes;
 import com.example.hanghaefinal.model.Post;
@@ -22,6 +19,8 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -120,7 +119,13 @@ public class ParagraphService {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
         }
 
-        return new ParagraphLikesResDto(paragraphId, paragraphLikesRepository.countByParagraph(paragraph));
+        List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphId);
+        List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+        for(ParagraphLikes paragraphLikeTemp : paragraphLikes){
+            paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikeTemp));
+        }
+
+        return new ParagraphLikesResDto(paragraphId, paragraphLikesClickUserKeyResDtoList, paragraphLikesRepository.countByParagraph(paragraph));
     }
 
 }
