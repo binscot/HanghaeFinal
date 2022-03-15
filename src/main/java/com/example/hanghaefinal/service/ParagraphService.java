@@ -35,15 +35,20 @@ public class ParagraphService {
     private final ChannelTopic channelTopic;
 
     @Transactional
-    public Paragraph saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
+    public void saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
 
-        // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
-        //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
-        Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
-        return paragraphRepository.save(paragraph);
+        int limit = post.getLimitCnt();
+        int paragraphListSize = paragraphRepository.findAllByPostId(postId).size();
+
+        if (limit >= paragraphListSize){
+            // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
+            //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
+            Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
+            paragraphRepository.save(paragraph);
+        }
     }
 
     // destination 정보에서 postId 추출
@@ -81,8 +86,8 @@ public class ParagraphService {
     }
 
     // 채팅방에서 메세지 발송
-    public void paragraphStartAndComplete(Paragraph paragraph, ParagraphReqDto paragraphReqDto, Long postId) {
-        User user = userRepository.findById(paragraph.getUser().getId()).orElseThrow(
+    public void paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
+        User user = userRepository.findById(paragraphReqDto.getUserId()).orElseThrow(
                 ()-> new IllegalArgumentException("로그인한 사용자가 존재하지 않습니다.")
         );
 
