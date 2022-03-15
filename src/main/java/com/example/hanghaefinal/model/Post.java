@@ -33,6 +33,9 @@ public class Post extends Timestamped {
     @Column(name = "complete")  // nullable 고민하자
     private boolean complete;
 
+    @Column(name = "writing")
+    private boolean writing;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -44,9 +47,12 @@ public class Post extends Timestamped {
         this.color = requestDto.getColor();
         this.limitCnt = requestDto.getLimitCnt();
         this.user = user;
+
     }
 
-    public void updatePost(boolean bool){
+    public void updatePostComplete(boolean bool){
         this.complete = bool;
     }
+
+    public void updatePostWriting(boolean bool) { this.writing = bool; }
 }

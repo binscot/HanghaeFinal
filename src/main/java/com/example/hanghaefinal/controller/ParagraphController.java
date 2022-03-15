@@ -3,11 +3,13 @@ package com.example.hanghaefinal.controller;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
 import com.example.hanghaefinal.model.Paragraph;
+import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
 import com.example.hanghaefinal.service.ParagraphService;
+import com.example.hanghaefinal.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.Header;
@@ -25,6 +27,7 @@ public class ParagraphController {
     private final ParagraphService paragraphService;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PostService postService;
 
     @PostMapping("/paragraph/{postId}")
     public Boolean saveParagraph(@PathVariable Long postId,
@@ -38,9 +41,12 @@ public class ParagraphController {
         return true;
     }
 
+    @PostMapping("/cancelIsWriting/{postId}")
+    public Boolean cancelIsWriting(@PathVariable Long postId){
+        return postService.cancelIsWriting(postId);
+    }
 
     // 예를들어 좋아요 알림 같은 것도 controller에 @PostMapping으로 만들 수 있다.
-
     // 위에 api 를 대체해야한다.
     // 채팅 메시지를 @MessageMapping 형태로 받는다
     // 웹소켓으로 publish 된 메시지를 받는 곳이다 ( 프론트에서 '/pub/api/chat/message', 이런식으로 pub 준다.)
@@ -71,18 +77,20 @@ public class ParagraphController {
         // MySql DB에 채팅 메시지 저장
         // redis에 만 저장하면 다른 사람이 새로고침하면 날라가니까.. 저장을 해야한다.
         // TALK 할 때만 save 근데.. 여기서 save 해준 이유 확인하자...
-        Paragraph paragraph = paragraphService.saveParagraph(paragraphReqDto, postId, user);
+
         //ChatMessage chatMessage = chatMessageService.save(chatMessageRequestDto);
 
         // 웹소켓 통신으로 채팅방 토픽 구독자들에게 메시지 보내기
         if(paragraphReqDto.getType().equals(Paragraph.MessageType.START)){
             log.info("---------------- START START START ---------");
-            paragraphService.paragraphStartAndComplete(paragraph, paragraphReqDto, postId);
+            paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
+            postService.writingStatus(postId);
         }
         else if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK)) {
             log.info("---------------TALK TALK TALK ----------------");
-            // Paragraph paragraph = paragraphService.saveParagraph(paragraphReqDto, postId, user);
-            paragraphService.paragraphStartAndComplete(paragraph, paragraphReqDto, postId);
+            paragraphService.saveParagraph(paragraphReqDto, postId, user);
+            paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
+            postService.writingStatus(postId);
         }
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
 //            paragraphService.sendChatMessage();
