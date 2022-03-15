@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.CommentLikesRequestDto;
+import com.example.hanghaefinal.dto.responseDto.CommentLikeClickersResponseDto;
 import com.example.hanghaefinal.dto.responseDto.CommentLikesResponseDto;
 import com.example.hanghaefinal.model.Comment;
 import com.example.hanghaefinal.model.CommentLikes;
@@ -11,6 +12,9 @@ import com.example.hanghaefinal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -40,8 +44,12 @@ public class CommentLikesService {
             commentLikesRepository.deleteById(findCommentLike.getId());
         }
 
-        return new CommentLikesResponseDto(commentId, commentLikesRepository.countByComment(comment));
+        List<CommentLikes> commentLikes = commentLikesRepository.findAllByCommentId(commentId);
+        List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtos = new ArrayList<>();
+        for (CommentLikes commentLikesTemp : commentLikes) {
+            commentLikeClickersResponseDtos.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+        }
 
+        return new CommentLikesResponseDto(commentId, commentLikeClickersResponseDtos,commentLikesRepository.countByComment(comment));
     }
-
-}
+    }
