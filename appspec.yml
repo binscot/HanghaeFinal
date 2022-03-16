@@ -2,12 +2,12 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/ec2-user/wewrite/ # 프로젝트 이름
+    destination: /home/ubuntu/wewrite/ # 프로젝트 이름
     overwrite: yes
 
 permissions:
   - object: /
     pattern: "**"
-    owner: ec2-user
-    group: ec2-user
+    owner: ubuntu
+    group: ubuntu
 
