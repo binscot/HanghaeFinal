@@ -24,12 +24,15 @@ public class PostDetailResponseDto {
     //private List<CommentResponseDto> commnetList;
     private Long postLikesCnt;
     private List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList;
+    private int bookmarkLikesCnt;
+    private List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList;
     private List<ParagraphResDto> paragraphResDtoList;
     private List<CategoryResponseDto> categoryList;
     private List<CommentResponseDto> commentList;
 
     public PostDetailResponseDto(Post post,
                                  List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList,
+                                 List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList,
                                  List<ParagraphResDto> paragraphResDtoList,
                                  List<CommentResponseDto> commentList,
                                  List<CategoryResponseDto> categoryList,
@@ -43,9 +46,12 @@ public class PostDetailResponseDto {
         this.limitCnt = post.getLimitCnt();
         this.complete = post.isComplete();  // boolean형은 get이 아니라 is로 가져온다.
         this.writing = post.isWriting();
-        this.postLikeClickersResponseDtoList = postLikeClickersResponseDtoList;
-        this.paragraphResDtoList = paragraphResDtoList;
         this.postLikesCnt = postLikesCnt;
+        this.postLikeClickersResponseDtoList = postLikeClickersResponseDtoList;
+        this.bookmarkLikesCnt = bookmarkClickUserKeyResDtoList.size();
+        this.bookmarkClickUserKeyResDtoList = bookmarkClickUserKeyResDtoList;
+        this.paragraphResDtoList = paragraphResDtoList;
+
         this.categoryList = categoryList;
         this.commentList = commentList;
     }

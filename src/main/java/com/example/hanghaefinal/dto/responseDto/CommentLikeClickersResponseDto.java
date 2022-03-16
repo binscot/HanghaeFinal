@@ -5,11 +5,11 @@ import lombok.Getter;
 
 @Getter
 public class CommentLikeClickersResponseDto {
-    private Long userId;
+    private Long userKey;
 
     // 각 ParagraphLikes 의
     public CommentLikeClickersResponseDto(CommentLikes commentLikes) {
-        this.userId = commentLikes.getUser().getId();
+        this.userKey = commentLikes.getUser().getId();
     }
 }
 

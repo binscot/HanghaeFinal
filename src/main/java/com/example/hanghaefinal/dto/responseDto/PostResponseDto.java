@@ -20,10 +20,10 @@ public class PostResponseDto {
     private int limitCnt;
     private boolean complete;
     // ----- 밑에 부터 post컬럼에 있는 값이 아닌 것 -----
-    //private double postScore;
-    //private List<CommentResponseDto> commnetList;
     private int postLikesCnt;
     private List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList;
+    private int bookmarkLikesCnt;
+    private List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList;
     private List<ParagraphResDto> paragraphResList;
     private List<CategoryResponseDto> categoryList;
     private List<CommentResponseDto> commentList;
@@ -50,6 +50,7 @@ public class PostResponseDto {
 
     public PostResponseDto(Post post,
                            List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList,
+                           List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList,
                            List<ParagraphResDto> paragraphResList,
                            List<CommentResponseDto> commentList,
                            List<CategoryResponseDto> categoryList,
@@ -72,6 +73,8 @@ public class PostResponseDto {
         // commentList 에 있는 userId를 가지고 user정보를 와 commentLikes를 response 해라
         this.postLikesCnt = postLikesCnt;
         this.postLikeClickersResponseDtoList = postLikeClickersResponseDtoList;
+        this.bookmarkLikesCnt = bookmarkClickUserKeyResDtoList.size();
+        this.bookmarkClickUserKeyResDtoList = bookmarkClickUserKeyResDtoList;
         this.paragraphResList = paragraphResList;
         this.categoryList = categoryList;
         this.commentList = commentList;
