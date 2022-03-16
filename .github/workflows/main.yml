@@ -8,9 +8,8 @@ env: # 새로 추가한 부분
   S3_BUCKET_NAME: wewrite-deploy
   PROJECT_NAME: wewrite
   RESOURCE_PATH: ./src/main/resources/aws.yml
+
   
-
-
 jobs: 
   build: 
     runs-on: ubuntu-latest 
@@ -35,25 +34,24 @@ jobs:
 
       - name: Make zip file 
         run: zip -r ./$GITHUB_SHA.zip . 
-        shell: bash 
-        
+        shell: bash
+
       - name: Set Yml
         uses: microsoft/variable-substitution@v1
         with:
-          files: ${{ env.RESOURCE_PATH }} 
+          files: ${{ env.RESOURCE_PATH }}
         env:
-          override.value: 'from main.yml'
-#           spring.datasource.username: ${{ secrets.DB_USERNAME }}
-#           spring.datasource.password: ${{ secrets.DB_PW }}
-#           spring.mail.username: ${{ secrets.MAIL_USERNAME }}
-#           spring.mail.password: ${{ secrets.MAIL_PW }}
-#           cloud.aws.credentials.accessKey: ${{ secrets.S3_STORAGE_ACCESSKEY }}
-#           cloud.aws.credentials.secretKey: ${{ secrets.S3_STORAGE_PW }}
+          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+          spring.datasource.password: ${{ secrets.DB_PW }}
+          spring.mail.username: ${{ secrets.MAIL_USERNAME }}
+          spring.mail.password: ${{ secrets.MAIL_PW }}
+          cloud.aws.credentials.accessKey: ${{ secrets.S3_STORAGE_ACCESSKEY }}
+          cloud.aws.credentials.secretKey: ${{ secrets.S3_STORAGE_PW }}
         
       - name: Configure AWS credentials 
         uses: aws-actions/configure-aws-credentials@v1 
         with: 
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }} 
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
           aws-region: ${{ secrets.AWS_REGION }} 
           
@@ -62,7 +60,3 @@ jobs:
         
       - name: Code Deploy 
         run: aws deploy create-deployment --application-name wewrite-deploy --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name develop --s3-location bucket=$S3_BUCKET_NAME,bundleType=zip,key=$PROJECT_NAME/$GITHUB_SHA.zip
-
-
-        
-
