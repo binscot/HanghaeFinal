@@ -36,6 +36,9 @@ public class Post extends Timestamped {
     @Column(name = "writing")
     private boolean writing;
 
+    @Column(name = "writer") // 믄딘 시작 버튼을 누른 사람의 nickname
+    private String writer; // 작성 완료 및 작성 취소시 삭제 또는 null
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -47,12 +50,14 @@ public class Post extends Timestamped {
         this.color = requestDto.getColor();
         this.limitCnt = requestDto.getLimitCnt();
         this.user = user;
-
     }
 
     public void updatePostComplete(boolean bool){
         this.complete = bool;
     }
 
-    public void updatePostWriting(boolean bool) { this.writing = bool; }
+    public void updatePostWriting(boolean bool, String writer) {
+        this.writing = bool;
+        this.writer = writer;
+    }
 }

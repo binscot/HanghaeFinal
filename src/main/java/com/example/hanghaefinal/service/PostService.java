@@ -155,7 +155,7 @@ public class PostService {
                 paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
     }
 
-    // 게시글 상세조회
+    // 게시글 상세조회 ( 완성, 미완성 둘다)
     public PostDetailResponseDto viewPostDetail(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
@@ -615,11 +615,20 @@ public class PostService {
         return new OtherUserResDto2(user, postResponseDtoList);
     }
 
-    public void writingStatus(Long postId) {
+    // '문단 시작'버튼을 눌렀을 때 writing이 true가 되고 writer의 닉네임을 준다.
+    public void startWritingStatus(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
-        post.updatePostWriting(!post.isWriting());
+        post.updatePostWriting(true, user.getNickName());
+    }
+
+    // '문단 완료'버튼을 눌렀을 때 writing이 false가 되고 writer의 nickName을 null 로 한다.
+    public void talkWritingStatus(Long postId) {
+        Post post = postRepository.findById(postId).orElseThrow(
+                () -> new IllegalArgumentException("해당 게시글이 없습니다.")
+        );
+        post.updatePostWriting(false, null);
     }
 
     public Boolean cancelIsWriting(Long postId) {
@@ -627,7 +636,7 @@ public class PostService {
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
         if (post.isWriting()){
-            post.updatePostWriting(false);
+            post.updatePostWriting(false, null);
         }
         return post.isWriting();
     }
