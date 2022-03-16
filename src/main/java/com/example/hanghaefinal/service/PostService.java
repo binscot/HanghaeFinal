@@ -34,6 +34,7 @@ public class PostService {
     private final CategoryRepository categoryRepository;
     private final ParagraphRepository paragraphRepository;
     private final ParagraphLikesRepository paragraphLikesRepository;
+    private final BookmarkRepository bookmarkRepository;
     private final S3Uploader s3Uploader;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
@@ -92,6 +93,13 @@ public class PostService {
             postLikeClickersResponseDtoList.add(new PostLikeClickersResponseDto(postLikesTemp));
         }
 
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(postId);
+        List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+        for (Bookmark bookmark:bookmarkList){
+            bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+        }
+
 
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(postId);
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
@@ -143,7 +151,8 @@ public class PostService {
         }
 
         //return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt,postUsername);
-        return new PostDetailResponseDto(post, postLikeClickersResponseDtoList, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
+        return new PostDetailResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
     }
 
     // 게시글 상세조회
@@ -159,6 +168,13 @@ public class PostService {
         List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList = new ArrayList<>();
         for (PostLikes postLikesTemp : postLikes) {
             postLikeClickersResponseDtoList.add(new PostLikeClickersResponseDto(postLikesTemp));
+        }
+
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(postId);
+        List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+        for (Bookmark bookmark:bookmarkList){
+            bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
         }
 
 
@@ -210,7 +226,6 @@ public class PostService {
         }
 
 
-        //List<CommentLikes> commentLikesList = commentLikesRepository.findBy
         // postLikes 조회
         //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
         // postId는 이미 알고 있으니까 totalCnt만 주면된다.
@@ -226,7 +241,8 @@ public class PostService {
         }
 
 
-        return new PostDetailResponseDto(post, postLikeClickersResponseDtoList, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
+        return new PostDetailResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
 //        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 
@@ -248,6 +264,13 @@ public class PostService {
             }
             //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
+
+            List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
+            List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+            for (Bookmark bookmark:bookmarkList){
+                bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+            }
 
 
             List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
@@ -298,8 +321,8 @@ public class PostService {
                 postUsername = post.getUser().getUsername();
             }
 
-            //PostResponseDto postResponseDto = new PostResponseDto(post);
-            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                    paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
@@ -324,6 +347,13 @@ public class PostService {
             //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
+            List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
+            List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+            for (Bookmark bookmark:bookmarkList){
+                bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+            }
+
 
             List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
@@ -373,8 +403,8 @@ public class PostService {
                 postUsername = post.getUser().getUsername();
             }
 
-            //PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
-            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                    paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             //postResponseDto.getPostLikesCnt();
             postResponseDtoList.add(postResponseDto);
         }
@@ -411,6 +441,13 @@ public class PostService {
             //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
+            List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
+            List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+            for (Bookmark bookmark:bookmarkList){
+                bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+            }
+
 
             List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
@@ -460,8 +497,8 @@ public class PostService {
                 postUsername = post.getUser().getUsername();
             }
 
-            //PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
-            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                    paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
@@ -514,6 +551,13 @@ public class PostService {
             //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
+            List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
+            List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+            for (Bookmark bookmark:bookmarkList){
+                bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+            }
+
 
             List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
@@ -563,8 +607,8 @@ public class PostService {
                 postUsername = post.getUser().getUsername();
             }
 
-            //PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
-            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                    paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             postResponseDtoList.add(postResponseDto);
         }
 

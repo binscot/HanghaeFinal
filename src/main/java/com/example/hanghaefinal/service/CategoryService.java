@@ -20,6 +20,7 @@ public class CategoryService {
     private final CommentRepository commentRepository;
     private final CommentLikesRepository commentLikesRepository;
     private final ParagraphLikesRepository paragraphLikesRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public List<CategoryResponseDto> showCategories() {
         List<Category> categories = categoryRepository.findAll();
@@ -54,6 +55,13 @@ public class CategoryService {
             }
             //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
+
+            List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
+            List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+            for (Bookmark bookmark:bookmarkList){
+                bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+            }
 
 
             List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -102,8 +110,8 @@ public class CategoryService {
                 postUsername = post.getUser().getUsername();
             }
 
-            //PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
-            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                    paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
