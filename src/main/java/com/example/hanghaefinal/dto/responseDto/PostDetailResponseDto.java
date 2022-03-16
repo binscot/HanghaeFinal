@@ -19,6 +19,7 @@ public class PostDetailResponseDto {
     private int limitCnt;
     private boolean complete;
     private boolean writing;
+    private String writer;
     // ----- 밑에 부터 post컬럼에 있는 값이 아닌 것 -----
     //private double postScore;
     //private List<CommentResponseDto> commnetList;
@@ -46,6 +47,7 @@ public class PostDetailResponseDto {
         this.limitCnt = post.getLimitCnt();
         this.complete = post.isComplete();  // boolean형은 get이 아니라 is로 가져온다.
         this.writing = post.isWriting();
+        this.writer = post.getWriter();
         this.postLikesCnt = postLikesCnt;
         this.postLikeClickersResponseDtoList = postLikeClickersResponseDtoList;
         this.bookmarkLikesCnt = bookmarkClickUserKeyResDtoList.size();

@@ -41,6 +41,7 @@ public class ParagraphController {
         return true;
     }
 
+    // 작성 취소 로직
     @PostMapping("/cancelIsWriting/{postId}")
     public Boolean cancelIsWriting(@PathVariable Long postId){
         return postService.cancelIsWriting(postId);
@@ -84,13 +85,13 @@ public class ParagraphController {
         if(paragraphReqDto.getType().equals(Paragraph.MessageType.START)){
             log.info("---------------- START START START ---------");
             paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
-            postService.writingStatus(postId);
+            postService.startWritingStatus(postId, user);
         }
         else if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK)) {
             log.info("---------------TALK TALK TALK ----------------");
             paragraphService.saveParagraph(paragraphReqDto, postId, user);
             paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
-            postService.writingStatus(postId);
+            postService.talkWritingStatus(postId);
         }
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
 //            paragraphService.sendChatMessage();
