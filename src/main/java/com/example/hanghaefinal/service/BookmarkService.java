@@ -1,6 +1,8 @@
 package com.example.hanghaefinal.service;
 
-import com.example.hanghaefinal.dto.responseDto.BookmarkResponseDto;
+import com.example.hanghaefinal.dto.requestDto.BookmarkRequestDto;
+import com.example.hanghaefinal.dto.responseDto.BookmarkCheckResponseDto;
+import com.example.hanghaefinal.dto.responseDto.BookmarkInfoResponseDto;
 import com.example.hanghaefinal.model.Badge;
 import com.example.hanghaefinal.model.Bookmark;
 import com.example.hanghaefinal.model.Post;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 
 import java.util.List;
@@ -23,39 +26,52 @@ import java.util.List;
 public class BookmarkService {
 
     private final BookmarkRepository bookmarkRepository;
+    private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final BadgeRepository badgeRepository;
 
 
     //북마크조회
-    public List<BookmarkResponseDto> getBookmark(User user) {
+    public List<BookmarkInfoResponseDto> getBookmark(User user) {
 
         List<Bookmark> bookmarkList = bookmarkRepository.findAll();
-        List<BookmarkResponseDto> bookmarkResponseDtos =new ArrayList<>();
+        List<BookmarkInfoResponseDto> bookmarkInfoResponseDtos =new ArrayList<>();
 
         for(Bookmark bookmark : bookmarkList){
             if(bookmark.getUser().getId().equals(user.getId())){
-                BookmarkResponseDto bookmarkResponseDto = new BookmarkResponseDto(
+                BookmarkInfoResponseDto bookmarkInfoResponseDto = new BookmarkInfoResponseDto(
                         bookmark.getId(),
-                        bookmark.getPost(),
+                        bookmark.getPost().getId(),
                         bookmark.getUser().getId()
                 );
 
-                bookmarkResponseDtos.add(bookmarkResponseDto);
+                bookmarkInfoResponseDtos.add(bookmarkInfoResponseDto);
             }
         }
-        return bookmarkResponseDtos;
+        return bookmarkInfoResponseDtos;
     }
 
 
     //북마크생성
-    public boolean addBookmark(@PathVariable Long postId,
-                                     User user) {
+    @Transactional
+    public BookmarkCheckResponseDto addBookmark(@PathVariable Long postId, Long userId) {
+
+        User user = userRepository.findById(userId).orElseThrow(
+                () -> new IllegalArgumentException("유저정보가 없습니다.")
+        );
+
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
 
-        Bookmark bookmark = new Bookmark(user, post);
-        bookmarkRepository.save(bookmark);
+        Bookmark bookmarkCheck = bookmarkRepository.findByUserAndPost(user, post).orElse(null);
+
+        if (bookmarkCheck == null) {
+            BookmarkRequestDto bookmarkRequestDto = new BookmarkRequestDto(user, post);
+            Bookmark bookmark = new Bookmark(bookmarkRequestDto);
+            bookmarkRepository.save(bookmark);
+        } else {
+            bookmarkRepository.deleteById(bookmarkCheck.getId());
+        }
 
         //북마크 뱃지 로직 구현
         User postUser = post.getUser();
@@ -72,7 +88,8 @@ public class BookmarkService {
             badge.setUser(postUser);
             badgeRepository.save(badge);
         }
-        return true;
+
+        return new BookmarkCheckResponseDto(postId);
     }
 
 

@@ -8,6 +8,7 @@ public class BookmarkClickUserKeyResDto {
     private Long userKey;
 
     public BookmarkClickUserKeyResDto(Bookmark bookmark){
+
         this.userKey = bookmark.getUser().getId();
     }
 }
