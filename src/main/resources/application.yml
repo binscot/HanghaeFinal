@@ -54,6 +54,7 @@ jasypt:
     bean: jasyptStringEncryptor
     password: ${JASYPT_ENCRYPTOR_PASSWORD}
 
+
 cloud:
   aws:
     credentials:
@@ -61,8 +62,8 @@ cloud:
       #      secretKey: ${{ secrets.S3_STORAGE_PW }}
 #      accessKey: AKIAZIQAGYTDQYBHKFFL
 #      secretKey: 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
-      accessKey: ENC(OXCHKRHAXQtGK8JnCwSwe0fLM/2bofjCpaO5kuY/rGQ=)
-      secretKey: ENC(rGEVLY+Wm0GcHvOK2fcQu8KuWi79R7KIdA2vh7JLqzh2K5zWOwwiu86l2tFPdKewqyefTqoGt/0=)
+      accessKey: ENC(xVayH+XMUf+tedUtr8eIkcPimDSqSQSAXSmQWSo137g=)
+      secretKey: ENC(QNAII19rTjOEd2Ti6XlnnD5qlpPC9S6qfcCYTS90KscRBuaE6Ap3LLHVw1FTlVrwpOfn1O3LKkY=)
     #      accessKey: ENC(/c1NsflZGGmDO0e9T75hIhYp1XNont3PTQV9km6MCQ8=)
     #      secretKey: ENC(oFmpszB9QZF7Wlw9hk/YweYiRbPJTUrIxMBoHD8t2BJQdVnVzQTzVlzi7wFTqs+BJt5LBvgNWWM=)
     s3:

@@ -10,11 +10,12 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class JasyptConfig {
 
-    @Value("${jasypt.encryptor.password}")
+    @Value("wewrite")
     private String password;
 
     @Bean("jasyptStringEncryptor")
     public StringEncryptor stringEncryptor() {
+        System.out.println("---------나와라11111111111---------------------------");
         PooledPBEStringEncryptor encryptor = new PooledPBEStringEncryptor();
         SimpleStringPBEConfig config = new SimpleStringPBEConfig();
         config.setPassword(password);
@@ -26,6 +27,7 @@ public class JasyptConfig {
         config.setIvGeneratorClassName("org.jasypt.iv.NoIvGenerator");
         config.setStringOutputType("base64");
         encryptor.setConfig(config);
+        System.out.println("---------나와라22222222222222---------------------------");
         return encryptor;
     }
 }
