@@ -30,7 +30,7 @@ public class S3Uploader {
         log.info("------------------------------1번 업로드----------------------------------------");
         File uploadFile = convert(multipartFile)  // 파일 변환할 수 없으면 에러
                 .orElseThrow(() -> new IllegalArgumentException("error: MultipartFile -> File convert fail"));
-
+        log.info("------------------------------1.5번 업로드----------------------------------------");
         return upload(uploadFile, dirName);
     }
 
@@ -46,6 +46,8 @@ public class S3Uploader {
     // S3로 업로드
     private String putS3(File uploadFile, String fileName) {
         log.info("------------------------------3번 putS3 업로드----------------------------------------");
+        System.out.println("--------------------------"+bucket+"--------"+fileName+"------------"+uploadFile);
+        System.out.println("--------------"+CannedAccessControlList.PublicRead);
         amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, uploadFile).withCannedAcl(CannedAccessControlList.PublicRead));
         log.info("------------------------------3.2 번 putS3 업로드----------------------------------------");
         return amazonS3Client.getUrl(bucket, fileName).toString();
