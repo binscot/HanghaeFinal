@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -224,7 +225,6 @@ public class PostService {
 
             commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
         }
-
 
         // postLikes 조회
         //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
@@ -620,7 +620,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
-        post.updatePostWriting(true, user.getNickName());
+        post.updatePostByStart(true, user.getNickName(), LocalDateTime.now());
     }
 
     // '문단 완료'버튼을 눌렀을 때 writing이 false가 되고 writer의 nickName을 null 로 한다.

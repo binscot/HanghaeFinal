@@ -42,7 +42,7 @@ jobs:
       - name: Make zip file 
         run: zip -r ./$GITHUB_SHA.zip . 
         shell: bash
-
+        
 #       - name: Set Yml
 #         uses: microsoft/variable-substitution@v1
 #         with:

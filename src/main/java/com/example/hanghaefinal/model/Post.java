@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -39,6 +40,9 @@ public class Post extends Timestamped {
     @Column(name = "writer") // 믄딘 시작 버튼을 누른 사람의 nickname
     private String writer; // 작성 완료 및 작성 취소시 삭제 또는 null
 
+    @Column(name = "paragraph_start_time")  // 문단 작성 시작 버튼을 누른 시간
+    private String paragraphStartTime;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -54,6 +58,12 @@ public class Post extends Timestamped {
 
     public void updatePostComplete(boolean bool){
         this.complete = bool;
+    }
+
+    public void updatePostByStart(boolean bool, String writer, LocalDateTime time){
+        this.writing = bool;
+        this.writer = writer;
+        this.paragraphStartTime = String.valueOf(time);
     }
 
     public void updatePostWriting(boolean bool, String writer) {
