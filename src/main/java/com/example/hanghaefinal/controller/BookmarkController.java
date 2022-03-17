@@ -2,6 +2,7 @@ package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.responseDto.BookmarkCheckResponseDto;
 import com.example.hanghaefinal.dto.responseDto.BookmarkInfoResponseDto;
+import com.example.hanghaefinal.dto.responseDto.BookmarkResponseDto;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
@@ -20,7 +21,7 @@ public class BookmarkController {
 
     //북마크 조회
     @GetMapping("/bookmark")
-    public List<BookmarkInfoResponseDto> getBookmark(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public List<BookmarkResponseDto> getBookmark(@AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
         return bookmarkService.getBookmark(user);
     }
@@ -31,10 +32,10 @@ public class BookmarkController {
         return bookmarkService.addBookmark(postId, userDetails.getUser().getId());
     }
 
-    @DeleteMapping("/bookmark/{postId}")
-    public boolean deleteBookmark(@PathVariable Long postId,
-                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
-        User user = userDetails.getUser();
-        return bookmarkService.deleteBookmark(postId,user);
-    }
+//    @DeleteMapping("/bookmark/{postId}")
+//    public boolean deleteBookmark(@PathVariable Long postId,
+//                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
+//        User user = userDetails.getUser();
+//        return bookmarkService.deleteBookmark(postId,user);
+//    }
 }

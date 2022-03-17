@@ -3,6 +3,7 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.BookmarkRequestDto;
 import com.example.hanghaefinal.dto.responseDto.BookmarkCheckResponseDto;
 import com.example.hanghaefinal.dto.responseDto.BookmarkInfoResponseDto;
+import com.example.hanghaefinal.dto.responseDto.BookmarkResponseDto;
 import com.example.hanghaefinal.model.Badge;
 import com.example.hanghaefinal.model.Bookmark;
 import com.example.hanghaefinal.model.Post;
@@ -32,23 +33,23 @@ public class BookmarkService {
 
 
     //북마크조회
-    public List<BookmarkInfoResponseDto> getBookmark(User user) {
+    public List<BookmarkResponseDto> getBookmark(User user) {
 
         List<Bookmark> bookmarkList = bookmarkRepository.findAll();
-        List<BookmarkInfoResponseDto> bookmarkInfoResponseDtos =new ArrayList<>();
+        List<BookmarkResponseDto> bookmarkResponseDtos =new ArrayList<>();
 
         for(Bookmark bookmark : bookmarkList){
             if(bookmark.getUser().getId().equals(user.getId())){
-                BookmarkInfoResponseDto bookmarkInfoResponseDto = new BookmarkInfoResponseDto(
+                BookmarkResponseDto bookmarkResponseDto = new BookmarkResponseDto(
                         bookmark.getId(),
-                        bookmark.getPost().getId(),
+                        bookmark.getPost(),
                         bookmark.getUser().getId()
                 );
 
-                bookmarkInfoResponseDtos.add(bookmarkInfoResponseDto);
+                bookmarkResponseDtos.add(bookmarkResponseDto);
             }
         }
-        return bookmarkInfoResponseDtos;
+        return bookmarkResponseDtos;
     }
 
 
@@ -93,18 +94,18 @@ public class BookmarkService {
     }
 
 
-    //북마크 삭제
-    public boolean deleteBookmark(@PathVariable Long postId, User user) {
-
-        List<Bookmark> bookmarksList= bookmarkRepository.findAllByPostId(postId);
-        Long userId = user.getId();
-        for(Bookmark bookmark:bookmarksList){
-            if(bookmark.getUser().getId().equals(userId)){
-                bookmarkRepository.deleteById(bookmark.getId());
-            }
-        }
-        return false;
-    }
+//    //북마크 삭제
+//    public boolean deleteBookmark(@PathVariable Long postId, User user) {
+//
+//        List<Bookmark> bookmarksList= bookmarkRepository.findAllByPostId(postId);
+//        Long userId = user.getId();
+//        for(Bookmark bookmark:bookmarksList){
+//            if(bookmark.getUser().getId().equals(userId)){
+//                bookmarkRepository.deleteById(bookmark.getId());
+//            }
+//        }
+//        return false;
+//    }
 
 
 }
