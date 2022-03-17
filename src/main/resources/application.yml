@@ -1,7 +1,8 @@
 spring:
   redis:
     port: 6379
-    host: 127.0.0.1
+    host: 52.78.138.53
+    password: 1111
   #  h2:
   #    console:
   #      enabled: true
@@ -11,11 +12,16 @@ spring:
   #    password:
   datasource:
     url: jdbc:mysql://springboot-db.craud3vucxol.ap-northeast-2.rds.amazonaws.com:3306/wewrite
-    username: ${{ secrets.DB_USERNAME }}
-    password: ${{ secrets.DB_PW }}
+#    username: ${{ secrets.DB_USERNAME }}
+#    password: ${{ secrets.DB_PW }}
+    username: ENC(N4mpm/G/bfoHKNAdRhTtJA==)
+    password: ENC(w36HZ970qLzdpb7UV4yMXYcurkfzy6MQ)
   jpa:
     hibernate:
       ddl-auto: update
+
+
+
 
   servlet:
     multipart:
@@ -26,8 +32,10 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ${{ secrets.MAIL_USERNAME }}
-    password: ${{ secrets.MAIL_PW }}
+#    username: ${{ secrets.MAIL_USERNAME }}
+#    password: ${{ secrets.MAIL_PW }}
+    username: ENC(V3JgzQWM7Tqxa1mT51mLn/ftHSl1NTeWUMYM27CAff4=)
+    password: ENC(4Dz6seqsIpSMzyEQdUWdAjpVlZbI6OZp)
     properties:
       mail:
         smtp:
@@ -38,6 +46,32 @@ spring:
           connectiontimeout: 5000
           timeout: 5000
           writetimeout: 5000
+
+
+
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+    password: ${JASYPT_ENCRYPTOR_PASSWORD}
+
+cloud:
+  aws:
+    credentials:
+      #      accessKey: ${{ secrets.S3_STORAGE_ACCESSKEY }}
+      #      secretKey: ${{ secrets.S3_STORAGE_PW }}
+#      accessKey: AKIAZIQAGYTDQYBHKFFL
+#      secretKey: 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
+      accessKey: ENC(OXCHKRHAXQtGK8JnCwSwe0fLM/2bofjCpaO5kuY/rGQ=)
+      secretKey: ENC(rGEVLY+Wm0GcHvOK2fcQu8KuWi79R7KIdA2vh7JLqzh2K5zWOwwiu86l2tFPdKewqyefTqoGt/0=)
+    #      accessKey: ENC(/c1NsflZGGmDO0e9T75hIhYp1XNont3PTQV9km6MCQ8=)
+    #      secretKey: ENC(oFmpszB9QZF7Wlw9hk/YweYiRbPJTUrIxMBoHD8t2BJQdVnVzQTzVlzi7wFTqs+BJt5LBvgNWWM=)
+    s3:
+      #      bucket: ENC(BShKHxh34lIEyMdbukKrIDIGBbp6Huch)
+      bucket: taeks3bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
 
 Logging.level:
   org.apache.coyote.http11: debug #http 요청 메시지 보기
