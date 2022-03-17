@@ -4,16 +4,18 @@ import com.example.hanghaefinal.model.Post;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class BookmarkResponseDto {
-    private final Long id;
-    private final Post post;
-    private final Long userId;
+    private final Long bookmarkId;
+    private List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtos;
+    private Long bookmarkCnt;
 
-    public BookmarkResponseDto(Long id, Post post, Long userId){
-        this.id = id;
-        this.post = post;
-        this.userId = userId;
+    public BookmarkResponseDto(Long bookmarkId, List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtos, Long bookmarkCnt){
+        this.bookmarkId = bookmarkId;
+        this.bookmarkClickUserKeyResDtos = bookmarkClickUserKeyResDtos;
+        this.bookmarkCnt = bookmarkCnt;
     }
 }
