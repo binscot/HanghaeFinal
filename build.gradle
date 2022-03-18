@@ -68,6 +68,10 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.0'
     implementation group: 'org.json', name: 'json', version: '20160810'
 
+
+    //jasypt
+    implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.3'
+
 }
 
 tasks.named('test') {

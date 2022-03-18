@@ -1,6 +1,8 @@
 package com.example.hanghaefinal.model;
 
 
+import com.example.hanghaefinal.dto.requestDto.BookmarkRequestDto;
+import com.example.hanghaefinal.dto.requestDto.PostLikesRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,5 +32,11 @@ public class Bookmark {
     public Bookmark(User user, Post post) {
         this.user = user;
         this.post = post;
+    }
+
+    public Bookmark(BookmarkRequestDto bookmarkRequestDto) {
+
+        this.user = bookmarkRequestDto.getUser();
+        this.post = bookmarkRequestDto.getPost();
     }
 }
