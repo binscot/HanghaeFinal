@@ -628,7 +628,7 @@ public class PostService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
-        post.updatePostWriting(false, null);
+        post.updatePostWriting(false, null,null);
     }
 
     public Boolean cancelIsWriting(Long postId) {
@@ -636,7 +636,7 @@ public class PostService {
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
         if (post.isWriting()){
-            post.updatePostWriting(false, null);
+            post.updatePostWriting(false, null,null);
         }
         return post.isWriting();
     }

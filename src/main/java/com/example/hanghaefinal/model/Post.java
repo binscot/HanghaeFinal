@@ -66,8 +66,9 @@ public class Post extends Timestamped {
         this.paragraphStartTime = String.valueOf(time);
     }
 
-    public void updatePostWriting(boolean bool, String writer) {
+    public void updatePostWriting(boolean bool, String writer,String paragraphStartTime) {
         this.writing = bool;
         this.writer = writer;
+        this.paragraphStartTime = paragraphStartTime;
     }
 }

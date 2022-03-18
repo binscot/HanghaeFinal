@@ -1,12 +1,8 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.BookmarkRequestDto;
-import com.example.hanghaefinal.dto.responseDto.BookmarkCheckResponseDto;
-import com.example.hanghaefinal.dto.responseDto.BookmarkInfoResponseDto;
-import com.example.hanghaefinal.model.Badge;
-import com.example.hanghaefinal.model.Bookmark;
-import com.example.hanghaefinal.model.Post;
-import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.BadgeRepository;
 import com.example.hanghaefinal.repository.BookmarkRepository;
 import com.example.hanghaefinal.repository.PostRepository;
@@ -32,29 +28,29 @@ public class BookmarkService {
 
 
     //북마크조회
-    public List<BookmarkInfoResponseDto> getBookmark(User user) {
+    public List<BookmarkGetResponseDto> getBookmark(User user) {
 
         List<Bookmark> bookmarkList = bookmarkRepository.findAll();
-        List<BookmarkInfoResponseDto> bookmarkInfoResponseDtos =new ArrayList<>();
+        List<BookmarkGetResponseDto> bookmarkGetResponseDtos =new ArrayList<>();
 
         for(Bookmark bookmark : bookmarkList){
             if(bookmark.getUser().getId().equals(user.getId())){
-                BookmarkInfoResponseDto bookmarkInfoResponseDto = new BookmarkInfoResponseDto(
+                BookmarkGetResponseDto bookmarkGetResponseDto = new BookmarkGetResponseDto(
                         bookmark.getId(),
-                        bookmark.getPost().getId(),
+                        bookmark.getPost(),
                         bookmark.getUser().getId()
                 );
 
-                bookmarkInfoResponseDtos.add(bookmarkInfoResponseDto);
+                bookmarkGetResponseDtos.add(bookmarkGetResponseDto);
             }
         }
-        return bookmarkInfoResponseDtos;
+        return bookmarkGetResponseDtos;
     }
 
 
     //북마크생성
     @Transactional
-    public BookmarkCheckResponseDto addBookmark(@PathVariable Long postId, Long userId) {
+    public BookmarkResponseDto addBookmark(@PathVariable Long postId, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("유저정보가 없습니다.")
@@ -73,6 +69,12 @@ public class BookmarkService {
             bookmarkRepository.deleteById(bookmarkCheck.getId());
         }
 
+        List<Bookmark> bookmark = bookmarkRepository.findAllByPostId(postId);
+        List<BookmarkClickUserKeyResDto> bookmarkClickerUserKeyResponseDtos = new ArrayList<>();
+        for (Bookmark bookmarkTemp : bookmark) {
+            bookmarkClickerUserKeyResponseDtos.add(new BookmarkClickUserKeyResDto(bookmarkTemp));
+        }
+
         //북마크 뱃지 로직 구현
         User postUser = post.getUser();
         List<Bookmark> bookmarkList = bookmarkRepository.findAll();
@@ -89,22 +91,22 @@ public class BookmarkService {
             badgeRepository.save(badge);
         }
 
-        return new BookmarkCheckResponseDto(postId);
+        return  new BookmarkResponseDto(postId, bookmarkClickerUserKeyResponseDtos, bookmarkRepository.countByPost(post));
     }
 
 
-    //북마크 삭제
-    public boolean deleteBookmark(@PathVariable Long postId, User user) {
-
-        List<Bookmark> bookmarksList= bookmarkRepository.findAllByPostId(postId);
-        Long userId = user.getId();
-        for(Bookmark bookmark:bookmarksList){
-            if(bookmark.getUser().getId().equals(userId)){
-                bookmarkRepository.deleteById(bookmark.getId());
-            }
-        }
-        return false;
-    }
+//    //북마크 삭제
+//    public boolean deleteBookmark(@PathVariable Long postId, User user) {
+//
+//        List<Bookmark> bookmarksList= bookmarkRepository.findAllByPostId(postId);
+//        Long userId = user.getId();
+//        for(Bookmark bookmark:bookmarksList){
+//            if(bookmark.getUser().getId().equals(userId)){
+//                bookmarkRepository.deleteById(bookmark.getId());
+//            }
+//        }
+//        return false;
+//    }
 
 
 }
