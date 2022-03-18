@@ -1,32 +1,12 @@
-#cloud:
-#  aws:
-#    credentials:
-##      accessKey: ${{ secrets.S3_STORAGE_ACCESSKEY }}
-##      secretKey: ${{ secrets.S3_STORAGE_PW }}
-#      accessKey: ENC(Yl9YWJIZXWBOsf3pn1o8VixDMr57uThE/0rtb92AV1o=)
-#      secretKey: ENC(FKJnB92tB+ESDG1JwZZuldj+EjrkOAmVhUen11YwFlxSDkSTdCUqVc+/N/dfNGAK/Ou3eQTS/HQ=)
-#
-#    s3:
-#      bucket: taeks3bucket
-#    region:
-#      static: ap-northeast-2
-#    stack:
-#      auto: false
+cloud:
+  aws:
+    credentials:
+      accessKey: AKIA4ES5GHOF237WUCHF
+      secretKey: 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
 
-
-#cloud:
-#  aws:
-#    credentials:
-#      #      accessKey: ${{ secrets.S3_STORAGE_ACCESSKEY }}
-#      #      secretKey: ${{ secrets.S3_STORAGE_PW }}
-#      accessKey: ENC(OXCHKRHAXQtGK8JnCwSwe0fLM/2bofjCpaO5kuY/rGQ=)
-#      secretKey: ENC(rGEVLY+Wm0GcHvOK2fcQu8KuWi79R7KIdA2vh7JLqzh2K5zWOwwiu86l2tFPdKewqyefTqoGt/0=)
-##      accessKey: ENC(/c1NsflZGGmDO0e9T75hIhYp1XNont3PTQV9km6MCQ8=)
-##      secretKey: ENC(oFmpszB9QZF7Wlw9hk/YweYiRbPJTUrIxMBoHD8t2BJQdVnVzQTzVlzi7wFTqs+BJt5LBvgNWWM=)
-#    s3:
-##      bucket: ENC(BShKHxh34lIEyMdbukKrIDIGBbp6Huch)
-#      bucket: taeks3bucket
-#    region:
-#      static: ap-northeast-2
-#    stack:
-#      auto: false
+    s3:
+      bucket: binscot-bucket
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
