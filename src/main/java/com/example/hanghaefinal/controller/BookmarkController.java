@@ -1,10 +1,9 @@
 package com.example.hanghaefinal.controller;
 
-import com.example.hanghaefinal.dto.responseDto.BookmarkCheckResponseDto;
-import com.example.hanghaefinal.dto.responseDto.BookmarkInfoResponseDto;
+
+import com.example.hanghaefinal.dto.responseDto.BookmarkGetResponseDto;
 import com.example.hanghaefinal.dto.responseDto.BookmarkResponseDto;
 import com.example.hanghaefinal.model.User;
-import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +20,13 @@ public class BookmarkController {
 
     //북마크 조회
     @GetMapping("/bookmark")
-    public List<BookmarkResponseDto> getBookmark(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public List<BookmarkGetResponseDto> getBookmark(@AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
         return bookmarkService.getBookmark(user);
     }
 
     @PostMapping("/bookmark/{postId}")
-    public BookmarkCheckResponseDto addBookmarks(@PathVariable Long postId,
+    public BookmarkResponseDto addBookmarks(@PathVariable Long postId,
                                                  @AuthenticationPrincipal UserDetailsImpl userDetails){
         return bookmarkService.addBookmark(postId, userDetails.getUser().getId());
     }

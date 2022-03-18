@@ -1,13 +1,8 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.BookmarkRequestDto;
-import com.example.hanghaefinal.dto.responseDto.BookmarkCheckResponseDto;
-import com.example.hanghaefinal.dto.responseDto.BookmarkInfoResponseDto;
-import com.example.hanghaefinal.dto.responseDto.BookmarkResponseDto;
-import com.example.hanghaefinal.model.Badge;
-import com.example.hanghaefinal.model.Bookmark;
-import com.example.hanghaefinal.model.Post;
-import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.BadgeRepository;
 import com.example.hanghaefinal.repository.BookmarkRepository;
 import com.example.hanghaefinal.repository.PostRepository;
@@ -33,29 +28,29 @@ public class BookmarkService {
 
 
     //북마크조회
-    public List<BookmarkResponseDto> getBookmark(User user) {
+    public List<BookmarkGetResponseDto> getBookmark(User user) {
 
         List<Bookmark> bookmarkList = bookmarkRepository.findAll();
-        List<BookmarkResponseDto> bookmarkResponseDtos =new ArrayList<>();
+        List<BookmarkGetResponseDto> bookmarkGetResponseDtos =new ArrayList<>();
 
         for(Bookmark bookmark : bookmarkList){
             if(bookmark.getUser().getId().equals(user.getId())){
-                BookmarkResponseDto bookmarkResponseDto = new BookmarkResponseDto(
+                BookmarkGetResponseDto bookmarkGetResponseDto = new BookmarkGetResponseDto(
                         bookmark.getId(),
                         bookmark.getPost(),
                         bookmark.getUser().getId()
                 );
 
-                bookmarkResponseDtos.add(bookmarkResponseDto);
+                bookmarkGetResponseDtos.add(bookmarkGetResponseDto);
             }
         }
-        return bookmarkResponseDtos;
+        return bookmarkGetResponseDtos;
     }
 
 
     //북마크생성
     @Transactional
-    public BookmarkCheckResponseDto addBookmark(@PathVariable Long postId, Long userId) {
+    public BookmarkResponseDto addBookmark(@PathVariable Long postId, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("유저정보가 없습니다.")
@@ -74,6 +69,12 @@ public class BookmarkService {
             bookmarkRepository.deleteById(bookmarkCheck.getId());
         }
 
+        List<Bookmark> bookmark = bookmarkRepository.findAllByPostId(postId);
+        List<BookmarkClickUserKeyResDto> bookmarkClickerUserKeyResponseDtos = new ArrayList<>();
+        for (Bookmark bookmarkTemp : bookmark) {
+            bookmarkClickerUserKeyResponseDtos.add(new BookmarkClickUserKeyResDto(bookmarkTemp));
+        }
+
         //북마크 뱃지 로직 구현
         User postUser = post.getUser();
         List<Bookmark> bookmarkList = bookmarkRepository.findAll();
@@ -90,7 +91,7 @@ public class BookmarkService {
             badgeRepository.save(badge);
         }
 
-        return new BookmarkCheckResponseDto(postId);
+        return  new BookmarkResponseDto(postId, bookmarkClickerUserKeyResponseDtos, bookmarkRepository.countByPost(post));
     }
 
 
