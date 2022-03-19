@@ -81,7 +81,7 @@ public class ParagraphController {
 
         //ChatMessage chatMessage = chatMessageService.save(chatMessageRequestDto);
 
-        // 웹소켓 통신으로 채팅방 토픽 구독자들에게 메시지 보내기
+        // 웹소켓 통신으로 게시글 안에 있는 사람들한테 response데이터 보내기
         if(paragraphReqDto.getType().equals(Paragraph.MessageType.START)){
             log.info("---------------- START START START ---------");
             paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
