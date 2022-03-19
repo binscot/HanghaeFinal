@@ -1,6 +1,5 @@
 package com.example.hanghaefinal.dto.responseDto;
 
-import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import lombok.Getter;
 import lombok.Setter;
