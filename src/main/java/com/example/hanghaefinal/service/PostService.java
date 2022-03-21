@@ -156,6 +156,7 @@ public class PostService {
             postUsername = post.getUser().getUsername();
         }
 
+        log.info("---------------------- 222222aaaa ----------------------");
         // 알람 호출
         alarmService.generateCompletePostAlarm(user, post);
 

@@ -22,9 +22,7 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -98,113 +96,110 @@ public class AlarmService {
     }
 
     // 1. 내가 참여한 소설에 새로운 문단이 달렸을 경우
+    // paragraphOwner 빼고 알림을 보내줌
     public void generateNewParagraphAlarm(User paragraphOwner, Post post) {
-
+        log.info("---------------------- 111111bbbb ----------------------");
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
-
         List<Long> userIdList = new ArrayList<>();
 
-        for (Paragraph paragraph:paragraphList){
-            if( !userIdList.contains(paragraph.getUser().getId()) ){
-                userIdList.add(paragraph.getUser().getId());
-                for(Long userid : userIdList){
-                    log.info("------------------- 111userid : " + userid);
-                    if (!Objects.equals(userid, paragraphOwner.getId())){
-                        Alarm alarm = Alarm.builder()
-                                .userId(userid)
-                                .type(AlarmType.NEWPARAGRAPH)
-                                .postId(post.getId())
-                                .isRead(false)
-                                .alarmMessage("[알림] ["
-                                        + post.getTitle()
-                                        + "] 소설에 문단이 등록되었습니다. 확인해보세요! 11aa")
-                                .build();
-
-                        log.info("--------------- 터짐11 ---------------");
-                        // redis로 알림메시지 pub, alarmRepository에 저장
-                        // 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외 ?
-                        alarmRepository.save(alarm);
-
-                        /* 알림 메시지를 보낼 DTO 생성 */
-                        AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
-                                .alarmId(alarm.getId().toString())
-                                .type(alarm.getType().toString())
-                                .message("[알림] ["
-                                        + post.getTitle()
-                                        + "] 소설에 문단이 등록되었습니다. 확인해보세요! 11bb")
-                                .alarmTargetId(userid.toString())
-                                .isRead(alarm.getIsRead())
-                                .postId(alarm.getPostId().toString())
-                                .build();
-
-                        log.info("--------------- 터짐22 ---------------");
-
-                        redisTemplate.convertAndSend(channelTopic.getTopic(),
-                                alarmResponseDto);
-
-                        log.info("--------------- 터짐33 ---------------");
-                    }
-                }
-            }
-        }
-    }
-
-    // 2. 미완성 -> 완성 됐을 때 알림         LastParagraphOwner 이름이 이상한데..
-    public void generateCompletePostAlarm(User LastParagraphOwner, Post post) {
-
-        List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
-
-        List<Long> userIdList = new ArrayList<>();
-
-        for (Paragraph paragraph:paragraphList){
-
+        for(Paragraph paragraph : paragraphList){
             if( !userIdList.contains(paragraph.getUser().getId()) ) {
                 userIdList.add(paragraph.getUser().getId());
-                for (Long userid : userIdList) {
-                    log.info("------------------- 222userid : " + userid);
-
-                    if (!Objects.equals(paragraph.getUser().getId(), LastParagraphOwner.getId())){
-                        Alarm alarm = Alarm.builder()
-                                .userId(paragraph.getUser().getId())
-                                .type(AlarmType.COMPLETEPOST)
-                                .postId(post.getId())
-                                .isRead(false)
-                                .alarmMessage("[알림] ["
-                                        + post.getTitle()
-                                        + "] 소설이 완성되었습니다. 확인해보세요! 22aa")
-                                .build();
-
-                        alarmRepository.save(alarm);
-
-                        /* 알림 메시지를 보낼 DTO 생성 */
-                        AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
-                                .alarmId(alarm.getId().toString())
-                                .type(alarm.getType().toString())
-                                .message("[알림] ["
-                                        + post.getTitle()
-                                        + "] 소설이 완성되었습니다.. 확인해보세요! 22bb")
-                                .alarmTargetId(paragraph.getUser().getId().toString())
-                                .isRead(alarm.getIsRead())
-                                .postId(alarm.getPostId().toString())
-                                .build();
-                        /*-
-                         * redis로 알림메시지 pub, alarmRepository에 저장
-                         * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
-                         */
-                        redisTemplate.convertAndSend(channelTopic.getTopic(),
-                                alarmResponseDto);
-                    }
-                }
             }
         }
+
+        log.info("------------------- userIdList의 SIZE : " + userIdList.size());
+        for(Long userid : userIdList){
+            if (!Objects.equals(userid, paragraphOwner.getId())){ // 문단을 작성한 사람과 다르면
+                Alarm alarm = Alarm.builder()
+                        .userId(userid)
+                        .type(AlarmType.NEWPARAGRAPH)
+                        .postId(post.getId())
+                        .isRead(false)
+                        .alarmMessage("[알림] ["
+                                + post.getTitle()
+                                + "] 소설에 문단이 등록되었습니다. 확인해보세요! 11aa")
+                        .build();
+
+                //log.info("--------------- 터짐11 ---------------");
+                // redis로 알림메시지 pub, alarmRepository에 저장
+                // 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외 ?
+                alarmRepository.save(alarm);
+
+                /* 알림 메시지를 보낼 DTO 생성 */
+                AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
+                        .alarmId(alarm.getId().toString())
+                        .type(alarm.getType().toString())
+                        .message("[알림] ["
+                                + post.getTitle()
+                                + "] 소설에 문단이 등록되었습니다. 확인해보세요! 11bb")
+                        .alarmTargetId(userid.toString())
+                        .isRead(alarm.getIsRead())
+                        .postId(alarm.getPostId().toString())
+                        .build();
+
+                redisTemplate.convertAndSend(channelTopic.getTopic(),
+                        alarmResponseDto);
+            }
+        }
+
     }
 
-    // 3. 내가 작성한 문단이 좋아요를 받았을 때 알림 - 알림이 하나 가는데 취소할 때도 간다.
-    public void generateParagraphLikestAlarm(User ParagraphOwner, Post post ) {
+    // 2. 미완성 -> 완성 됐을 때 알림         LastParagraphOwner 만 빼고 알림을 보내줌
+    public void generateCompletePostAlarm(User LastParagraphOwner, Post post) {
+        log.info("---------------------- 222222bbbb ----------------------");
+        List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
+        List<Long> userIdList = new ArrayList<>();
 
+        for(Paragraph paragraph : paragraphList){
+            if( !userIdList.contains(paragraph.getUser().getId()) ) {
+                userIdList.add(paragraph.getUser().getId());
+            }
+        }
+
+        log.info("------------------- userIdList의 SIZE : " + userIdList.size());
+        for(Long userid : userIdList){
+            if (!Objects.equals(userid, LastParagraphOwner.getId())){
+                Alarm alarm = Alarm.builder()
+                        .userId(userid)
+                        .type(AlarmType.COMPLETEPOST)
+                        .postId(post.getId())
+                        .isRead(false)
+                        .alarmMessage("[알림] ["
+                                + post.getTitle()
+                                + "] 소설이 완성되었습니다. 확인해보세요! 22aa")
+                        .build();
+
+                alarmRepository.save(alarm);
+
+                /* 알림 메시지를 보낼 DTO 생성 */
+                AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
+                        .alarmId(alarm.getId().toString())
+                        .type(alarm.getType().toString())
+                        .message("[알림] ["
+                                + post.getTitle()
+                                + "] 소설이 완성되었습니다.. 확인해보세요! 22bb")
+                        .alarmTargetId(userid.toString())
+                        .isRead(alarm.getIsRead())
+                        .postId(alarm.getPostId().toString())
+                        .build();
+                /*-
+                 * redis로 알림메시지 pub, alarmRepository에 저장
+                 * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
+                 */
+                redisTemplate.convertAndSend(channelTopic.getTopic(),
+                        alarmResponseDto);
+            }
+        }
+
+    }
+
+    // 3. 내가 작성한 문단이 좋아요를 받았을 때 알림
+    public void generateParagraphLikestAlarm(User ParagraphOwner, Post post ) {
+        log.info("---------------------- 333333bbbb ----------------------");
         Alarm alarm = Alarm.builder()
                 .userId(ParagraphOwner.getId())
-                .type(AlarmType.COMPLETEPOST)
+                .type(AlarmType.LIKEPARAGRAPH)
                 .postId(post.getId())
                 .isRead(false)
                 .alarmMessage("[알림] ["
@@ -237,51 +232,53 @@ public class AlarmService {
 
     // 4. 내가 참여한 게시글이 좋아요를 받았을 때
     public void generatePostLikesAlarm(Post post) {
-
+        log.info("---------------------- 444444bbbb ----------------------");
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
-        //List<Paragraph> paragraphList2 = paragraphRepository.
-
         List<Long> userIdList = new ArrayList<>();
 
-        for (Paragraph paragraph:paragraphList){
-            if( !userIdList.contains(paragraph.getUser().getId()) ){
+        for(Paragraph paragraph : paragraphList){
+            if( !userIdList.contains(paragraph.getUser().getId()) ) {
                 userIdList.add(paragraph.getUser().getId());
-                for(Long userid : userIdList){
-                    log.info("------------------- 444userid : " + userid);
-                    Alarm alarm = Alarm.builder()
-                            .userId(userid)
-                            .type(AlarmType.LIKEPOST)
-                            .postId(post.getId())
-                            .isRead(false)
-                            .alarmMessage("[알림] ["
-                                    + post.getTitle()
-                                    + "]에 좋아요가 등록되었습니다. 44aa")
-                            .build();
-
-                    log.info("--------------- alarmRepository.save(alarm); 직전");
-                    // 조건문 없으니 밑에서 alarm.getId()를 찾기위해선 여기서 먼저 저장해야한다.
-                    alarmRepository.save(alarm);
-
-                    /* 알림 메시지를 보낼 DTO 생성 */
-                    AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
-                            .alarmId(alarm.getId().toString())
-                            .type(alarm.getType().toString())
-                            .message("[알림] ["
-                                    + post.getTitle()
-                                    + "]에 좋아요가 등록되었습니다! 44bb")
-                            .alarmTargetId(userid.toString())
-                            .isRead(alarm.getIsRead())
-                            .postId(alarm.getPostId().toString())
-                            .build();
-                    /*-
-                     * redis로 알림메시지 pub, alarmRepository에 저장
-                     * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
-                     */
-                    redisTemplate.convertAndSend(channelTopic.getTopic(),
-                            alarmResponseDto);
-                }
             }
         }
+
+        // 게시글에 참여한 모든 유저에게 알림을 보낸다
+        log.info("------------------- userIdList의 SIZE : " + userIdList.size());
+        for(Long userid : userIdList){
+            log.info("------------------- 444userid : " + userid);
+            Alarm alarm = Alarm.builder()
+                    .userId(userid)
+                    .type(AlarmType.LIKEPOST)
+                    .postId(post.getId())
+                    .isRead(false)
+                    .alarmMessage("[알림] ["
+                            + post.getTitle()
+                            + "]에 좋아요가 등록되었습니다. 44aa")
+                    .build();
+
+            log.info("--------------- alarmRepository.save(alarm); 직전");
+            // 조건문 없으니 밑에서 alarm.getId()를 찾기위해선 여기서 먼저 저장해야한다.
+            alarmRepository.save(alarm);
+
+            /* 알림 메시지를 보낼 DTO 생성 */
+            AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
+                    .alarmId(alarm.getId().toString())
+                    .type(alarm.getType().toString())
+                    .message("[알림] ["
+                            + post.getTitle()
+                            + "]에 좋아요가 등록되었습니다! 44bb")
+                    .alarmTargetId(userid.toString())
+                    .isRead(alarm.getIsRead())
+                    .postId(alarm.getPostId().toString())
+                    .build();
+            /*-
+             * redis로 알림메시지 pub, alarmRepository에 저장
+             * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
+             */
+            redisTemplate.convertAndSend(channelTopic.getTopic(),
+                    alarmResponseDto);
+        }
+
     }
 
     /* 알림 읽었을 경우 체크 */
@@ -306,7 +303,7 @@ public class AlarmService {
                 .introduction(user.getIntroduction())
                 .build();*/
 
-        //user.updateUserAlaram(true);
+        user.updateUserAlaram(true);
 
             /* 내가 참여한 게시글에 새로운 문단이 달렸을 때 */
         if (alarm.getType().equals(AlarmType.NEWPARAGRAPH)) {

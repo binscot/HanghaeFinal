@@ -10,12 +10,14 @@ import com.example.hanghaefinal.repository.PostLikesRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PostLikesService {
@@ -45,6 +47,8 @@ public class PostLikesService {
             postLikesRepository.save(postLikes);
 
             // 내가 참여한 게시글에 좋아요를 받았을 때
+
+            log.info("---------------------- 444444aaaa ----------------------");
             alarmService.generatePostLikesAlarm(post);
         } else {
             postLikesRepository.deleteById(findLike.getId());

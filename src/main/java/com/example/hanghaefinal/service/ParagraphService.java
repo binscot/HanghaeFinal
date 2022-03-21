@@ -50,6 +50,7 @@ public class ParagraphService {
             Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
             paragraphRepository.save(paragraph);
 
+            log.info("---------------------- 111111aaaa ----------------------");
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
         }
@@ -126,6 +127,7 @@ public class ParagraphService {
             ParagraphLikes paragraphLikes = new ParagraphLikes(paragraphLikesReqDto);
             paragraphLikesRepository.save(paragraphLikes);
 
+            log.info("---------------------- 333333aaaa ----------------------");
             // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
             alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
         } else {
