@@ -29,7 +29,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // 여러가지 Endpoint 설정
         registry.addEndpoint("/ws-stomp", "/ws-alarm")  // 웹소켓 연결 주소, 바로 Ski프렌드 가져왔네
-                .setAllowedOriginPatterns("http://localhost:3000")  // 이거를 프론트의 S3로 하면되는데 일단 지금은 모두 열어두자
+//                .setAllowedOriginPatterns("http://localhost:3000")  // 이거를 프론트의 S3로 하면되는데 일단 지금은 모두 열어두자
+                .setAllowedOriginPatterns("*")
                 .withSockJS();  // sock.js를 통하여 낮은 버전의 브라우저에서도 websocket 이 동작할수 있게 한다
     }
 
