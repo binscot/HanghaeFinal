@@ -85,7 +85,7 @@ public class ParagraphService {
         }
     }
 
-    // 채팅방에서 메세지 발송
+    // 게시글에 있는 사람들에게 response데이터 보내기
     public void paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
         User user = userRepository.findById(paragraphReqDto.getUserId()).orElseThrow(
                 ()-> new IllegalArgumentException("로그인한 사용자가 존재하지 않습니다.")
@@ -101,6 +101,7 @@ public class ParagraphService {
         log.info("-------------- paragraphAccessResDto :  " + paragraphAccessResDto);
         log.info("-------------------- userInfoResDto : " + userInfoResDto);
 
+        // convertAndSend 할 때 redis 인메모리에 들어간다 (disconnect가 되면 없어짐)
         redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
     }
 

@@ -5,6 +5,8 @@ import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -33,12 +35,13 @@ public class CategoryService {
 
     }
 
-    public List<PostResponseDto> showCategoryPosts(CategoryRequestDto categoryRequestDto) {
+    public List<PostResponseDto> showCategoryPosts(CategoryRequestDto categoryRequestDto, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         String categoryName = categoryRequestDto.getCategory();
 
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         List<Post> posts = new ArrayList<>();
-        List<Category> categories = categoryRepository.findByCategoryNameOrderByModifiedAtDesc(categoryName);
+        List<Category> categories = categoryRepository.findByCategoryNameOrderByModifiedAtDesc(categoryName, pageable);
 
         for (Category category: categories){
             Post post = category.getPost();
