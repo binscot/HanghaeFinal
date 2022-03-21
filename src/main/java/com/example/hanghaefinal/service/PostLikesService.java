@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.PostLikesRequestDto;
+import com.example.hanghaefinal.dto.responseDto.PostLikeClickersResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostLikesResponseDto;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.PostLikes;

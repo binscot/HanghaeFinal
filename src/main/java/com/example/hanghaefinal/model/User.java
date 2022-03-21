@@ -30,6 +30,9 @@ public class User extends Timestamped{
     @Column(nullable = true)
     private String nickName;
 
+//    @Column(nullable = true)
+//    private boolean isAlarmRead;
+
     @Column(nullable = true)
     private String userProfileImage;
 
@@ -84,6 +87,10 @@ public class User extends Timestamped{
         this.nickName=nickName;
         this.introduction=introduction;
     }
+
+    /*public void updateUserAlaram(boolean bool){
+        this.isAlarmRead = bool;
+    }*/
 
 
 }

@@ -2,10 +2,7 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphResDto;
-import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.ParagraphLikes;
 import com.example.hanghaefinal.model.Post;
@@ -53,6 +50,7 @@ public class ParagraphService {
             Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
             paragraphRepository.save(paragraph);
 
+            // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
         }
     }
@@ -127,12 +125,12 @@ public class ParagraphService {
             ParagraphLikesReqDto paragraphLikesReqDto = new ParagraphLikesReqDto(user, paragraph);
             ParagraphLikes paragraphLikes = new ParagraphLikes(paragraphLikesReqDto);
             paragraphLikesRepository.save(paragraphLikes);
+
+            // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
+            alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
         }
-
-        // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
-        alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
 
         List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphId);
         List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();

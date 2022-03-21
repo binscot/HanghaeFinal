@@ -12,7 +12,7 @@ import lombok.*;
 public class AlarmResponseDto {
 
     private String alarmId;
-    private String type;
+    private String type;    // NEWPARAGRAPH, COMPLETEPOST, LIKEPARAGRAPH, LIKEPOST
     private String message;
     private Boolean isRead;
 //    private String chatRoomId;

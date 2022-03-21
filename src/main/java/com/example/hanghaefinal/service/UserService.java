@@ -214,6 +214,7 @@ public class UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getNickName(),
+                //user.isAlarmRead(),
                 user.getUserProfileImage(),
                 user.getIntroduction(),
                 bookmarkInfoResponseDtoList,
