@@ -34,7 +34,7 @@ public class Post extends Timestamped {
     @Column(name = "complete")  // nullable 고민하자
     private boolean complete;
 
-    @Column(name = "writing")
+    @Column(name = "writing")   // 누군가 문단 시작 버튼을 눌렀는지 여부
     private boolean writing;
 
     @Column(name = "writer") // 믄딘 시작 버튼을 누른 사람의 nickname
