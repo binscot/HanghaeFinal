@@ -44,4 +44,13 @@ public class UserInfoResponseDto {
         this.userProfileImage=userProfileImage;
         this.introduction=introduction;
     }
+
+    public UserInfoResponseDto(Long id, String username, String nickName, String introduction) {
+        this.userKey=id;
+        this.username=username;
+        this.nickname=nickName;
+        this.introduction=introduction;
+    }
+
+
 }

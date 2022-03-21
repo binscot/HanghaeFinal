@@ -1,13 +1,12 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
-import com.example.hanghaefinal.dto.responseDto.CategoryResponseDto;
-import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphResDto;
-import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
+import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -22,6 +21,8 @@ public class CategoryService {
     private final ParagraphRepository paragraphRepository;
     private final CommentRepository commentRepository;
     private final CommentLikesRepository commentLikesRepository;
+    private final ParagraphLikesRepository paragraphLikesRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     public List<CategoryResponseDto> showCategories() {
         List<Category> categories = categoryRepository.findAll();
@@ -34,12 +35,13 @@ public class CategoryService {
 
     }
 
-    public List<PostResponseDto> showCategoryPosts(CategoryRequestDto categoryRequestDto) {
+    public List<PostResponseDto> showCategoryPosts(CategoryRequestDto categoryRequestDto, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
         String categoryName = categoryRequestDto.getCategory();
 
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         List<Post> posts = new ArrayList<>();
-        List<Category> categories = categoryRepository.findByCategoryNameOrderByModifiedAtDesc(categoryName);
+        List<Category> categories = categoryRepository.findByCategoryNameOrderByModifiedAtDesc(categoryName, pageable);
 
         for (Category category: categories){
             Post post = category.getPost();
@@ -50,13 +52,36 @@ public class CategoryService {
         int postLikeCnt;
         for (Post post: posts ) {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList = new ArrayList<>();
+            for (PostLikes postLikesTemp : postLikesList) {
+                postLikeClickersResponseDtoList.add(new PostLikeClickersResponseDto(postLikesTemp));
+            }
+            //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
+
+            List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
+            List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+            for (Bookmark bookmark:bookmarkList){
+                bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+            }
+
 
             List<Paragraph> paragraphList = paragraphRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
-                paragraphResDtoList.add(new ParagraphResDto(paragraph));
+                Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+                Long paragraphKey = paragraph.getId();
+
+                List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+                for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                    // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                    paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+                }
+
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
             }
 
             List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -65,7 +90,14 @@ public class CategoryService {
             // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
-                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+
+                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+                for(CommentLikes commentLikesTemp : commentLikesList){
+                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+                }
+
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
             }
 
             List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -81,8 +113,8 @@ public class CategoryService {
                 postUsername = post.getUser().getUsername();
             }
 
-            //PostResponseDto postResponseDto = new PostResponseDto(post);
-            PostResponseDto postResponseDto = new PostResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                    paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;

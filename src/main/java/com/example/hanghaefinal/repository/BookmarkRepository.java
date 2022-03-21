@@ -6,11 +6,16 @@ import com.example.hanghaefinal.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
-        List<Bookmark> findAllByPostId(Long postId);
+    List<Bookmark> findAllByPostId(Long postId);
 
     List<Bookmark> findAllByUser(User user);
 
     void deleteAllByUser(User user);
+
+    Optional<Bookmark> findByUserAndPost(User user, Post post);
+
+    Long countByPost(Post post);
 }

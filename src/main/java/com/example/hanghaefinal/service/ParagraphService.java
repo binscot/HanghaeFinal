@@ -22,6 +22,8 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -37,22 +39,22 @@ public class ParagraphService {
     private final AlarmService alarmService;
 
     @Transactional
-    public Paragraph saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
+    public void saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
 
-        // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
-        //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
-        Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
+        int limit = post.getLimitCnt();
+        int paragraphListSize = paragraphRepository.findAllByPostId(postId).size();
 
-        paragraph = paragraphRepository.save(paragraph);
+        if (limit >= paragraphListSize){
+            // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
+            //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
+            Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
+            paragraphRepository.save(paragraph);
 
-        // 알림 발생,  문단을 작성한 유저 = user
-        alarmService.generateNewParagraphAlarm(user, post);
-
-        return paragraph;
-        //return paragraphRepository.save(paragraph);
+            alarmService.generateNewParagraphAlarm(user, post);
+        }
     }
 
     // destination 정보에서 postId 추출
@@ -70,12 +72,6 @@ public class ParagraphService {
 
     // 채팅방 입출입 시 메시지 발송
     public void accessChatMessage(ParagraphReqDto paragraphReqDto) {
-        // 1. START한 사람 이 있으면
-        // START한 사람의 닉네임을 보내주면 되고
-        // START한 사람이 없으면 보내줄게 없음
-        //
-        // 2. 프론트에서 START 한사람의 닉네임을(A) 알고 있긴한데..
-        // B라는 사람이 게시글에 들어가면 A의 닉네임과 달라서 블록을 해주던지 하면 될 듯
 
         log.info("채팅방 출입 메세지 발송 시 roomID = {}", paragraphReqDto.getPostId());
         User user = userRepository.findById(paragraphReqDto.getUserId())
@@ -95,9 +91,9 @@ public class ParagraphService {
         }
     }
 
-    // 채팅방에서 메세지 발송
-    public void paragraphStartAndComplete(Paragraph paragraph, ParagraphReqDto paragraphReqDto, Long postId) {
-        User user = userRepository.findById(paragraph.getUser().getId()).orElseThrow(
+    // 게시글에 있는 사람들에게 response데이터 보내기
+    public void paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
+        User user = userRepository.findById(paragraphReqDto.getUserId()).orElseThrow(
                 ()-> new IllegalArgumentException("로그인한 사용자가 존재하지 않습니다.")
         );
 
@@ -111,6 +107,7 @@ public class ParagraphService {
         log.info("-------------- paragraphAccessResDto :  " + paragraphAccessResDto);
         log.info("-------------------- userInfoResDto : " + userInfoResDto);
 
+        // convertAndSend 할 때 redis 인메모리에 들어간다 (disconnect가 되면 없어짐)
         redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
     }
 
@@ -134,11 +131,16 @@ public class ParagraphService {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
         }
 
-
         // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
         alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
 
-        return new ParagraphLikesResDto(paragraphId, paragraphLikesRepository.countByParagraph(paragraph));
+        List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphId);
+        List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+        for(ParagraphLikes paragraphLikeTemp : paragraphLikes){
+            paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikeTemp));
+        }
+
+        return new ParagraphLikesResDto(paragraphId, paragraphLikesClickUserKeyResDtoList, paragraphLikesRepository.countByParagraph(paragraph));
     }
 
 }

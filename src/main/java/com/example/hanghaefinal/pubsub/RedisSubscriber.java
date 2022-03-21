@@ -53,6 +53,7 @@ public class RedisSubscriber {
             // '문단 시작' 버튼 누를 시 responseDto 보내기
             else if(publishMessage.startsWith("START", 9)){
                 log.info("------------------------ RedisSubscriber START ----------- ");
+
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
                 messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             } else if (publishMessage.contains("[알림]")){
