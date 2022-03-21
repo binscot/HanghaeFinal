@@ -1,0 +1,40 @@
+spring:
+  redis:
+    port: 6379
+    host: 52.78.51.198
+    password: 1111
+  datasource:
+    url: jdbc:mysql://springboot-db.craud3vucxol.ap-northeast-2.rds.amazonaws.com:3306/wewrite
+    username: binscot
+    password: 11111111
+  jpa:
+    hibernate:
+      ddl-auto: update
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: wewrite06@gmail.com
+    password: 123!123a
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+            required: true
+          auth: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
+logging:
+  version : 0.0.2
+
+Logging.level:
+  org.apache.coyote.http11: debug #http 요청 메시지 보기

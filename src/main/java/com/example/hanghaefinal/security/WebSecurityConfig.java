@@ -82,22 +82,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource(){
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        //configuration.addAllowedOrigin("http://jeonhaekang.shop.s3-website.ap-northeast-2.amazonaws.com");
-        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.addExposedHeader("*");
-        configuration.setAllowCredentials(true);
-        configuration.validateAllowCredentials();
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**",configuration);
-        return source;
-    }
+//    @Bean
+//    public CorsConfigurationSource corsConfigurationSource(){
+//        CorsConfiguration configuration = new CorsConfiguration();
+//
+//        configuration.addAllowedOrigin("https://main.d2l6bnge3hnh7g.amplifyapp.com/");
+//        configuration.addAllowedOrigin("http://localhost:3000");
+//        configuration.addAllowedMethod("*");
+//        configuration.addAllowedHeader("*");
+//        configuration.addExposedHeader("Authorization");
+//        configuration.setMaxAge(3600L);
+//        configuration.setAllowCredentials(true);
+//        configuration.validateAllowCredentials();
+//
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**",configuration);
+//        return source;
+//    }
 
 
     /*@Bean

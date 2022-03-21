@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://main.d2l6bnge3hnh7g.amplifyapp.com")
 @RequiredArgsConstructor
 @Api(tags = {"User"})
 public class UserController {

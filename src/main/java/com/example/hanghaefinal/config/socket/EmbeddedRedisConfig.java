@@ -13,7 +13,7 @@ import javax.annotation.PreDestroy;
 // 깃이그노어 반영 확인
 //@Profile("local")
 //@Profile("13.209.70.1")
-@Profile("52.78.138.53")
+@Profile("52.78.51.198")
 @Configuration
 public class EmbeddedRedisConfig {
 

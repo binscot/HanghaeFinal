@@ -11,10 +11,20 @@ import java.util.Arrays;
 @RestController
 @RequiredArgsConstructor
 public class WebRestController {
+
     private final Environment env;
 
     @GetMapping("/profile")
-    public String getProfile(){
-        return Arrays.stream(env.getActiveProfiles()).findFirst().orElse("");
+    public String getProfile() {
+        String[] str = env.getActiveProfiles();
+        int idx = 0;
+        for(int i = 0; i < str.length; i++){
+            if(str[i].contains("set")){
+                idx = i;
+                break;
+            }
+        }
+
+        return str[idx];
     }
 }
