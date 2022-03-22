@@ -18,6 +18,8 @@ env: # 새로 추가한 부분
 
 jobs:
   build:
+    #build 이름 설정 (빌드 체크위해서 설정함)
+    name : build
     runs-on: ubuntu-latest
 
     steps: 
