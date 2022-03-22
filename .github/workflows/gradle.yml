@@ -19,8 +19,6 @@ env: # 새로 추가한 부분
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      JASYPT_ENCRYPTOR_PASSWORD : ${{ secrets.JASYPT_ENCRYPTOR_PASSWORD }}
 
     steps: 
     - name: Checkout
