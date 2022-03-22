@@ -133,7 +133,7 @@ public class PostService {
             categoryResDtoList.add(new CategoryResponseDto(category));
         }
 
-        List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(postId);
         List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
         // List<Comment>에 있는 정보를 List<CommentResponseDto> 에 담는다
@@ -219,7 +219,7 @@ public class PostService {
             categoryResDtoList.add(new CategoryResponseDto(category));
         }
 
-        List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
+        List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(postId);
         List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
         // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
@@ -301,7 +301,7 @@ public class PostService {
                 paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
             }
 
-            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
             // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
@@ -383,7 +383,7 @@ public class PostService {
                 paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
             }
 
-            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
             // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
@@ -477,7 +477,7 @@ public class PostService {
                 paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
             }
 
-            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
             // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
@@ -587,7 +587,7 @@ public class PostService {
                 paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
             }
 
-            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
             // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
