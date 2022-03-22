@@ -1,5 +1,6 @@
 package com.example.hanghaefinal.pubsub;
 
+import com.example.hanghaefinal.dto.responseDto.AlarmResponseDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
 import com.example.hanghaefinal.model.Paragraph;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,15 @@ public class RedisSubscriber {
 
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
                 messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
+            } else if (publishMessage.contains("[알림]")){
+                log.info("------------------------ publishMessage : " + publishMessage);
+                log.info("----------------------- 알림이 들어오긴 하나");
+                AlarmResponseDto alarmResponseDto = objectMapper
+                        .readValue(publishMessage, AlarmResponseDto.class);
+
+                messagingTemplate.convertAndSend(
+                        "/sub/alarm/" + alarmResponseDto.getAlarmTargetId(),
+                        alarmResponseDto);
             }
 
             // Paragraph 객채로 맵핑

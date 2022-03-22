@@ -14,6 +14,7 @@ public class UserInfoResponseDto {
     private Long userKey;
     private String username;
     private String nickname;
+    private boolean isAlaramRead;
     private String userProfileImage;
     private String introduction;
     private List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList;
@@ -27,10 +28,11 @@ public class UserInfoResponseDto {
         this.introduction = user.getIntroduction();
     }
 
-    public UserInfoResponseDto(Long id, String username, String nickName, String userProfileImage, String introduction, List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList, List<BadgeResponseDto> badgeResponseDtoList) {
+    public UserInfoResponseDto(Long id, String username, String nickName, boolean bool, String userProfileImage, String introduction, List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList, List<BadgeResponseDto> badgeResponseDtoList) {
         this.userKey=id;
         this.username=username;
         this.nickname=nickName;
+        this.isAlaramRead=bool;
         this.userProfileImage=userProfileImage;
         this.introduction=introduction;
         this.bookmarkInfoResponseDtoList=bookmarkInfoResponseDtoList;

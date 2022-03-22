@@ -45,8 +45,9 @@ public class PostController {
     // 마지막 문단을 단 사람과 게시글 완성 버튼을 누른 사람이 일치하면 완성 되도록???
     @PatchMapping("/posts/complete/{postId}")
     public PostDetailResponseDto completePost(@PathVariable Long postId,
-                                              CategoryRequestDto categoryRequestDto){
-        return postService.completePost(postId, categoryRequestDto);
+                                              CategoryRequestDto categoryRequestDto,
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.completePost(postId, categoryRequestDto, userDetails);
     }
 
     // 게시글 상세 페이지 조회 (완성/미완성)

@@ -33,6 +33,7 @@ public class ParagraphService {
     private final ParagraphLikesRepository paragraphLikesRepository;
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
+    private final AlarmService alarmService;
 
     @Transactional
     public void saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
@@ -48,6 +49,10 @@ public class ParagraphService {
             //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
             Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
             paragraphRepository.save(paragraph);
+
+            log.info("---------------------- 111111aaaa ----------------------");
+            // 소설에 문단이 등록 됐을 때 알림 -
+            alarmService.generateNewParagraphAlarm(user, post);
         }
     }
 
@@ -121,6 +126,10 @@ public class ParagraphService {
             ParagraphLikesReqDto paragraphLikesReqDto = new ParagraphLikesReqDto(user, paragraph);
             ParagraphLikes paragraphLikes = new ParagraphLikes(paragraphLikesReqDto);
             paragraphLikesRepository.save(paragraphLikes);
+
+            log.info("---------------------- 333333aaaa ----------------------");
+            // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
+            alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
         }
