@@ -45,3 +45,10 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+
+#jasypt
+jasypt:
+  encryptor:
+    bean: jasyptStringEncryptor
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator
