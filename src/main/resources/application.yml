@@ -20,8 +20,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: ENC(Ur5dg3ssI0oSwjjopkz5GEsm9DKvJmr5GXJGRNq61UA=)
-    password: ENC(M0HskvtElJ5w+Jj7BkFutgnzc83hs+4i)
+    username: wewrite06@gmail.com
+    password: 123!123a
     properties:
       mail:
         smtp:
@@ -33,22 +33,17 @@ spring:
           timeout: 5000
           writetimeout: 5000
 
-cloud:
-  aws:
-    credentials:
-      accessKey: ENC(4K1X5dPf64S9tmvBv90oz5+KaFW2y6zkn4OgfoaPSwg=)
-      secretKey: ENC(VEC9ehAlTyGv9a/gA6a7QyXQ6OraW1u3+1i5Qg2mcEuHsvPh235tWMfLlXtCtFIYVf8fRtoQ3jQ=)
 
     s3:
-      bucket: binscot-bucket
+      bucket: taeks3bucket
     region:
       static: ap-northeast-2
     stack:
       auto: false
 
 #jasypt
-jasypt:
-  encryptor:
-    bean: jasyptStringEncryptor
-    algorithm: PBEWithMD5AndDES
-    iv-generator-classname: org.jasypt.iv.NoIvGenerator
+#jasypt:
+#  encryptor:
+#    bean: jasyptStringEncryptor
+#    algorithm: PBEWithMD5AndDES
+#    iv-generator-classname: org.jasypt.iv.NoIvGenerator

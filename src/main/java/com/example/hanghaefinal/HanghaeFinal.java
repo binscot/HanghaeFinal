@@ -13,8 +13,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 public class HanghaeFinal {
 
     public static final String APPLICATION_LOCATIONS = "spring.config.location="
-            + "classpath:application.yml";
-
+            + "./application.yml";
 
     public static void main(String[] args) {
         //SpringApplication.run(HanghaeFinal.class, args);
