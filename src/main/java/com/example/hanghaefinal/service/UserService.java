@@ -316,7 +316,7 @@ public class UserService {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
-            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
             for (Comment comment:commentList ) {
@@ -380,7 +380,7 @@ public class UserService {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
-            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
             for (Comment comment:commentList ) {
