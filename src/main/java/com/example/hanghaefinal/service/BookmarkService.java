@@ -5,6 +5,9 @@ import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -25,9 +28,9 @@ public class BookmarkService {
     private final CategoryRepository categoryRepository;
 
     //북마크조회
-    public List<BookmarkGetResponseDto> getBookmark(User user) {
-
-        List<Bookmark> bookmarkList = bookmarkRepository.findAll();
+    public List<BookmarkGetResponseDto> getBookmark(int page, int size, User user) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Bookmark> bookmarkList = bookmarkRepository.findAll(pageable);
         List<BookmarkGetResponseDto> bookmarkGetResponseDtos =new ArrayList<>();
 
         for(Bookmark bookmark : bookmarkList){
