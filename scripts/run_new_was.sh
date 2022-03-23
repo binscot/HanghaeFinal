@@ -2,7 +2,7 @@
 
 #현재 서비스하고 있는 WAS 포트 번호 읽어오기
 #CURRENT_PORT=$(cat /etc/nginx/conf.d/service-url.inc | grep -Po '[0-9]+' | tail -1)
-CURRENT_PORT=$(cat /etc/nginx/sites-available/default/service_url.inc | grep -Po '[0-9]+' | tail -1)
+CURRENT_PORT=$(cat /home/ubuntu/service_url.inc | grep -Po '[0-9]+' | tail -1)
 TARGET_PORT=0
 
 echo "> Current port of running WAS is ${CURRENT_PORT}."
