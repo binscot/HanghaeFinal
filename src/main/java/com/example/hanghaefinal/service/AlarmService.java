@@ -2,7 +2,6 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.Enum.AlarmType;
 import com.example.hanghaefinal.dto.responseDto.AlarmResponseDto;
-import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.model.Alarm;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.Post;
@@ -50,14 +49,21 @@ public class AlarmService {
         List<AlarmResponseDto> alarmResponseDtoList = new ArrayList<>();
 
         for (Alarm alarm : alarmListPage) {
+            Post post = postRepository.findById(alarm.getPostId()).orElseThrow(
+                    () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
+            );
+
                 /* 내가 참여한 게시글에 새로운 문단이 등록 됐을 때 */
             if (alarm.getType().equals(AlarmType.NEWPARAGRAPH)) {
+
                 AlarmResponseDto alarmDto = AlarmResponseDto.builder()
                         .alarmId(alarm.getId().toString())
                         .type(alarm.getType().toString())
                         .message(alarm.getAlarmMessage())
                         .isRead(alarm.getIsRead())
-                        .postId(alarm.getPostId().toString())
+                        .postKey(alarm.getPostId().toString())
+                        .postTitle(post.getTitle())
+                        .postUrl(post.getPostImageUrl())
                         .build();
                 alarmResponseDtoList.add(alarmDto);
             } /* 내가 참여한 게시글이 완성 됐을 때 */
@@ -67,7 +73,9 @@ public class AlarmService {
                         .type(alarm.getType().toString())
                         .message(alarm.getAlarmMessage())
                         .isRead(alarm.getIsRead())
-                        .postId(alarm.getPostId().toString())
+                        .postKey(alarm.getPostId().toString())
+                        .postTitle(post.getTitle())
+                        .postUrl(post.getPostImageUrl())
                         .build();
                 alarmResponseDtoList.add(alarmDto);
             } /* 내가 작성한 문단이 좋아요 받았을 때 */
@@ -77,7 +85,9 @@ public class AlarmService {
                         .type(alarm.getType().toString())
                         .message(alarm.getAlarmMessage())
                         .isRead(alarm.getIsRead())
-                        .postId(alarm.getPostId().toString())
+                        .postKey(alarm.getPostId().toString())
+                        .postTitle(post.getTitle())
+                        .postUrl(post.getPostImageUrl())
                         .build();
                 alarmResponseDtoList.add(alarmDto);
             } /* 내가 참여한 게시글이 좋아요 받았을 때 */
@@ -87,7 +97,9 @@ public class AlarmService {
                         .type(alarm.getType().toString())
                         .message(alarm.getAlarmMessage())
                         .isRead(alarm.getIsRead())
-                        .postId(alarm.getPostId().toString())
+                        .postKey(alarm.getPostId().toString())
+                        .postTitle(post.getTitle())
+                        .postUrl(post.getPostImageUrl())
                         .build();
                 alarmResponseDtoList.add(alarmDto);
             }
@@ -135,7 +147,7 @@ public class AlarmService {
                                 + "] 소설에 문단이 등록되었습니다. 확인해보세요! 11bb")
                         .alarmTargetId(userid.toString())
                         .isRead(alarm.getIsRead())
-                        .postId(alarm.getPostId().toString())
+                        .postKey(alarm.getPostId().toString())
                         .build();
 
                 redisTemplate.convertAndSend(channelTopic.getTopic(),
@@ -181,7 +193,7 @@ public class AlarmService {
                                 + "] 소설이 완성되었습니다.. 확인해보세요! 22bb")
                         .alarmTargetId(userid.toString())
                         .isRead(alarm.getIsRead())
-                        .postId(alarm.getPostId().toString())
+                        .postKey(alarm.getPostId().toString())
                         .build();
                 /*-
                  * redis로 알림메시지 pub, alarmRepository에 저장
@@ -219,7 +231,7 @@ public class AlarmService {
                         + "] 소설에 작성한 문단에 좋아요가 달렸습니다.! 33bb")
                 .alarmTargetId(ParagraphOwner.getId().toString())
                 .isRead(alarm.getIsRead())
-                .postId(alarm.getPostId().toString())
+                .postKey(alarm.getPostId().toString())
                 .build();
         /*-
          * redis로 알림메시지 pub, alarmRepository에 저장
@@ -269,7 +281,7 @@ public class AlarmService {
                             + "]에 좋아요가 등록되었습니다! 44bb")
                     .alarmTargetId(userid.toString())
                     .isRead(alarm.getIsRead())
-                    .postId(alarm.getPostId().toString())
+                    .postKey(alarm.getPostId().toString())
                     .build();
             /*-
              * redis로 알림메시지 pub, alarmRepository에 저장
@@ -312,7 +324,7 @@ public class AlarmService {
                     .type(alarm.getType().toString())
                     .message(alarm.getAlarmMessage())
                     .isRead(alarm.getIsRead())
-                    .postId(alarm.getPostId().toString())
+                    .postKey(alarm.getPostId().toString())
                     .build();
         } /* 내가 참여한 게시글이 완성 됐을 때 */
         else if(alarm.getType().equals(AlarmType.COMPLETEPOST)) {
@@ -321,7 +333,7 @@ public class AlarmService {
                     .type(alarm.getType().toString())
                     .message(alarm.getAlarmMessage())
                     .isRead(alarm.getIsRead())
-                    .postId(alarm.getPostId().toString())
+                    .postKey(alarm.getPostId().toString())
                     .build();
         } /* 내가 작성한 문단이 좋아요를 받았을 때 */
         else if(alarm.getType().equals(AlarmType.LIKEPARAGRAPH)) {
@@ -330,7 +342,7 @@ public class AlarmService {
                     .type(alarm.getType().toString())
                     .message(alarm.getAlarmMessage())
                     .isRead(alarm.getIsRead())
-                    .postId(alarm.getPostId().toString())
+                    .postKey(alarm.getPostId().toString())
                     .build();
         } /* 내가 참여한 게시글이 좋아요를 받았을 때 */
         else if(alarm.getType().equals(AlarmType.LIKEPOST)) {
@@ -339,7 +351,7 @@ public class AlarmService {
                     .type(alarm.getType().toString())
                     .message(alarm.getAlarmMessage())
                     .isRead(alarm.getIsRead())
-                    .postId(alarm.getPostId().toString())
+                    .postKey(alarm.getPostId().toString())
                     .build();
         }
 
