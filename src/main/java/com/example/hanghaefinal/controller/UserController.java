@@ -1,14 +1,16 @@
 package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.*;
-import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
+import com.example.hanghaefinal.dto.responseDto.MailKeyResponseDto;
+import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
+import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.EmailService;
 import com.example.hanghaefinal.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
