@@ -3,10 +3,7 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.BookmarkRequestDto;
 import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.*;
-import com.example.hanghaefinal.repository.BadgeRepository;
-import com.example.hanghaefinal.repository.BookmarkRepository;
-import com.example.hanghaefinal.repository.PostRepository;
-import com.example.hanghaefinal.repository.UserRepository;
+import com.example.hanghaefinal.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +22,7 @@ public class BookmarkService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final BadgeRepository badgeRepository;
-
+    private final CategoryRepository categoryRepository;
 
     //북마크조회
     public List<BookmarkGetResponseDto> getBookmark(User user) {
@@ -35,10 +32,20 @@ public class BookmarkService {
 
         for(Bookmark bookmark : bookmarkList){
             if(bookmark.getUser().getId().equals(user.getId())){
+
+                List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(bookmark.getPost().getId());
+                List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+
+                // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+                for (Category category : categoryList) {
+                    categoryResDtoList.add(new CategoryResponseDto(category));
+                }
+
                 BookmarkGetResponseDto bookmarkGetResponseDto = new BookmarkGetResponseDto(
                         bookmark.getId(),
                         bookmark.getPost(),
-                        bookmark.getUser().getId()
+                        bookmark.getUser().getId(),
+                        categoryResDtoList
                 );
 
                 bookmarkGetResponseDtos.add(bookmarkGetResponseDto);
