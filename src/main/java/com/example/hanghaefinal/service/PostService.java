@@ -92,6 +92,7 @@ public class PostService {
 
         // 어차피 true지만  postRequestDto.isComplete() 이걸 인자로 넣어도 된다.
         post.updatePostComplete(true);
+        //postRepository.save(post);
 
         List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);
         List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList = new ArrayList<>();
@@ -432,6 +433,7 @@ public class PostService {
         //return postResponseDtoList;
     }
 
+
     // 미완성 게시글 전체 조회 - 최신순
     public List<PostResponseDto> viewPostIncomplete(int page, int size){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
@@ -442,6 +444,7 @@ public class PostService {
 
         int postLikeCnt = 0;
         for (Post post: posts ) {
+            // 게시글을 좋아요한 사람의 userKey리스트를 구한다.
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList = new ArrayList<>();
             for (PostLikes postLikesTemp : postLikesList) {
@@ -450,6 +453,7 @@ public class PostService {
             //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
+            // 게시글을 북마크한 사람의 userKey 리스트를 구한다.
             List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
             List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
 
@@ -466,7 +470,7 @@ public class PostService {
 //                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
                 Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
                 Long paragraphKey = paragraph.getId();
-
+                // 각 문단을 좋아요한 사람의 userKey 리스트를 구한다.
                 List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
                 List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
                 for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
@@ -483,7 +487,7 @@ public class PostService {
             // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
-
+                // 각 댓글을 좋아요한 사람의 userKey 리스트를 구한다.
                 List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
                 List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
                 for(CommentLikes commentLikesTemp : commentLikesList){
@@ -495,7 +499,7 @@ public class PostService {
 
             List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
             List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
-
+            // 게시글의 카테고리 리스트(시작 1개, 끝날 때 1개 총 2개)를 구한다.
             // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
             for(Category category: categoryList){
                 categoryResDtoList.add(new CategoryResponseDto(category));
@@ -523,7 +527,6 @@ public class PostService {
 
         int postLikeCnt = 0;
         for (Post post: posts ) {
-            log.info("-----첫번째 for 의 postKey : " + post.getId());
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList = new ArrayList<>();
             for (PostLikes postLikesTemp : postLikesList) {
@@ -542,8 +545,6 @@ public class PostService {
             List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
 
             for(Paragraph paragraph: paragraphList){
-//                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
-//                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
                 Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
                 Long paragraphKey = paragraph.getId();
 
@@ -595,9 +596,7 @@ public class PostService {
         // 댓글있고 북마크있는 것들만 추린다.
         List<PostResponseDto> postCommentAndBookmarkList = new ArrayList<>();
         for(PostResponseDto postResponseDto : postResponseDtoList){
-            log.info("--------------------------------------postKey : "+postResponseDto.getPostKey());
             if(postResponseDto.getCommentList().size() > 0 && postResponseDto.getBookmarkLikesCnt() > 0){
-                log.info("if문 안--------------------- postKey : "+ postResponseDto.getPostKey());
                 postCommentAndBookmarkList.add(postResponseDto);
             }
         }
@@ -618,6 +617,92 @@ public class PostService {
         return top3ResDtoList;  // BookMark 많이한 Top3 & 댓글 있는거 & 완성작
     }
 
+
+    // 사용자가(내가) 좋아요한 게시글목록
+    public List<PostResponseDto> viewMyLikesPost(int page, int size, User user){
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        Pageable pageable = PageRequest.of(page, size);
+        //Page<Post> posts = postRepository.findAllByOrderByModifiedAtDesc(pageable);
+        List<PostLikes> postMyLikesList = postLikesRepository.findAllByUserId(user.getId(), pageable);
+
+        // 지금 postLikes 에 시간이 없네.. 좋아요한 시간 순서데로 보여줘야할 것 같은데...
+        int postLikeCnt = 0;
+        for(PostLikes postLikes : postMyLikesList){
+            Post post = postRepository.findById(postLikes.getPost().getId()).orElseThrow(
+                    () -> new IllegalArgumentException("유저정보가 없습니다.")
+            );
+
+            // 게시글을 좋아요한 사람의 userKey리스트를 구한다.
+            List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList = new ArrayList<>();
+            for (PostLikes postLikesTemp : postLikesList) {
+                postLikeClickersResponseDtoList.add(new PostLikeClickersResponseDto(postLikesTemp));
+            }
+            //List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            postLikeCnt = postLikesList.size();
+
+            // 게시글을 북마크한 사람의 userKey 리스트를 구한다.
+            List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
+            List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+            for (Bookmark bookmark:bookmarkList){
+                bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+            }
+
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
+            List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+
+            for(Paragraph paragraph: paragraphList){
+                Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+                Long paragraphKey = paragraph.getId();
+                // 각 문단을 좋아요한 사람의 userKey 리스트를 구한다.
+                List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+                for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                    // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                    paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+                }
+
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
+            }
+
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
+            List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+            for (Comment comment:commentList ) {
+                Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+                // 각 댓글을 좋아요한 사람의 userKey 리스트를 구한다.
+                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+                for(CommentLikes commentLikesTemp : commentLikesList){
+                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+                }
+
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
+            }
+
+            List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+            // 게시글의 카테고리 리스트(시작 1개, 끝날 때 1개 총 2개)를 구한다.
+            // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+            for(Category category: categoryList){
+                categoryResDtoList.add(new CategoryResponseDto(category));
+            }
+
+            String postUsername = null;
+            if (post.getUser() != null) {
+                postUsername = post.getUser().getUsername();
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                    paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            postResponseDtoList.add(postResponseDto);
+        }
+
+        return postResponseDtoList;
+    }
+
     // 다른 유저 페이지
     /*public OtherUserResDto viewUserPage(Long userKey,int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
@@ -636,7 +721,6 @@ public class PostService {
         //OtherUserResDto otherUserResDto = new OtherUserResDto(user, postList);
         return new OtherUserResDto(user, otherUserList);
     }*/
-
 
     // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
     public OtherUserResDto2 viewUserPage2(Long userKey, int page, int size){

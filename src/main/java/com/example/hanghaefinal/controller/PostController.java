@@ -2,17 +2,15 @@ package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
-import com.example.hanghaefinal.dto.responseDto.*;
-import com.example.hanghaefinal.model.Post;
+import com.example.hanghaefinal.dto.responseDto.OtherUserResDto2;
+import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
+import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -83,6 +81,18 @@ public class PostController {
     @GetMapping("/posts/viewMain")
     public List<PostResponseDto> viewPostMain(){
         return postService.viewPostMain();
+    }
+
+    // 사용자가(내가) 좋아요한 작품
+    @GetMapping("/posts/viewMyLikesPost")
+    public List<PostResponseDto> viewMyLikesPost(
+            @RequestParam int page,
+            @RequestParam int size,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ){
+        if(userDetails !=null ){
+            return postService.viewMyLikesPost(page, size, userDetails.getUser());
+        } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");
     }
 
     // 다른 유저 페이지
