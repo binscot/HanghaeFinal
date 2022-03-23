@@ -16,6 +16,8 @@ public class AlarmResponseDto {
     private String message;
     private Boolean isRead;
 //    private String chatRoomId;
-    private String postId;
+    private String postKey;
+    private String postTitle;
+    private String postUrl;
     private String alarmTargetId;
 }

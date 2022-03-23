@@ -20,9 +20,12 @@ public class BookmarkController {
 
     //북마크 조회
     @GetMapping("/bookmark")
-    public List<BookmarkGetResponseDto> getBookmark(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public List<BookmarkGetResponseDto> getBookmark(
+            @RequestParam int page,
+            @RequestParam int size,
+            @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
-        return bookmarkService.getBookmark(user);
+        return bookmarkService.getBookmark(page, size, user);
     }
 
     @PostMapping("/bookmark/{postId}")
