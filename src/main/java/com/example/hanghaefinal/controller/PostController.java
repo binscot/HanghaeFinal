@@ -2,10 +2,7 @@ package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
-import com.example.hanghaefinal.dto.responseDto.OtherUserResDto;
-import com.example.hanghaefinal.dto.responseDto.OtherUserResDto2;
-import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
-import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
+import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
@@ -80,6 +77,12 @@ public class PostController {
             @RequestParam int size
     ){
         return postService.viewPostIncomplete(page, size);
+    }
+
+    // 메인에 보여줄 즐겨찾기 많은 순 & 댓글 있고 & 완성작 top3
+    @GetMapping("/posts/viewMain")
+    public List<PostResponseDto> viewPostMain(){
+        return postService.viewPostMain();
     }
 
     // 다른 유저 페이지
