@@ -2,7 +2,7 @@
 
 #현재 서비스하고 있는 WAS 포트 번호 읽어오기
 #CURRENT_PORT=$(cat /etc/nginx/conf.d/service-url.inc | grep -Po '[0-9]+' | tail -1)
-CURRENT_PORT=$(cat /etc/nginx/sites-available/default/service_url.inc | grep -Po '[0-9]+' | tail -1)
+CURRENT_PORT=$(cat /home/ubuntu/service_url.inc | grep -Po '[0-9]+' | tail -1)
 TARGET_PORT=0
 
 echo "> Current port of running WAS is ${CURRENT_PORT}."
@@ -25,6 +25,6 @@ if [ ! -z ${TARGET_PID} ]; then
 fi
 
 #마지막&는 프로세스가 백그라운드로 실행되도록 해준다.
-nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/wewrite/build/libs/* > /home/ubuntu/nohup.out 2>&1 &
+nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/wewrite/build/libs/user-0.0.1-SNAPSHOT.jar > /home/ubuntu/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
