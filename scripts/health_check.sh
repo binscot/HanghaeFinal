@@ -25,7 +25,7 @@ do
   if [ ${RESPONSE_CODE} -eq 200 ]; then
     echo "> New WAS successfully running"
     exit 0
-  elif [ ${RETRY_COUNT} -eq 20 ]; then
+  elif [ ${RETRY_COUNT} -eq 10 ]; then
     echo "> Health check failed."
     echo "> aaaa" + ${RESPONSE_CODE};
     exit 1
