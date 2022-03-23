@@ -130,7 +130,7 @@ public class AlarmService {
                         .isRead(false)
                         .alarmMessage("[알림] ["
                                 + post.getTitle()
-                                + "] 소설에 문단이 등록되었습니다. 확인해보세요! 11aa")
+                                + "] 소설에 문단이 등록되었습니다. 확인해보세요!")
                         .build();
 
                 //log.info("--------------- 터짐11 ---------------");
@@ -144,7 +144,7 @@ public class AlarmService {
                         .type(alarm.getType().toString())
                         .message("[알림] ["
                                 + post.getTitle()
-                                + "] 소설에 문단이 등록되었습니다. 확인해보세요! 11bb")
+                                + "] 소설에 문단이 등록되었습니다. 확인해보세요.")
                         .alarmTargetId(userid.toString())
                         .isRead(alarm.getIsRead())
                         .postKey(alarm.getPostId().toString())
@@ -179,7 +179,7 @@ public class AlarmService {
                         .isRead(false)
                         .alarmMessage("[알림] ["
                                 + post.getTitle()
-                                + "] 소설이 완성되었습니다. 확인해보세요! 22aa")
+                                + "] 소설이 완성되었습니다. 확인해보세요!")
                         .build();
 
                 alarmRepository.save(alarm);
@@ -190,7 +190,7 @@ public class AlarmService {
                         .type(alarm.getType().toString())
                         .message("[알림] ["
                                 + post.getTitle()
-                                + "] 소설이 완성되었습니다.. 확인해보세요! 22bb")
+                                + "] 소설이 완성되었습니다.. 확인해보세요.")
                         .alarmTargetId(userid.toString())
                         .isRead(alarm.getIsRead())
                         .postKey(alarm.getPostId().toString())
@@ -216,7 +216,7 @@ public class AlarmService {
                 .isRead(false)
                 .alarmMessage("[알림] ["
                         + post.getTitle()
-                        + "] 소설에 작성한 문단에 좋아요가 달렸습니다. 33aa")
+                        + "] 소설에 작성한 문단에 좋아요가 달렸습니다!")
                 .build();
 
         // 조건문 없으니 밑에서 alarm.getId()를 찾기위해선 여기서 먼저 저장해야한다.
@@ -228,7 +228,7 @@ public class AlarmService {
                 .type(alarm.getType().toString())
                 .message("[알림] ["
                         + post.getTitle()
-                        + "] 소설에 작성한 문단에 좋아요가 달렸습니다.! 33bb")
+                        + "] 소설에 작성한 문단에 좋아요가 달렸습니다.")
                 .alarmTargetId(ParagraphOwner.getId().toString())
                 .isRead(alarm.getIsRead())
                 .postKey(alarm.getPostId().toString())
@@ -265,7 +265,7 @@ public class AlarmService {
                     .isRead(false)
                     .alarmMessage("[알림] ["
                             + post.getTitle()
-                            + "]에 좋아요가 등록되었습니다. 44aa")
+                            + "]에 좋아요가 등록되었습니다!")
                     .build();
 
             log.info("--------------- alarmRepository.save(alarm); 직전");
@@ -278,7 +278,7 @@ public class AlarmService {
                     .type(alarm.getType().toString())
                     .message("[알림] ["
                             + post.getTitle()
-                            + "]에 좋아요가 등록되었습니다! 44bb")
+                            + "]에 좋아요가 등록되었습니다.")
                     .alarmTargetId(userid.toString())
                     .isRead(alarm.getIsRead())
                     .postKey(alarm.getPostId().toString())
