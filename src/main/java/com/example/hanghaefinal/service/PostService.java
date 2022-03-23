@@ -432,6 +432,111 @@ public class PostService {
         //return postResponseDtoList;
     }
 
+    // 메인에 보여줄 즐겨찾기 많은 순 & 댓글 있고 & 완성작 top3
+    public List<PostResponseDto> viewPostMain(){
+
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
+        List<Post> posts = postRepository.findAll();
+
+
+        int postLikeCnt = 0;
+        for (Post post: posts ) {
+            log.info("-----첫번째 for 의 postKey : " + post.getId());
+            List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
+            List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList = new ArrayList<>();
+            for (PostLikes postLikesTemp : postLikesList) {
+                postLikeClickersResponseDtoList.add(new PostLikeClickersResponseDto(postLikesTemp));
+            }
+            postLikeCnt = postLikesList.size();
+
+            List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(post.getId());
+            List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
+
+            for (Bookmark bookmark:bookmarkList){
+                bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
+            }
+
+            List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
+            List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+
+            for(Paragraph paragraph: paragraphList){
+//                UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
+//                paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
+                Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
+                Long paragraphKey = paragraph.getId();
+
+                List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+                for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
+                    // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+                    paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
+                }
+
+                paragraphResDtoList.add(new ParagraphResDto(paragraph, paragraphLikesClickUserKeyResDtoList, paragraphLikesCnt));
+            }
+
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
+            List<CommentResponseDto> commentResDtoList = new ArrayList<>();
+
+            // List<Comment>를 각각 List<CommentResponseDto> 에 담는다
+            for (Comment comment:commentList ) {
+                Long commentLikesCnt = commentLikesRepository.countByComment(comment);
+
+                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+                for(CommentLikes commentLikesTemp : commentLikesList){
+                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+                }
+
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
+            }
+
+            List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<CategoryResponseDto> categoryResDtoList = new ArrayList<>();
+
+            // List<Category>에 있는 정보를 List<CategoryResponseDto> 에 담는다.
+            for(Category category: categoryList){
+                categoryResDtoList.add(new CategoryResponseDto(category));
+            }
+
+            String postUsername = null;
+            if (post.getUser() != null) {
+                postUsername = post.getUser().getUsername();
+            }
+
+            PostResponseDto postResponseDto = new PostResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
+                    paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
+            postResponseDtoList.add(postResponseDto);
+
+        }
+
+        // 댓글있고 북마크있는 것들만 추린다.
+        List<PostResponseDto> postCommentAndBookmarkList = new ArrayList<>();
+        for(PostResponseDto postResponseDto : postResponseDtoList){
+            log.info("--------------------------------------postKey : "+postResponseDto.getPostKey());
+            if(postResponseDto.getCommentList().size() > 0 && postResponseDto.getBookmarkLikesCnt() > 0){
+                log.info("if문 안--------------------- postKey : "+ postResponseDto.getPostKey());
+                postCommentAndBookmarkList.add(postResponseDto);
+            }
+        }
+
+        // 북마크 좋아요 순으로 내림차순 정렬(좋아요 많은게 위에 보이게끔)
+        Comparator<PostResponseDto> comparator = Comparator.comparing(PostResponseDto::getBookmarkLikesCnt, Comparator.reverseOrder());
+        List<PostResponseDto> responseDtoList = postCommentAndBookmarkList.stream().sorted(comparator).collect(Collectors.toList());
+
+        List<PostResponseDto> top3ResDtoList = new ArrayList<>();
+        int cnt = 0;
+        for(PostResponseDto postResponseDto: responseDtoList){
+            top3ResDtoList.add(postResponseDto);
+            cnt++;
+            if(cnt == 3)
+                break;
+        }
+
+        return top3ResDtoList;  // BookMark 많이한 Top3 & 댓글 있는거 & 완성작
+    }
+
     // 미완성 게시글 전체 조회 - 최신순
     public List<PostResponseDto> viewPostIncomplete(int page, int size){
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
