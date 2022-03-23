@@ -25,6 +25,6 @@ if [ ! -z ${TARGET_PID} ]; then
 fi
 
 #마지막&는 프로세스가 백그라운드로 실행되도록 해준다.
-nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/wewrite/build/libs/* > /home/ubuntu/nohup.out 2>&1 &
+nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/wewrite/build/libs/user-0.0.1-SNAPSHOT.jar > /home/ubuntu/nohup.out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
