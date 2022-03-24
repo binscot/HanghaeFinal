@@ -8,7 +8,12 @@
 name: Java CI with Gradle
 
 on:
+
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
+
   
 env: # 새로 추가한 부분 
   S3_BUCKET_NAME: wewrite-deploy
