@@ -14,7 +14,7 @@ public class UserInfoResponseDto {
     private Long userKey;
     private String username;
     private String nickname;
-    private boolean isAlaramRead;
+    private boolean isAlarmRead;
     private String userProfileImage;
     private String introduction;
     private List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList;
@@ -32,7 +32,7 @@ public class UserInfoResponseDto {
         this.userKey=id;
         this.username=username;
         this.nickname=nickName;
-        this.isAlaramRead=bool;
+        this.isAlarmRead=bool;
         this.userProfileImage=userProfileImage;
         this.introduction=introduction;
         this.bookmarkInfoResponseDtoList=bookmarkInfoResponseDtoList;
