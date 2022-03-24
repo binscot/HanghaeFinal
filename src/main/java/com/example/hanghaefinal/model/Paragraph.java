@@ -26,7 +26,7 @@ public class Paragraph extends Timestamped{
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "paragraph")
+    @Column(name = "paragraph", length = 2000)
     private String paragraph;
 
     @Column

@@ -123,6 +123,11 @@ public class AlarmService {
         log.info("------------------- userIdList의 SIZE : " + userIdList.size());
         for(Long userid : userIdList){
             if (!Objects.equals(userid, paragraphOwner.getId())){ // 문단을 작성한 사람과 다르면
+                User user = userRepository.findById(userid).orElseThrow(
+                        () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                );
+                user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
+
                 Alarm alarm = Alarm.builder()
                         .userId(userid)
                         .type(AlarmType.NEWPARAGRAPH)
@@ -172,6 +177,11 @@ public class AlarmService {
         log.info("------------------- userIdList의 SIZE : " + userIdList.size());
         for(Long userid : userIdList){
             if (!Objects.equals(userid, LastParagraphOwner.getId())){
+                User user = userRepository.findById(userid).orElseThrow(
+                        () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                );
+                user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
+
                 Alarm alarm = Alarm.builder()
                         .userId(userid)
                         .type(AlarmType.COMPLETEPOST)
@@ -209,6 +219,12 @@ public class AlarmService {
     // 3. 내가 작성한 문단이 좋아요를 받았을 때 알림
     public void generateParagraphLikestAlarm(User ParagraphOwner, Post post ) {
         log.info("---------------------- 333333bbbb ----------------------");
+
+        User user = userRepository.findById(ParagraphOwner.getId()).orElseThrow(
+                () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+        );
+        user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
+
         Alarm alarm = Alarm.builder()
                 .userId(ParagraphOwner.getId())
                 .type(AlarmType.LIKEPARAGRAPH)
@@ -258,6 +274,11 @@ public class AlarmService {
         log.info("------------------- userIdList의 SIZE : " + userIdList.size());
         for(Long userid : userIdList){
             log.info("------------------- 444userid : " + userid);
+            User user = userRepository.findById(userid).orElseThrow(
+                    () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+            );
+            user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
+
             Alarm alarm = Alarm.builder()
                     .userId(userid)
                     .type(AlarmType.LIKEPOST)
