@@ -3,14 +3,14 @@ package com.example.hanghaefinal.repository;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Persistable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PostRepository extends JpaRepository<Post, Long> {
+    Optional<Post> findById(Long id);
     List<Post> findAllByOrderByModifiedAtDesc();
     // findAll By OrderBy ModifiedAt Desc
     // 모두 찾아라 순서에따라 ModifiedAt을 기준으로 내림차순으로
@@ -28,7 +28,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     Page<Post> findAllByCompleteTrueOrderByModifiedAtDesc(Pageable pageable);
     Page<Post> findAllByCompleteFalseOrderByModifiedAtDesc(Pageable pageable);
 
-    List<Post> findAllByCompleteTrueOrderByModifiedAtDesc();
+    //List<Post> findAllByCompleteTrueOrderByModifiedAtDesc();
     List<Post> findAllByUser(User user);
 
 }
