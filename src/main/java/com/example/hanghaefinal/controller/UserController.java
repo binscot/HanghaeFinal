@@ -159,5 +159,11 @@ public class UserController {
     public ResponseEntity<Boolean> updatePassword(@RequestBody PasswordRequestDto requestDto){
         return ResponseEntity.ok(userService.updatePassword(requestDto));
     }
+    
+    @GetMapping("/health") 
+    public String checkHealth() { 
+        return "healthy"; 
+    }
+
 
 }
