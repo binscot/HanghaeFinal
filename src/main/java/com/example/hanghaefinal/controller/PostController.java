@@ -9,12 +9,14 @@ import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class PostController {
@@ -42,6 +44,7 @@ public class PostController {
     public PostDetailResponseDto completePost(@PathVariable Long postId,
                                               @RequestBody CategoryRequestDto categoryRequestDto,
                                               @AuthenticationPrincipal UserDetailsImpl userDetails){
+        log.info(" ------ testcode1 ------ ");
         return postService.completePost(postId, categoryRequestDto, userDetails);
     }
 
