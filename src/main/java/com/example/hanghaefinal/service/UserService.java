@@ -223,56 +223,15 @@ public class UserService {
     }
 
 
-    //유저 정보 변경
-//    @Transactional
-//    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
-//
-//        MultipartFile multipartFile = updateDto.getUserProfile();
-//        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-//        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
-//            userProfile = s3Uploader.upload(multipartFile, "static");
-//
-//        User user = userDetails.getUser();
-//        String nickName = updateDto.getNickName();
-//        String password = passwordEncoder.encode(updateDto.getPassword());
-//        String introduction = updateDto.getIntroduction();
-//        user.updateUser(nickName,password,introduction,userProfile);
-//        userRepository.save(user);
-//
-//        return new UserInfoResponseDto(
-//                user.getId(),
-//                user.getUsername(),
-//                user.getNickName(),
-//                user.getUserProfileImage(),
-//                user.getIntroduction()
-//        );
-//    }
-
     @Transactional
     public UserInfoResponseDto updateUserProfile(MultipartFile file, UserDetailsImpl userDetails) throws IOException {
-        log.info("------------------------------userService11111111111111111111111111111111111111111111111111111111111111111111 ");
-
-        log.info("------------------------------userService22222222222222222222222222222222222222222 "+ file.getOriginalFilename());
         String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-        log.info("------------------------------userService333333333333333333333333333333333333333");
         if (!Objects.equals(file.getOriginalFilename(), "foo.txt")){
-            log.info("------------------------------userService4444444444444444444444444444444444444");
             userProfile = s3Uploader.upload(file, "static");
         }
 
-
-
-//        String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-//        if (!Objects.equals(file.getOriginalFilename(), "foo.txt"))
-//            userProfile = s3Uploader.upload(file, "static");
-
-        log.info("------------------------------userService22222222");
-
-
         User user = userDetails.getUser();
-
         user.updateUser(userProfile);
-        log.info("------------------------------userService33333333");
         userRepository.save(user);
         return new UserInfoResponseDto(
                 user.getId(),
@@ -345,7 +304,6 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요!");
         }
-//        List<Badge> badgeList = badgeRepository.findAllByUser(user);
         badgeRepository.deleteAllByUser(user);
         attendanceCheckRepository.deleteAllByUser(user);
         bookmarkRepository.deleteAllByUser(user);
