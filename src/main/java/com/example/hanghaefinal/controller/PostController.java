@@ -2,19 +2,15 @@ package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
-import com.example.hanghaefinal.dto.responseDto.OtherUserResDto;
+import com.example.hanghaefinal.dto.responseDto.OtherUserResDto2;
 import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
-import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
@@ -116,5 +112,5 @@ public class PostController {
             @RequestParam int page,
             @RequestParam int size){
         return postService.viewUserPage(userKey,page, size);
-    }
+    }*/
 }
