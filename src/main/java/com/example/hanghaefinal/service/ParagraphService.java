@@ -2,10 +2,7 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
-import com.example.hanghaefinal.dto.responseDto.ParagraphResDto;
-import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.example.hanghaefinal.dto.responseDto.*;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.ParagraphLikes;
 import com.example.hanghaefinal.model.Post;
@@ -22,6 +19,8 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,17 +33,27 @@ public class ParagraphService {
     private final ParagraphLikesRepository paragraphLikesRepository;
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
+    private final AlarmService alarmService;
 
     @Transactional
-    public Paragraph saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
+    public void saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
 
-        // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
-        //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
-        Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
-        return paragraphRepository.save(paragraph);
+        int limit = post.getLimitCnt();
+        int paragraphListSize = paragraphRepository.findAllByPostId(postId).size();
+
+        if (limit >= paragraphListSize){
+            // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
+            //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
+            Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
+            paragraphRepository.save(paragraph);
+
+            log.info("---------------------- 111111aaaa ----------------------");
+            // 소설에 문단이 등록 됐을 때 알림 -
+            alarmService.generateNewParagraphAlarm(user, post);
+        }
     }
 
     // destination 정보에서 postId 추출
@@ -81,9 +90,9 @@ public class ParagraphService {
         }
     }
 
-    // 채팅방에서 메세지 발송
-    public void paragraphStartAndComplete(Paragraph paragraph, ParagraphReqDto paragraphReqDto, Long postId) {
-        User user = userRepository.findById(paragraph.getUser().getId()).orElseThrow(
+    // 게시글에 있는 사람들에게 response데이터 보내기
+    public void paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
+        User user = userRepository.findById(paragraphReqDto.getUserId()).orElseThrow(
                 ()-> new IllegalArgumentException("로그인한 사용자가 존재하지 않습니다.")
         );
 
@@ -97,6 +106,7 @@ public class ParagraphService {
         log.info("-------------- paragraphAccessResDto :  " + paragraphAccessResDto);
         log.info("-------------------- userInfoResDto : " + userInfoResDto);
 
+        // convertAndSend 할 때 redis 인메모리에 들어간다 (disconnect가 되면 없어짐)
         redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
     }
 
@@ -116,11 +126,21 @@ public class ParagraphService {
             ParagraphLikesReqDto paragraphLikesReqDto = new ParagraphLikesReqDto(user, paragraph);
             ParagraphLikes paragraphLikes = new ParagraphLikes(paragraphLikesReqDto);
             paragraphLikesRepository.save(paragraphLikes);
+
+            log.info("---------------------- 333333aaaa ----------------------");
+            // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
+            alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
         }
 
-        return new ParagraphLikesResDto(paragraphId, paragraphLikesRepository.countByParagraph(paragraph));
+        List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphId);
+        List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+        for(ParagraphLikes paragraphLikeTemp : paragraphLikes){
+            paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikeTemp));
+        }
+
+        return new ParagraphLikesResDto(paragraphId, paragraphLikesClickUserKeyResDtoList, paragraphLikesRepository.countByParagraph(paragraph));
     }
 
 }

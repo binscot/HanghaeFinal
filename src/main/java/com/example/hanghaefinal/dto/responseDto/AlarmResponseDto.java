@@ -11,11 +11,13 @@ import lombok.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AlarmResponseDto {
 
-    private Long alarmId;
-    private String type;
+    private String alarmId;
+    private String type;    // NEWPARAGRAPH, COMPLETEPOST, LIKEPARAGRAPH, LIKEPOST
     private String message;
     private Boolean isRead;
-    private String chatRoomId;
-    private Long postId;
-    private Long alarmTargetId;
+//    private String chatRoomId;
+    private String postKey;
+    private String postTitle;
+    private String postUrl;
+    private String alarmTargetId;
 }

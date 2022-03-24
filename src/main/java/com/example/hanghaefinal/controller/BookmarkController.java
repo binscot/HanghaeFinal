@@ -1,8 +1,9 @@
 package com.example.hanghaefinal.controller;
 
+
+import com.example.hanghaefinal.dto.responseDto.BookmarkGetResponseDto;
 import com.example.hanghaefinal.dto.responseDto.BookmarkResponseDto;
 import com.example.hanghaefinal.model.User;
-import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.BookmarkService;
 import lombok.RequiredArgsConstructor;
@@ -19,22 +20,24 @@ public class BookmarkController {
 
     //북마크 조회
     @GetMapping("/bookmark")
-    public List<BookmarkResponseDto> getBookmark(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    public List<BookmarkGetResponseDto> getBookmark(
+            @RequestParam int page,
+            @RequestParam int size,
+            @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
-        return bookmarkService.getBookmark(user);
+        return bookmarkService.getBookmark(page, size, user);
     }
 
     @PostMapping("/bookmark/{postId}")
-    public boolean addBookmarks(@PathVariable Long postId,
-                           @AuthenticationPrincipal UserDetailsImpl userDetails){
-        User user = userDetails.getUser();
-        return bookmarkService.addBookmark(postId, user);
+    public BookmarkResponseDto addBookmarks(@PathVariable Long postId,
+                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return bookmarkService.addBookmark(postId, userDetails.getUser().getId());
     }
 
-    @DeleteMapping("/bookmark/{postId}")
-    public boolean deleteBookmark(@PathVariable Long postId,
-                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
-        User user = userDetails.getUser();
-        return bookmarkService.deleteBookmark(postId,user);
-    }
+//    @DeleteMapping("/bookmark/{postId}")
+//    public boolean deleteBookmark(@PathVariable Long postId,
+//                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
+//        User user = userDetails.getUser();
+//        return bookmarkService.deleteBookmark(postId,user);
+//    }
 }

@@ -12,4 +12,6 @@ public interface ParagraphRepository extends JpaRepository<Paragraph, Long> {
     List<Paragraph> findAllByPostIdOrderByModifiedAtDesc(Long postId);
 
     List<Paragraph> findAllByUser(User user);
+
+    List<Paragraph> findAllByPostId(Long postId);
 }

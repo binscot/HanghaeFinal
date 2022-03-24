@@ -1,19 +1,22 @@
 package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.*;
-import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.dto.responseDto.LoginResponseDto;
+import com.example.hanghaefinal.dto.responseDto.MailKeyResponseDto;
+import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
+import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.EmailService;
 import com.example.hanghaefinal.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -21,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://main.d2l6bnge3hnh7g.amplifyapp.com")
 @RequiredArgsConstructor
 @Api(tags = {"User"})
 public class UserController {
@@ -80,15 +83,48 @@ public class UserController {
     }
 
     //회원정보 수정
+//    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
+//    @PutMapping("/user/update")
+//    public ResponseEntity<UserInfoResponseDto> updateUser(
+//            @ModelAttribute UserUpdateDto updateDto,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+//    ) throws IOException {
+//        UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails);
+//        return ResponseEntity.ok(userInfoResponseDto);
+//    }
+
     @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
     @PutMapping("/user/update")
     public ResponseEntity<UserInfoResponseDto> updateUser(
-            @ModelAttribute UserUpdateDto updateDto,
+            @RequestBody UserUpdateDto updateDto,
             @AuthenticationPrincipal UserDetailsImpl userDetails
-    ) throws IOException {
+    ) {
         UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails);
         return ResponseEntity.ok(userInfoResponseDto);
     }
+
+    //유저 프로필 수정
+//    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
+//    @PutMapping("/user/updateProfile")
+//    public ResponseEntity<UserInfoResponseDto> updateUserProfile(
+//            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile,
+//            @AuthenticationPrincipal UserDetailsImpl userDetails
+//    ) throws IOException {
+//        UserInfoResponseDto userInfoResponseDto = userService.updateUserProfile(multipartFile,userDetails);
+//        return ResponseEntity.ok(userInfoResponseDto);
+//    }
+
+    //유저 사진 수정
+    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
+    @PutMapping("/user/updateProfile")
+    public ResponseEntity<UserInfoResponseDto> updateUserProfile(
+            @RequestParam("userProfile") MultipartFile userProfile,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) throws IOException {
+        UserInfoResponseDto userInfoResponseDto = userService.updateUserProfile(userProfile, userDetails);
+        return ResponseEntity.ok(userInfoResponseDto);
+    }
+
 
     //회원 정보 삭제
     @ApiOperation(value = "회원정보 삭제.", notes = "회원정보 삭제.")
@@ -123,5 +159,11 @@ public class UserController {
     public ResponseEntity<Boolean> updatePassword(@RequestBody PasswordRequestDto requestDto){
         return ResponseEntity.ok(userService.updatePassword(requestDto));
     }
+    
+    @GetMapping("/health") 
+    public String checkHealth() { 
+        return "healthy"; 
+    }
+
 
 }

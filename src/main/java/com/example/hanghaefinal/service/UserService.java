@@ -11,6 +11,7 @@ import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
 import com.example.hanghaefinal.util.S3Uploader;
 import com.google.gson.JsonObject;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -212,6 +214,7 @@ public class UserService {
                 user.getId(),
                 user.getUsername(),
                 user.getNickName(),
+                user.isAlarmRead(),
                 user.getUserProfileImage(),
                 user.getIntroduction(),
                 bookmarkInfoResponseDtoList,
@@ -220,20 +223,33 @@ public class UserService {
     }
 
 
-    //유저 정보 변경
     @Transactional
-    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) throws IOException {
-
-        MultipartFile multipartFile = updateDto.getUserProfile();
+    public UserInfoResponseDto updateUserProfile(MultipartFile file, UserDetailsImpl userDetails) throws IOException {
         String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-        if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
-            userProfile = s3Uploader.upload(multipartFile, "static");
+        if (!Objects.equals(file.getOriginalFilename(), "foo.txt")){
+            userProfile = s3Uploader.upload(file, "static");
+        }
+
+        User user = userDetails.getUser();
+        user.updateUser(userProfile);
+        userRepository.save(user);
+        return new UserInfoResponseDto(
+                user.getId(),
+                user.getUsername(),
+                user.getNickName(),
+                user.getUserProfileImage(),
+                user.getIntroduction()
+        );
+    }
+
+
+    @Transactional
+    public UserInfoResponseDto updateUser(UserUpdateDto updateDto,UserDetailsImpl userDetails) {
 
         User user = userDetails.getUser();
         String nickName = updateDto.getNickName();
-        String password = passwordEncoder.encode(updateDto.getPassword());
         String introduction = updateDto.getIntroduction();
-        user.updateUser(nickName,password,introduction,userProfile);
+        user.updateUser(nickName,introduction);
         userRepository.save(user);
 
         return new UserInfoResponseDto(
@@ -242,6 +258,7 @@ public class UserService {
                 user.getNickName(),
                 user.getUserProfileImage(),
                 user.getIntroduction()
+
         );
     }
 
@@ -258,7 +275,7 @@ public class UserService {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
-            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
             for (Comment comment:commentList ) {
@@ -287,7 +304,6 @@ public class UserService {
         if (!passwordEncoder.matches(password, user.getPassword())) {
             throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요!");
         }
-//        List<Badge> badgeList = badgeRepository.findAllByUser(user);
         badgeRepository.deleteAllByUser(user);
         attendanceCheckRepository.deleteAllByUser(user);
         bookmarkRepository.deleteAllByUser(user);
@@ -322,7 +338,7 @@ public class UserService {
             List<PostLikes> postLikesList = postLikesRepository.findAllByPostId(post.getId());
             postLikeCnt = postLikesList.size();
 
-            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
+            List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAt(post.getId());
             List<CommentResponseDto> commentResDtoList = new ArrayList<>();
 
             for (Comment comment:commentList ) {
@@ -436,6 +452,8 @@ public class UserService {
         response.addHeader("Authorization", token);
         return ResponseEntity.ok(loginResponseDto);
     }
+
+
 }
 
 

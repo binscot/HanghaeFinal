@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.PostLikesRequestDto;
+import com.example.hanghaefinal.dto.responseDto.PostLikeClickersResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostLikesResponseDto;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.PostLikes;
@@ -9,9 +10,14 @@ import com.example.hanghaefinal.repository.PostLikesRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class PostLikesService {
@@ -19,10 +25,11 @@ public class PostLikesService {
     private final PostLikesRepository postLikesRepository;
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final AlarmService alarmService;
 
     //좋아요 등록
     @Transactional
-    public PostLikesResponseDto addLike(Long postId, Long userId){
+    public PostLikesResponseDto addLike(Long postId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
                 () -> new IllegalArgumentException("유저정보가 없습니다.")
         );
@@ -34,13 +41,25 @@ public class PostLikesService {
         PostLikes findLike = postLikesRepository.findByUserAndPost(user, post).orElse(null);
 
         //좋아요가 되어있는지 아닌지 체크해서 등록/해제
-        if(findLike == null){
+        if (findLike == null) {
             PostLikesRequestDto postLikesRequestDto = new PostLikesRequestDto(user, post);
             PostLikes postLikes = new PostLikes(postLikesRequestDto);
             postLikesRepository.save(postLikes);
-        } else{
+
+            // 내가 참여한 게시글에 좋아요를 받았을 때
+
+            log.info("---------------------- 444444aaaa ----------------------");
+            alarmService.generatePostLikesAlarm(post);
+        } else {
             postLikesRepository.deleteById(findLike.getId());
         }
-        return new PostLikesResponseDto(postId, postLikesRepository.countByPost(post));
+
+        List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);
+        List<PostLikeClickersResponseDto> postLikeClickersResponseDtos = new ArrayList<>();
+        for (PostLikes postLikesTemp : postLikes) {
+            postLikeClickersResponseDtos.add(new PostLikeClickersResponseDto(postLikesTemp));
+        }
+
+        return  new PostLikesResponseDto(postId, postLikeClickersResponseDtos,postLikesRepository.countByPost(post));
     }
 }

@@ -13,7 +13,8 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         // header 확장시킴.
         registry.addMapping("/**")
-                .allowedOrigins("http://localhost:3000")
+//                .allowedOrigins("http://localhost:3000")
+                .allowedOrigins("https://main.d2l6bnge3hnh7g.amplifyapp.com")
                 .exposedHeaders("Authorization");
 
     }

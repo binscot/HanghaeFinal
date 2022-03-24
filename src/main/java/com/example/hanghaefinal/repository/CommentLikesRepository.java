@@ -6,6 +6,7 @@ import com.example.hanghaefinal.model.CommentLikes;
 import com.example.hanghaefinal.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface CommentLikesRepository extends JpaRepository<CommentLikes, Long> {
@@ -14,5 +15,7 @@ public interface CommentLikesRepository extends JpaRepository<CommentLikes, Long
     Long countByComment(Comment comment);
 
     void deleteAllByUser(User user);
+
+    List<CommentLikes> findAllByCommentId(Long commentId);
 }
 

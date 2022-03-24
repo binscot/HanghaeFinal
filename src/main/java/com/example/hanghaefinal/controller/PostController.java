@@ -44,8 +44,9 @@ public class PostController {
     // 마지막 문단을 단 사람과 게시글 완성 버튼을 누른 사람이 일치하면 완성 되도록???
     @PatchMapping("/posts/complete/{postId}")
     public PostDetailResponseDto completePost(@PathVariable Long postId,
-                                              @RequestBody CategoryRequestDto categoryRequestDto){
-        return postService.completePost(postId, categoryRequestDto);
+                                              @RequestBody CategoryRequestDto categoryRequestDto,
+                                              @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.completePost(postId, categoryRequestDto, userDetails);
     }
 
     // 게시글 상세 페이지 조회 (완성/미완성)
@@ -80,8 +81,36 @@ public class PostController {
         return postService.viewPostIncomplete(page, size);
     }
 
+    // 메인에 보여줄 즐겨찾기 많은 순 & 댓글 있고 & 완성작 top3
+    @GetMapping("/posts/viewMain")
+    public List<PostResponseDto> viewPostMain(){
+        return postService.viewPostMain();
+    }
+
+    // 사용자가(내가) 좋아요한 작품
+    @GetMapping("/posts/viewMyLikesPost")
+    public List<PostResponseDto> viewMyLikesPost(
+            @RequestParam int page,
+            @RequestParam int size,
+            @AuthenticationPrincipal UserDetailsImpl userDetails
+    ){
+        if(userDetails !=null ){
+            return postService.viewMyLikesPost(page, size, userDetails.getUser());
+        } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");
+    }
+
     // 다른 유저 페이지
     @GetMapping("/posts/userPage/{userKey}")
+    public OtherUserResDto2 viewUserPage2(
+            @PathVariable Long userKey,
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        return postService.viewUserPage2(userKey, page, size);
+    }
+
+    // 다른 유저 페이지
+/*    @GetMapping("/posts/userPage/{userKey}")
     public OtherUserResDto viewUserPage(
             @PathVariable Long userKey,
             @RequestParam int page,
