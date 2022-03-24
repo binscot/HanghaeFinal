@@ -104,6 +104,8 @@ public class AlarmService {
                 alarmResponseDtoList.add(alarmDto);
             }
         }
+        
+        user.updateUserAlaram(true);    // 알림을 읽었다고 표시함
         return alarmResponseDtoList;
     }
 
@@ -336,7 +338,7 @@ public class AlarmService {
                 .introduction(user.getIntroduction())
                 .build();*/
 
-        user.updateUserAlaram(true);
+        //user.updateUserAlaram(true);
 
             /* 내가 참여한 게시글에 새로운 문단이 달렸을 때 */
         if (alarm.getType().equals(AlarmType.NEWPARAGRAPH)) {
