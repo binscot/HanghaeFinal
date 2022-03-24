@@ -71,6 +71,7 @@ public class PostService {
     // 마지막 파라그래프 작성 후 게시글 완성 버튼 누름 -> 완성 게시글로 변경 ( 완성 게시글 상세 조회)
     @Transactional
     public PostDetailResponseDto completePost(Long postId, CategoryRequestDto categoryRequestDto, UserDetailsImpl userDetails){
+        log.info("----------------------------- 카테고리리" + categoryRequestDto.getCategory());
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
                 () -> new IllegalArgumentException("userId가 존재하지 않습니다.")
         );
