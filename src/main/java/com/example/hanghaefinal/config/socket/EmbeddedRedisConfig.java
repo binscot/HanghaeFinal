@@ -14,7 +14,7 @@ import javax.annotation.PreDestroy;
 //@Profile("local")
 
 //@Profile("13.209.70.1")
-@Profile("52.78.51.198")
+@Profile("3.37.133.139")
 
 @Configuration
 public class EmbeddedRedisConfig {
