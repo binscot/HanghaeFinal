@@ -16,7 +16,8 @@ else
   echo "> No WAS is connected to nginx"
 fi
 
-TARGET_PID=$(lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
+TARGET_PID=$(sudo lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
+sudo lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+' | cat >/home/ubuntu/app/deploy/file
 
 # 만약 타겟포트에도 WAS 떠 있다면 kill하고 새롭게 띄우기
 if [ ! -z ${TARGET_PID} ]; then
