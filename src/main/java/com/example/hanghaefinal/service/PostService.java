@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -57,7 +58,13 @@ public class PostService {
 
     // 게시글 최초 생성 -> 미완성 게시글 생성
     @Transactional
-    public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg){
+    public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg, BindingResult bindingResult){
+        if (bindingResult.hasErrors()) {
+            throw new IllegalArgumentException(
+                    Objects.requireNonNull(bindingResult.getFieldError()
+                    ).getDefaultMessage());
+        }
+
         Post post = new Post(postRequestDto, user, defaultImg);
         Category category = new Category(postRequestDto.getCategory(), post);
         Paragraph paragraph = new Paragraph(postRequestDto.getParagraph(), user, post);
