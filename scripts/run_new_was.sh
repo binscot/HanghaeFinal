@@ -25,8 +25,8 @@ echo "CURRENT_PID -- ${CURRENT_PID}"
 echo "TARGET_PID -- ${TARGET_PID}"  
 
 # 만약 타겟포트에도 WAS 떠 있다면 kill하고 새롭게 띄우기
-if [ ! -z "${TARGET_PID}" ]; then
-# if [ ! -z $TARGET_PID ]; then
+echo "${TARGET_PID}" 
+if [ ! -z $TARGET_PID ]; then
   sudo kill ${TARGET_PID}
   echo "> Kill WAS running at ${TARGET_PORT}."
 fi
