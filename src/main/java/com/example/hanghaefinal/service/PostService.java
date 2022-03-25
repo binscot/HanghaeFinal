@@ -49,7 +49,7 @@ public class PostService {
 
         String defaultImg = "https://taeks3bucket.s3.ap-northeast-2.amazonaws.com/image/defaultPhoto.png";
         if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
-            defaultImg = s3Uploader.upload(multipartFile, "image");
+            defaultImg = s3Uploader.upload(multipartFile, "post");
         //String uploadUrl =  s3Uploader.upload(multipartFile, dirName);
         //requestDto.setPostImageUrl(defaultImg);
         //requestDto.setPostImageUrl(uploadUrl);
