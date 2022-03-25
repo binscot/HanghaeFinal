@@ -17,12 +17,17 @@ else
 fi
 
 TARGET_PID=$(sudo lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
+CURRENT_PID=$(sudo lsof -Fp -i TCP:${CURRENT_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
+
 sudo lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+' | cat >/home/ubuntu/app/deploy/file
+
+echo "CURRENT_PID -- ${CURRENT_PID}"  
+echo "TARGET_PID -- ${TARGET_PID}"  
 
 # 만약 타겟포트에도 WAS 떠 있다면 kill하고 새롭게 띄우기
 if [ ! -z ${TARGET_PID} ]; then
-  echo "> Kill WAS running at ${TARGET_PORT}."
   sudo kill ${TARGET_PID}
+  echo "> Kill WAS running at ${TARGET_PORT}."
 fi
 
 #마지막&는 프로세스가 백그라운드로 실행되도록 해준다.
