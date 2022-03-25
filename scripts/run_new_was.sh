@@ -25,10 +25,11 @@ echo "CURRENT_PID -- ${CURRENT_PID}"
 echo "TARGET_PID -- ${TARGET_PID}"  
 
 # 만약 타겟포트에도 WAS 떠 있다면 kill하고 새롭게 띄우기
-# if [ ! -z ${TARGET_PID} ]; then
-sudo kill ${TARGET_PID}
-echo "> Kill WAS running at ${TARGET_PORT}."
-# fi
+if [ ! -z "${TARGET_PID}" ]; then
+# if [ ! -z $TARGET_PID ]; then
+  sudo kill ${TARGET_PID}
+  echo "> Kill WAS running at ${TARGET_PORT}."
+fi
 
 #마지막&는 프로세스가 백그라운드로 실행되도록 해준다.
 nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/wewrite/build/libs/user-0.0.1-SNAPSHOT.jar > /home/ubuntu/nohup.out 2>&1 &
