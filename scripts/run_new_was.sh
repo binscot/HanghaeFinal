@@ -17,12 +17,8 @@ else
 fi
 
 TARGET_PID=$(sudo lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
-CURRENT_PID=$(sudo lsof -Fp -i TCP:${CURRENT_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+')
 
-sudo lsof -Fp -i TCP:${TARGET_PORT} | grep -Po 'p[0-9]+' | grep -Po '[0-9]+' | cat >/home/ubuntu/app/deploy/file
-
-echo "CURRENT_PID -- ${CURRENT_PID}"  
-echo "TARGET_PID -- "${TARGET_PID}""  
+echo "TARGET_PID -- ${TARGET_PID}"  
 
 # 만약 타겟포트에도 WAS 떠 있다면 kill하고 새롭게 띄우기
 if [ ! -z "${TARGET_PID}" ]; then
@@ -31,6 +27,6 @@ if [ ! -z "${TARGET_PID}" ]; then
 fi
 
 #마지막&는 프로세스가 백그라운드로 실행되도록 해준다.
-nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/wewrite/build/libs/user-0.0.1-SNAPSHOT.jar > /home/ubuntu/nohup.out 2>&1 &
+nohup java -jar -Dserver.port=${TARGET_PORT} /home/ubuntu/wewrite/build/libs/user-0.0.1-SNAPSHOT.jar > /home/ubuntu/nohup$(date +%Y)-$(date +%m)-$(date +%d)-$(date +%H):$(date +%M).out 2>&1 &
 echo "> Now new WAS runs at ${TARGET_PORT}."
 exit 0
