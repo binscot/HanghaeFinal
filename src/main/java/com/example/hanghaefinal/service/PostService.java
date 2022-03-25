@@ -47,7 +47,7 @@ public class PostService {
         String dirName = "image";
         //s3Uploader.upload(multipartFile, convertedFileName);
 
-        String defaultImg = "https://taeks3bucket.s3.ap-northeast-2.amazonaws.com/image/defaultPhoto.png";
+        String defaultImg = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/Rectangle+6141.png";
         if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
             defaultImg = s3Uploader.upload(multipartFile, "post");
         //String uploadUrl =  s3Uploader.upload(multipartFile, dirName);

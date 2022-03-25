@@ -22,7 +22,7 @@ public class S3Uploader {
 
     private final AmazonS3Client amazonS3Client;
 
-    @Value("${cloud.aws.s3.bucket}")
+    @Value("cloud.aws.s3.bucket")
     public String bucket;  // S3 버킷 이름
 
 
