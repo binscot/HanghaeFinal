@@ -44,7 +44,6 @@ public class PostService {
         //String originalFileName = multipartFile.getOriginalFilename();
         //String convertedFileName = UUID.randomUUID() + originalFileName;
         //requestDto.setImageUrl(convertedFileName);
-        String dirName = "image";
         //s3Uploader.upload(multipartFile, convertedFileName);
 
         String defaultImg = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/Rectangle+6141.png";
