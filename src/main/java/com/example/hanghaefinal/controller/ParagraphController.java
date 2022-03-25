@@ -54,11 +54,11 @@ public class ParagraphController {
     // '문단 생성 완료' 버튼 누를 때
     @MessageMapping("/paragraph/complete")   // 참고하느 코드는 roomId ReqDto에 넣었다. 즉, 연관관계를 안맺음
     public void message(
-                        @RequestBody ParagraphReqDto paragraphReqDto,
-                        @Header("Authorization") String rawToken
-                        //@AuthenticationPrincipal UserDetailsImpl userDetails
-                        //userDetails 이거 못쓰면 토큰에서 가져와야 할듯
-                        ) {
+            @RequestBody ParagraphReqDto paragraphReqDto,
+            @Header("Authorization") String rawToken
+            //@AuthenticationPrincipal UserDetailsImpl userDetails
+            //userDetails 이거 못쓰면 토큰에서 가져와야 할듯
+    ) {
         //String token = rawToken.substring(7); // Bearer 때문에 한듯
 
         Long postId = Long.valueOf(paragraphReqDto.getPostId());

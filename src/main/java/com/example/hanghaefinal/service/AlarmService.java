@@ -106,6 +106,7 @@ public class AlarmService {
         }
         
         user.updateUserAlaram(true);    // 알림을 읽었다고 표시함
+        userRepository.save(user);
         return alarmResponseDtoList;
     }
 

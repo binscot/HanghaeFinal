@@ -14,7 +14,7 @@ public class WebConfig implements WebMvcConfigurer {
         // header 확장시킴.
         registry.addMapping("/**")
 //                .allowedOrigins("http://localhost:3000")
-                .allowedOrigins("https://main.d2l6bnge3hnh7g.amplifyapp.com")
+                .allowedOrigins("https://www.wewrite.co.kr")
                 .exposedHeaders("Authorization");
 
     }
