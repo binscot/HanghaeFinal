@@ -16,7 +16,7 @@ public class CorsConfig {
         config.setAllowCredentials(true);
 //        config.addAllowedOriginPattern("*");
         config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("https://main.d2l6bnge3hnh7g.amplifyapp.com");
+        config.addAllowedOrigin("https://www.wewrite.co.kr");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addExposedHeader("Authorization");
