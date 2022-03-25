@@ -56,7 +56,7 @@ public class UserService {
         MultipartFile multipartFile = requestDto.getUserProfile();
         String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
         if (!Objects.equals(multipartFile.getOriginalFilename(), "foo.txt"))
-            userProfile = s3Uploader.upload(multipartFile, "static");
+            userProfile = s3Uploader.upload(multipartFile, "user");
 
         String username = requestDto.getUsername();
         String nickName = requestDto.getNickName();
@@ -227,7 +227,7 @@ public class UserService {
     public UserInfoResponseDto updateUserProfile(MultipartFile file, UserDetailsImpl userDetails) throws IOException {
         String userProfile = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
         if (!Objects.equals(file.getOriginalFilename(), "foo.txt")){
-            userProfile = s3Uploader.upload(file, "static");
+            userProfile = s3Uploader.upload(file, "user");
         }
 
         User user = userDetails.getUser();
