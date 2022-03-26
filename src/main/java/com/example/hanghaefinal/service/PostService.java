@@ -10,6 +10,7 @@ import com.example.hanghaefinal.util.S3Uploader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -530,6 +531,47 @@ public class PostService {
         // complete 가 false이며(미완성작품) 최근 수정한 시간순으로 불러온다.
 
         postResponseDtoList = viewPostList(postList);
+
+        return new OtherUserResDto2(user, postResponseDtoList);
+    }
+
+    // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
+    public OtherUserResDto2 viewUserPage3(Long userKey, int page, int size){
+        User user = userRepository.findById(userKey).orElseThrow(
+                () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
+        );
+
+        Pageable pageable = PageRequest.of(page,size);
+
+        // paragraphList 에서 userKey와 동일한 리스트들 가져온다.
+        List<Paragraph> paragraphList = paragraphRepository.findAllByUserId(userKey);
+        List<Long> postKeyList = new ArrayList<>();
+
+        // userKey와 동일한 리스트인 paragraphList 에서 postId가 중복을 없애서 postId만 들어있는 list에 넣는다.
+        for(Paragraph paragraph : paragraphList){
+            if( !postKeyList.contains(paragraph.getPost().getId()) ) {
+                postKeyList.add(paragraph.getPost().getId());
+            }
+        }
+
+        List<Post> postTempList = new ArrayList<>();
+        // postList 전체 가져온거에서 postId와 postKeyList에 들어있는 postKey가 같으면 postTempList 에 Post행을 넣어준다.
+
+        for(Long postKey : postKeyList){
+            Post post = postRepository.findById(postKey).orElseThrow(
+                    () -> new IllegalArgumentException("postId가 없습니다.")
+            );
+            postTempList.add(post);
+        }
+
+        // List<Post>를 Page<Post>로 변환하는 코드
+        final int start = (int)pageable.getOffset();
+        final int end = Math.min((start + pageable.getPageSize()), postTempList.size());
+        final Page<Post> postPageableList = new PageImpl<>(postTempList.subList(start, end), pageable, postTempList.size());
+
+
+        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        postResponseDtoList = viewPostList(postPageableList);
 
         return new OtherUserResDto2(user, postResponseDtoList);
     }
