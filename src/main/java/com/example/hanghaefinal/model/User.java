@@ -63,6 +63,7 @@ public class User extends Timestamped{
 
     public User(String username, String encodedPassword, Long kakaoId) {
         this.username=username;
+        this.nickName=username;
         this.password=encodedPassword;
         this.kakaoId=kakaoId;
     }
