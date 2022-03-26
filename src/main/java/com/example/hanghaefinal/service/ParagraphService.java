@@ -40,7 +40,6 @@ public class ParagraphService {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
-
         if(paragraphReqDto.getParagraph().length() > 2000){
             throw new IllegalArgumentException("문단은 2000자 이내로 입력해주세요.");
         }
