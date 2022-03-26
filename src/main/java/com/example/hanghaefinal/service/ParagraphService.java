@@ -37,20 +37,27 @@ public class ParagraphService {
 
     @Transactional
     public void saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
+        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자1111111111 ----------------------");
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
+        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자2222222222 ----------------------");
         if(paragraphReqDto.getParagraph().length() > 2000){
             throw new IllegalArgumentException("문단은 2000자 이내로 입력해주세요.");
         }
+        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자3333333333333----------------------");
 
         int limit = post.getLimitCnt();
+        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자44444444444444 ----------------------");
         int paragraphListSize = paragraphRepository.findAllByPostId(postId).size();
+        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자555555555555 ----------------------");
 
         if (limit >= paragraphListSize){
+            log.info("---------------------- 랙규야~~~~~~~~~~밥먹자666666666666 ----------------------");
             // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
             //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
             Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
+            log.info("---------------------- 랙규야~~~~~~~~~~밥먹자7777777777777777 ----------------------");
             paragraphRepository.save(paragraph);
 
             log.info("---------------------- 111111aaaa ----------------------");
