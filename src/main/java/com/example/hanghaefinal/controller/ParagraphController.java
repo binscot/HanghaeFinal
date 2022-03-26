@@ -63,7 +63,9 @@ public class ParagraphController {
             //userDetails 이거 못쓰면 토큰에서 가져와야 할듯
     ) {
         //String token = rawToken.substring(7); // Bearer 때문에 한듯
-
+        if (paragraphReqDto.getParagraph()==null){
+            throw new NullPointerException("문단을 작성해 주세요!");
+        }
         Long postId = Long.valueOf(paragraphReqDto.getPostId());
         String token = rawToken;
         String username = jwtTokenProvider.getAuthentication(token).getName();
