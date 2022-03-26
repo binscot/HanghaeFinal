@@ -56,7 +56,7 @@ public class ParagraphController {
     // 이게 pub로 받는 api이다 이거 알림 같은 경우는 @PostMapping 해야할듯
     // '문단 생성 완료' 버튼 누를 때
     @MessageMapping("/paragraph/complete")   // 참고하느 코드는 roomId ReqDto에 넣었다. 즉, 연관관계를 안맺음
-    public ResponseEntity<HttpStatus> message(
+    public void message(
             @RequestBody ParagraphReqDto paragraphReqDto,
             @Header("Authorization") String rawToken
             //@AuthenticationPrincipal UserDetailsImpl userDetails
@@ -98,7 +98,7 @@ public class ParagraphController {
         }
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
 //            paragraphService.sendChatMessage();
-      return ResponseEntity.ok(HttpStatus.MULTI_STATUS);
+
     }
 
     @PostMapping("/paragraph/likes/{paragraphId}")
