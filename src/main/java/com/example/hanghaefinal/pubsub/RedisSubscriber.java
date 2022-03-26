@@ -44,6 +44,7 @@ public class RedisSubscriber {
             // '문단 완료' 버튼 누를 시 responseDto 보내기 보내기
             else if(publishMessage.startsWith("TALK", 9)){
                 log.info("------------------------ RedisSubscriber TALK ----------- ");
+                Thread.sleep(1500);
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
                 messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
                 //ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);

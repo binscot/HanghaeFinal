@@ -89,8 +89,8 @@ public class ParagraphController {
         }
         else if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK)) {
             log.info("---------------TALK TALK TALK ----------------");
-            paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
             paragraphService.saveParagraph(paragraphReqDto, postId, user);
+            paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
             postService.talkWritingStatus(postId);
         }
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
