@@ -20,6 +20,9 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity // 스프링 Security 지원을 가능하게 함
@@ -63,16 +66,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 // 세션을 사용하지 않기 때문에 STATELESS로 설정
                 .and()
-//                .sessionManagement()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // 토큰 기반 인증이므로 세션 역시 사용하지 않습니다.
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .mvcMatchers(HttpMethod.OPTIONS,"/**").permitAll()
-                .antMatchers("/**","/").permitAll()
-                .anyRequest().permitAll()
+//                .mvcMatchers(HttpMethod.OPTIONS,"/**").permitAll()
+                .antMatchers("/","/user/logIn","/user/signup",
+                        "/user/signup/checkID","/user/signup/checkNick","/search",
+                        "/mailCheck","/login/kakaoLogin","/categories","/category/posts",
+                        "/posts/userPage/**","/posts/recent", "/posts/recommend","/posts/incomplete",
+                        "/posts/viewMain","/posts/{postId}","/comment/{postId}","/notice").permitAll()
+                .anyRequest().authenticated()
 
                 //.and().cors().configurationSource(corsConfigurationSource())    // 추가
 
@@ -80,6 +86,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
     }
+
+
 
 
 }

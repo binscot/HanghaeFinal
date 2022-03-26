@@ -14,6 +14,7 @@ public class HanghaeFinal {
 
     public static final String APPLICATION_LOCATIONS = "spring.config.location="
             + "/home/ubuntu/wewrite/build/libs/application.yml";
+//            + "classpath:application.yml";
 
     public static void main(String[] args) {
         //SpringApplication.run(HanghaeFinal.class, args);
