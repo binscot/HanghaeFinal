@@ -12,10 +12,13 @@ import com.example.hanghaefinal.service.ParagraphService;
 import com.example.hanghaefinal.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @RestController
@@ -53,7 +56,7 @@ public class ParagraphController {
     // 이게 pub로 받는 api이다 이거 알림 같은 경우는 @PostMapping 해야할듯
     // '문단 생성 완료' 버튼 누를 때
     @MessageMapping("/paragraph/complete")   // 참고하느 코드는 roomId ReqDto에 넣었다. 즉, 연관관계를 안맺음
-    public void message(
+    public ResponseEntity<HttpStatus> message(
             @RequestBody ParagraphReqDto paragraphReqDto,
             @Header("Authorization") String rawToken
             //@AuthenticationPrincipal UserDetailsImpl userDetails
@@ -95,6 +98,7 @@ public class ParagraphController {
         }
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
 //            paragraphService.sendChatMessage();
+      return ResponseEntity.ok(HttpStatus.MULTI_STATUS);
     }
 
     @PostMapping("/paragraph/likes/{paragraphId}")
