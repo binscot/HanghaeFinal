@@ -65,6 +65,13 @@ public class PostService {
                     ).getDefaultMessage());
         }
 
+        if(postRequestDto.getTitle().equals("null")){
+            throw new IllegalArgumentException("제목이 비어있으면 안됩니다.");
+        }
+        if(postRequestDto.getParagraph().equals("null")){
+            throw new IllegalArgumentException("문단이 비어있으면 안됩니다.");
+        }
+
         Post post = new Post(postRequestDto, user, defaultImg);
         Category category = new Category(postRequestDto.getCategory(), post);
         Paragraph paragraph = new Paragraph(postRequestDto.getParagraph(), user, post);
