@@ -61,12 +61,12 @@ public class User extends Timestamped{
 
     }
 
-    public User(String username, String encodedPassword, Long kakaoId) {
-        this.username=username;
-        this.nickName=username;
-        this.password=encodedPassword;
-        this.kakaoId=kakaoId;
-    }
+//    public User(String username, String nickName, String encodedPassword, Long kakaoId) {
+//        this.username=username;
+//        this.nickName=nickName;
+//        this.password=encodedPassword;
+//        this.kakaoId=kakaoId;
+//    }
 
 
 //    public void updateUser(String nickName, String password, String introduction, String userProfile) {

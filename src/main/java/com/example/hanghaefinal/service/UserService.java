@@ -382,7 +382,7 @@ public class UserService {
         String nickname = userInfo.getNickname();
         String email = userInfo.getEmail();
         // DB 에 중복된 Kakao Id 가 있는지 확인
-        User kakaoUser = userRepository.findByUsername(email)
+        User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
         // 카카오 정보로 회원가입
         if (kakaoUser == null) {
@@ -407,7 +407,8 @@ public class UserService {
                 if (email != null) {
                     kakaoUser = new User(nickname, encodedPassword, email, kakaoId);
                 } else {
-                    kakaoUser = new User(nickname, encodedPassword, kakaoId);
+                    String username = "kakaoUser"+UUID.randomUUID();
+                    kakaoUser = new User(nickname, encodedPassword,username, kakaoId);
                 }
                 userRepository.save(kakaoUser);
 
@@ -419,7 +420,7 @@ public class UserService {
                 String createdAt = String.valueOf(kakaoUser.getCreatedAt());
                 String createdDate = createdAt.substring(8,10);
 
-                if (createdDate.equals("07")){
+                if (createdDate.equals("28")){
                     Badge badge = new Badge();
                     badge.setBadgeName("알파테스터");
                     badge.setUser(kakaoUser);
