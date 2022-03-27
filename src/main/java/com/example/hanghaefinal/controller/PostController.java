@@ -10,6 +10,7 @@ import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -27,7 +28,7 @@ public class PostController {
 
     // 미완성 게시글 생성 요청
     @PostMapping("/posts")
-    public Boolean savePost(
+    public ResponseEntity<Boolean> savePost(
             @Validated
             @ModelAttribute PostRequestDto postRequestDto,
             BindingResult bindingResult,
@@ -37,9 +38,10 @@ public class PostController {
             User user = userDetails.getUser();
             String defaultImg = postService.uploadImageFile(postRequestDto.getPostImageUrl(), postRequestDto);
             //postService.uploadImageFile(multipartFile, postRequestDto);
-            postService.savePost(postRequestDto ,user, defaultImg, bindingResult);
+            //postService.savePost(postRequestDto ,user, defaultImg, bindingResult);
+            return ResponseEntity.ok(postService.savePost(postRequestDto ,user, defaultImg, bindingResult));
         } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");
-        return true; // postId로 return 할지 고려하자
+        //return true; // postId로 return 할지 고려하자
     }
 
     // 미완성 게시글을 -> 완성 게시글로 변경 ( complete 컴럼만 수정할 것이므로 patch 사용)
