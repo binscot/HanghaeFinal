@@ -16,4 +16,6 @@ public interface ParagraphRepository extends JpaRepository<Paragraph, Long> {
     List<Paragraph> findAllByPostId(Long postId);
 
     List<Paragraph> findAllByUserId(Long userId);
+
+    int countByParagraph(Long postId);
 }
