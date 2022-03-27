@@ -46,7 +46,7 @@ public class ParagraphService {
             throw new IllegalArgumentException("문단은 2000자 이내로 입력해주세요.");
         }
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자3333333333333----------------------");
-        if(paragraphReqDto.getParagraph().equals("null")){
+        if(paragraphReqDto.getParagraph().equals("")){
             throw new IllegalArgumentException("문단을 작성해주세요");
         }
 
