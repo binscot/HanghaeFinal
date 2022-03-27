@@ -53,10 +53,11 @@ public class User extends Timestamped{
         this.kakaoId = null;
     }
 
-    public User(String username, String encodedPassword, String email, Long kakaoId) {
+    public User(String username, String encodedPassword, String email, Long kakaoId, String userProfileImage) {
         this.username=email;
         this.password=encodedPassword;
         this.nickName=username;
+        this.userProfileImage = userProfileImage;
         this.kakaoId=kakaoId;
 
     }

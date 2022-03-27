@@ -405,11 +405,12 @@ public class UserService {
                 String encodedPassword = passwordEncoder.encode(password);
 
                 if (email != null) {
-                    kakaoUser = new User(nickname, encodedPassword, email, kakaoId);
+                    String userImg = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
+                    kakaoUser = new User(nickname, encodedPassword, email, kakaoId, userImg);
                 } else {
-
+                    String userImg = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
                     String username = "kakaoUser" + kakaoId;
-                    kakaoUser = new User(nickname, encodedPassword,username, kakaoId);
+                    kakaoUser = new User(nickname, encodedPassword,username, kakaoId, userImg);
                 }
                 userRepository.save(kakaoUser);
 
