@@ -56,7 +56,7 @@ public class ParagraphController {
     // 이게 pub로 받는 api이다 이거 알림 같은 경우는 @PostMapping 해야할듯
     // '문단 생성 완료' 버튼 누를 때
     @MessageMapping("/paragraph/complete")   // 참고하느 코드는 roomId ReqDto에 넣었다. 즉, 연관관계를 안맺음
-    public void message(
+    public ResponseEntity<Boolean> message(
             @RequestBody ParagraphReqDto paragraphReqDto,
             @Header("Authorization") String rawToken
             //@AuthenticationPrincipal UserDetailsImpl userDetails
@@ -70,6 +70,7 @@ public class ParagraphController {
         User user = userRepository.findByUsername(username).orElseThrow(
                 () -> new IllegalArgumentException("유저네임이 존재하지 않습니다.")
         );
+        Boolean bool = true;
 
         log.info("~~~~~~~~~~~~~~~~~~~~~~/chat/message/ 안에서 token : " + token+"\n");
         // 로그인 회원 정보를 들어온 메시지에 값 세팅
@@ -86,18 +87,19 @@ public class ParagraphController {
         // 웹소켓 통신으로 게시글 안에 있는 사람들한테 response데이터 보내기
         if(paragraphReqDto.getType().equals(Paragraph.MessageType.START)){
             log.info("---------------- START START START ---------");
-            paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
-            postService.startWritingStatus(postId, user);
+            bool = paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
+            bool = postService.startWritingStatus(postId, user);
         }
         else if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK)) {
             log.info("---------------TALK TALK TALK ----------------");
-            paragraphService.saveParagraph(paragraphReqDto, postId, user);
-            paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
-            postService.talkWritingStatus(postId);
+            bool = paragraphService.saveParagraph(paragraphReqDto, postId, user);
+            bool = paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
+            bool = postService.talkWritingStatus(postId);
         }
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
 //            paragraphService.sendChatMessage();
 
+        return ResponseEntity.ok(bool);
     }
 
     @PostMapping("/paragraph/likes/{paragraphId}")

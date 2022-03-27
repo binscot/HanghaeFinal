@@ -36,7 +36,7 @@ public class ParagraphService {
     private final AlarmService alarmService;
 
     @Transactional
-    public void saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
+    public Boolean saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자1111111111 ----------------------");
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
@@ -46,13 +46,17 @@ public class ParagraphService {
             throw new IllegalArgumentException("문단은 2000자 이내로 입력해주세요.");
         }
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자3333333333333----------------------");
+        if(paragraphReqDto.getParagraph() == null){
+            throw new IllegalArgumentException("문단을 작성해주세요");
+        }
 
         int limit = post.getLimitCnt();
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자44444444444444 ----------------------");
         int paragraphListSize = paragraphRepository.findAllByPostId(postId).size();
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자555555555555 ----------------------");
 
-        if (limit >= paragraphListSize){
+
+        if (limit >= paragraphListSize ){
             log.info("---------------------- 랙규야~~~~~~~~~~밥먹자666666666666 ----------------------");
             // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
             //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
@@ -63,7 +67,9 @@ public class ParagraphService {
             log.info("---------------------- 111111aaaa ----------------------");
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
-        }
+        } else throw new IllegalArgumentException("문단 개수를 초과했습니다.");
+
+        return true;
     }
 
     // destination 정보에서 postId 추출
@@ -101,7 +107,7 @@ public class ParagraphService {
     }
 
     // 게시글에 있는 사람들에게 response데이터 보내기
-    public void paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
+    public Boolean paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
         User user = userRepository.findById(paragraphReqDto.getUserId()).orElseThrow(
                 ()-> new IllegalArgumentException("로그인한 사용자가 존재하지 않습니다.")
         );
@@ -118,6 +124,8 @@ public class ParagraphService {
 
         // convertAndSend 할 때 redis 인메모리에 들어간다 (disconnect가 되면 없어짐)
         redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
+
+        return true;
     }
 
     @Transactional
