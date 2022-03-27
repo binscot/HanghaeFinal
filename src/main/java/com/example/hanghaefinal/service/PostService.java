@@ -577,19 +577,23 @@ public class PostService {
     }
 
     // '문단 시작'버튼을 눌렀을 때 writing이 true가 되고 writer의 닉네임을 준다.
-    public void startWritingStatus(Long postId, User user) {
+    public Boolean startWritingStatus(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
         post.updatePostByStart(true, user.getNickName(), LocalDateTime.now());
+
+        return true;
     }
 
     // '문단 완료'버튼을 눌렀을 때 writing이 false가 되고 writer의 nickName을 null 로 한다.
-    public void talkWritingStatus(Long postId) {
+    public Boolean talkWritingStatus(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
         post.updatePostWriting(false, null,null);
+
+        return true;
     }
 
     public Boolean cancelIsWriting(Long postId) {
