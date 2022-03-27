@@ -407,7 +407,8 @@ public class UserService {
                 if (email != null) {
                     kakaoUser = new User(nickname, encodedPassword, email, kakaoId);
                 } else {
-                    String username = "kakaoUser"+UUID.randomUUID();
+
+                    String username = "kakaoUser" + kakaoId;
                     kakaoUser = new User(nickname, encodedPassword,username, kakaoId);
                 }
                 userRepository.save(kakaoUser);
