@@ -95,18 +95,17 @@ public class PostService {
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
 
-        int cnt = paragraphRepository.countByParagraph(postId);
+        /*int cnt = paragraphRepository.countByParagraph(postId);
         log.info("------------------------- cnt ------------------------- : " + cnt);
         log.info("------------------------- cnt ------------------------- : " + cnt);
         log.info("------------------------- cnt ------------------------- : " + cnt);
         log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
         log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
         log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
-
 
         if(post.getLimitCnt() != cnt ){
             throw new IllegalArgumentException("문단 작성이 완료되지 않았습니다.");
-        }
+        }*/
 
         // 마지막 문단 작성자가 카테고리를 생성하면 새로운 카테고리 등록, category가 있으면 카테고리를 생성
         if(categoryRequestDto.getCategory() != null){
