@@ -25,7 +25,7 @@ public class CustomCorsFilter implements Filter {
 
 
         httpServletResponse.setHeader("Access-Control-Allow-Origin","https://www.wewrite.co.kr");
-//        httpServletResponse.setHeader("Access-Control-Allow-Origin","http://localhost:3000");
+        httpServletResponse.setHeader("Access-Control-Allow-Origin","http://localhost:3000");
         httpServletResponse.setHeader("Access-Control-Allow-Methods","*");
         httpServletResponse.setHeader("Access-Control-Max-Age","3600");
         httpServletResponse.setHeader("Access-Control-Allow-Headers","*");
