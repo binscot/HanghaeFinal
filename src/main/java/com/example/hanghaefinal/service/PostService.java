@@ -95,15 +95,10 @@ public class PostService {
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
 
-        /*int cnt = paragraphRepository.countByParagraph(postId);
-        log.info("------------------------- cnt ------------------------- : " + cnt);
-        log.info("------------------------- cnt ------------------------- : " + cnt);
-        log.info("------------------------- cnt ------------------------- : " + cnt);
-        log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
-        log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
-        log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
 
-        if(post.getLimitCnt() != cnt ){
+/*        int paragraphCnt = paragraphRepository.findAllByPostId(postId).size();
+
+        if(post.getLimitCnt() != paragraphCnt ){
             throw new IllegalArgumentException("문단 작성이 완료되지 않았습니다.");
         }*/
 
@@ -536,7 +531,7 @@ public class PostService {
     }*/
 
     // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
-    public OtherUserResDto2 viewUserPage2(Long userKey, int page, int size){
+    public OtherUserResDto2 viewUserCreatePost(Long userKey, int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
@@ -555,7 +550,7 @@ public class PostService {
     }
 
     // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
-    public OtherUserResDto2 viewUserPage3(Long userKey, int page, int size){
+    public OtherUserResDto2 viewUserParticipatePost(Long userKey, int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
