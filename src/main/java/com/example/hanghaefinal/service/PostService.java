@@ -96,6 +96,14 @@ public class PostService {
         );
 
         int cnt = paragraphRepository.countByParagraph(postId);
+        log.info("------------------------- cnt ------------------------- : " + cnt);
+        log.info("------------------------- cnt ------------------------- : " + cnt);
+        log.info("------------------------- cnt ------------------------- : " + cnt);
+        log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
+        log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
+        log.info("------------------------- post.getLimitCnt() ----------------- : " + post.getLimitCnt());
+
+
         if(post.getLimitCnt() != cnt ){
             throw new IllegalArgumentException("문단 작성이 완료되지 않았습니다.");
         }
