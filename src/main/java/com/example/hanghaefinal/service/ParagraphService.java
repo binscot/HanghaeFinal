@@ -53,7 +53,16 @@ public class ParagraphService {
         int limit = post.getLimitCnt();
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자44444444444444 ----------------------");
         int paragraphListSize = paragraphRepository.findAllByPostId(postId).size();
+        int countBySize = paragraphRepository.countByParagraph(postId);
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자555555555555 ----------------------");
+
+
+        log.info("------------------------- paragraphListSize --------------------- : " + paragraphListSize);
+        log.info("------------------------- paragraphListSize --------------------- : " + paragraphListSize);
+        log.info("------------------------- paragraphListSize --------------------- : " + paragraphListSize);
+        log.info("------------------------- countBySize ------------------------- : " + countBySize);
+        log.info("------------------------- countBySize ------------------------- : " + countBySize);
+        log.info("------------------------- countBySize ------------------------- : " + countBySize);
 
 
         if (limit >= paragraphListSize ){
