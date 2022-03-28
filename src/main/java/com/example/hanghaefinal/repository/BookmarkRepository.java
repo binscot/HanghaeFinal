@@ -21,5 +21,5 @@ public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
 
     Long countByPost(Post post);
 
-    Page<Bookmark> findAll(Pageable pageable);
+    Page<Bookmark> findAllByUserId(Long userId,Pageable pageable);
 }

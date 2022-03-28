@@ -30,7 +30,7 @@ public class BookmarkService {
     //북마크조회
     public List<BookmarkGetResponseDto> getBookmark(int page, int size, User user) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<Bookmark> bookmarkList = bookmarkRepository.findAll(pageable);
+        Page<Bookmark> bookmarkList = bookmarkRepository.findAllByUserId(user.getId(),pageable);
         List<BookmarkGetResponseDto> bookmarkGetResponseDtos =new ArrayList<>();
 
         for(Bookmark bookmark : bookmarkList){
