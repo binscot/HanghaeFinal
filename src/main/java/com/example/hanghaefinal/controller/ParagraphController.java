@@ -46,6 +46,7 @@ public class ParagraphController {
     // 작성 취소 로직
     @PostMapping("/cancelIsWriting/{postId}")
     public Boolean cancelIsWriting(@PathVariable Long postId){
+        log.info("cancelIsWriting----------------------------------");
         return postService.cancelIsWriting(postId);
     }
 

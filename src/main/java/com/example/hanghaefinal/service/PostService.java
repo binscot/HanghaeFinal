@@ -271,7 +271,7 @@ public class PostService {
             postUsername = post.getUser().getUsername();
         }
 
-
+        log.info("-----------------------PostDetailResponseDto---------:"+post.isWriting());
         return new PostDetailResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
                 paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
 //        return new PostDetailResponseDto(post, commentList, postLikesCnt);
@@ -613,6 +613,7 @@ public class PostService {
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
         if (post.isWriting()){
+            log.info("isWriting---------------------------------------false");
             post.updatePostWriting(false, null,null);
         }
         return post.isWriting();
