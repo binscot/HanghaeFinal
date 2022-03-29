@@ -118,6 +118,7 @@ public class StompHandler implements ChannelInterceptor {
             );
             log.info("~~~~~~~~~~~~~~~~~~~~ ");
             Long userId = user.get().getId();
+
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String findInOutKey = redisRepository.getSessionUserInfo(sessionId);
 
