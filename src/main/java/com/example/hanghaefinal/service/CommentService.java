@@ -1,7 +1,8 @@
 package com.example.hanghaefinal.service;
 
 
-import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
+import com.example.hanghaefinal.exception.exception.CommentNotFoundException;
+import com.example.hanghaefinal.exception.exception.IllegalUserException;
 import com.example.hanghaefinal.exception.exception.PostNotFoundException;
 import com.example.hanghaefinal.model.Comment;
 import com.example.hanghaefinal.repository.CommentRepository;
@@ -54,12 +55,12 @@ public class CommentService {
     public Comment update(Long commentId, CommentRequestDto commentRequestDto, UserDetailsImpl userDetails) {
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
+                () -> new CommentNotFoundException("해당 댓글이 존재하지 않습니다.")
         );
 
         User user = comment.getUser();
         if (userDetails.getUser() != user) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+            throw new IllegalUserException("해당 작성자가 아닙니다.");
         }
         if (commentRequestDto.getComment() == null) {
             throw new IllegalArgumentException("댓글을 입력해주세요.");
@@ -77,12 +78,12 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, UserDetailsImpl userDetails){
        Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("해당 댓글이 존재하지 않습니다.")
+                () -> new CommentNotFoundException("해당 댓글이 존재하지 않습니다.")
         );
         User user = comment.getUser();
         Long deleteId = user.getId();
         if(!Objects.equals(userDetails.getUser().getId(), deleteId)) {
-            throw new IllegalArgumentException("작성자만 수정할 수 있습니다.");
+            throw new IllegalUserException("해당 작성자가 아닙니다.");
         }else{
             commentRepository.deleteById(commentId);
         }
