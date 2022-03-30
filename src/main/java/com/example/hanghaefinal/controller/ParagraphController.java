@@ -4,7 +4,6 @@ import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
 import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Paragraph;
-import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
@@ -19,7 +18,6 @@ import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.HttpClientErrorException;
 
 @Slf4j
 @RestController

@@ -76,7 +76,7 @@ public class UserService {
             throw new EqualPasswordException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
         }
         if (introduction.length()>300){
-            throw new IllegalArgumentException("소개는 300자 이하로 작성해주세요!");
+            throw new IntroductionLimitException("소개는 300자 이하로 작성해주세요!");
         }
 
         User user = new User(username, password, nickName, introduction, userProfile);
