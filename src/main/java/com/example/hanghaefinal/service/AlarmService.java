@@ -2,6 +2,8 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.Enum.AlarmType;
 import com.example.hanghaefinal.dto.responseDto.AlarmResponseDto;
+import com.example.hanghaefinal.exception.exception.PostNotFoundException;
+import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Alarm;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.Post;
@@ -50,7 +52,7 @@ public class AlarmService {
 
         for (Alarm alarm : alarmListPage) {
             Post post = postRepository.findById(alarm.getPostId()).orElseThrow(
-                    () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
+                    () -> new PostNotFoundException("postId가 존재하지 않습니다.")
             );
 
                 /* 내가 참여한 게시글에 새로운 문단이 등록 됐을 때 */
@@ -127,7 +129,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             if (!Objects.equals(userid, paragraphOwner.getId())){ // 문단을 작성한 사람과 다르면
                 User user = userRepository.findById(userid).orElseThrow(
-                        () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                        () -> new UserNotFoundException ("user가 존재하지 않습니다.")
                 );
                 user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -181,7 +183,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             if (!Objects.equals(userid, LastParagraphOwner.getId())){
                 User user = userRepository.findById(userid).orElseThrow(
-                        () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                        () -> new UserNotFoundException ("user가 존재하지 않습니다.")
                 );
                 user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -224,7 +226,7 @@ public class AlarmService {
         log.info("---------------------- 333333bbbb ----------------------");
 
         User user = userRepository.findById(ParagraphOwner.getId()).orElseThrow(
-                () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                () -> new UserNotFoundException ("user가 존재하지 않습니다.")
         );
         user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -278,7 +280,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             log.info("------------------- 444userid : " + userid);
             User user = userRepository.findById(userid).orElseThrow(
-                    () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                    () -> new UserNotFoundException ("user가 존재하지 않습니다.")
             );
             user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 

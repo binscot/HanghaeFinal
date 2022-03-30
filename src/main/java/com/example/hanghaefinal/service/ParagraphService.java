@@ -3,6 +3,8 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.exception.exception.PostNotFoundException;
+import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.ParagraphLikes;
 import com.example.hanghaefinal.model.Post;
@@ -39,7 +41,7 @@ public class ParagraphService {
     public Boolean saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자1111111111 ----------------------");
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
+                () -> new PostNotFoundException("postId가 존재하지 않습니다.")
         );
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자2222222222 ----------------------");
         if(paragraphReqDto.getParagraph().length() > 2000){
@@ -118,7 +120,7 @@ public class ParagraphService {
     // 게시글에 있는 사람들에게 response데이터 보내기
     public Boolean paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
         User user = userRepository.findById(paragraphReqDto.getUserId()).orElseThrow(
-                ()-> new IllegalArgumentException("로그인한 사용자가 존재하지 않습니다.")
+                ()-> new UserNotFoundException("user가 존재하지 않습니다.")
         );
 
         log.info("--------------------------- sendChatMessage user.getUsername() : " + user.getUsername());
@@ -140,7 +142,7 @@ public class ParagraphService {
     @Transactional
     public ParagraphLikesResDto paragraphLikes(Long paragraphId, Long userId){
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("유저 정보가 없습니다.")
+                () -> new UserNotFoundException("user가 존재하지 않습니다.")
         );
 
         Paragraph paragraph = paragraphRepository.findById(paragraphId).orElseThrow(

@@ -2,6 +2,7 @@ package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
+import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
@@ -69,7 +70,7 @@ public class ParagraphController {
         String username = jwtTokenProvider.getAuthentication(token).getName();
         //Optional<User> user = userRepository.findByUsername(username);
         User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("유저네임이 존재하지 않습니다.")
+                () -> new UserNotFoundException("user가 존재하지 않습니다.")
         );
         Boolean bool = true;
 

@@ -2,6 +2,7 @@ package com.example.hanghaefinal.service;
 
 
 import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
+import com.example.hanghaefinal.exception.exception.PostNotFoundException;
 import com.example.hanghaefinal.model.Comment;
 import com.example.hanghaefinal.repository.CommentRepository;
 import com.example.hanghaefinal.dto.requestDto.CommentRequestDto;
@@ -33,7 +34,7 @@ public class CommentService {
     @Transactional
     public Comment addComment(Long postId, CommentRequestDto commentRequestDto, User user){
         Post post = postRepository.findById(postId).orElseThrow(
-                ()-> new IllegalArgumentException("해당 게시글을 찾을 수 없습니다.")
+                ()-> new PostNotFoundException("postId가 존재하지 않습니다.")
         );
 
         if (commentRequestDto.getComment() == null){
