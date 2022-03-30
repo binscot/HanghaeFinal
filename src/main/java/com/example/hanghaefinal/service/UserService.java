@@ -2,10 +2,7 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.*;
 import com.example.hanghaefinal.dto.responseDto.*;
-import com.example.hanghaefinal.exception.exception.EqualPasswordException;
-import com.example.hanghaefinal.exception.exception.IdDuplicationException;
-import com.example.hanghaefinal.exception.exception.NickDuplicationException;
-import com.example.hanghaefinal.exception.exception.UserNotFoundException;
+import com.example.hanghaefinal.exception.exception.*;
 import com.example.hanghaefinal.kakao.KakaoOAuth2;
 import com.example.hanghaefinal.kakao.KakaoUserInfo;
 import com.example.hanghaefinal.model.*;
@@ -76,7 +73,7 @@ public class UserService {
                     ).getDefaultMessage());
         }
         if (!requestDto.getPassword().matches(requestDto.getCheckPassword())){
-            throw new IllegalArgumentException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
+            throw new EqualPasswordException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
         }
         if (introduction.length()>300){
             throw new IllegalArgumentException("소개는 300자 이하로 작성해주세요!");
@@ -183,7 +180,7 @@ public class UserService {
 
     public HttpHeaders tokenToHeader(LoginRequestDto requestDto) {
         User user = userRepository.findByUsername(requestDto.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 ID 입니다."));
         String token = jwtTokenProvider.createToken(user.getUsername());
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", token);
@@ -196,7 +193,7 @@ public class UserService {
     //유저정보 전달
     public UserInfoResponseDto userInfo(UserDetailsImpl userDetails) {
         if (userDetails==null){
-            throw new NullPointerException("유저정보가 없습니다!");
+            throw new UserNotFoundException("유저정보가 없습니다!");
         }
         User user = userDetails.getUser();
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByUser(user);
@@ -304,12 +301,12 @@ public class UserService {
     @Transactional
     public void removeUser(DeleteUserRequestDto requestDto, UserDetailsImpl userDetails) {
         if (userDetails==null){
-            throw new NullPointerException("유저정보가 없습니다!");
+            throw new UserNotFoundException("유저정보가 없습니다!");
         }
         String password = requestDto.getPassword();
         User user = userDetails.getUser();
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요!");
+            throw new PasswordCheckException("비밀번호를 다시 확인해 주세요!");
         }
         badgeRepository.deleteAllByUser(user);
 
@@ -371,10 +368,10 @@ public class UserService {
     @Transactional
     public Boolean updatePassword(PasswordRequestDto requestDto) {
         User user = userRepository.findByUsername(requestDto.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다.")
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
         if (!requestDto.getPassword().matches(requestDto.getCheckPassword())){
-            throw new IllegalArgumentException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
+            throw new EqualPasswordException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
         }
         String password = passwordEncoder.encode(requestDto.getPassword());
         user.updateUser(password);
