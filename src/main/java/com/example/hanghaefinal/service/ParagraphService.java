@@ -3,14 +3,8 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.*;
-import com.example.hanghaefinal.model.Paragraph;
-import com.example.hanghaefinal.model.ParagraphLikes;
-import com.example.hanghaefinal.model.Post;
-import com.example.hanghaefinal.model.User;
-import com.example.hanghaefinal.repository.ParagraphLikesRepository;
-import com.example.hanghaefinal.repository.ParagraphRepository;
-import com.example.hanghaefinal.repository.PostRepository;
-import com.example.hanghaefinal.repository.UserRepository;
+import com.example.hanghaefinal.model.*;
+import com.example.hanghaefinal.repository.*;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +28,7 @@ public class ParagraphService {
     private final RedisTemplate redisTemplate;
     private final ChannelTopic channelTopic;
     private final AlarmService alarmService;
+    public final AlarmRepository alarmRepository;
 
     @Transactional
     public Boolean saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
@@ -76,6 +71,16 @@ public class ParagraphService {
             log.info("---------------------- 111111aaaa ----------------------");
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
+
+            List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId()); //asc로 가져옴
+
+            if(alarmList.size() > 20){
+                Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
+                        () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                );
+                alarmList.remove(oldAlarm);
+            }
+
         } else throw new IllegalArgumentException("문단 개수를 초과했습니다.");
 
         return true;
@@ -157,6 +162,16 @@ public class ParagraphService {
             log.info("---------------------- 333333aaaa ----------------------");
             // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
             alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
+
+            List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId()); //asc로 가져옴
+
+            if(alarmList.size() > 20){
+                Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
+                        () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                );
+                alarmList.remove(oldAlarm);
+            }
+
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
         }
