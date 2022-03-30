@@ -2,6 +2,10 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.*;
 import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.exception.exception.EqualPasswordException;
+import com.example.hanghaefinal.exception.exception.IdDuplicationException;
+import com.example.hanghaefinal.exception.exception.NickDuplicationException;
+import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.kakao.KakaoOAuth2;
 import com.example.hanghaefinal.kakao.KakaoUserInfo;
 import com.example.hanghaefinal.model.*;
@@ -101,7 +105,7 @@ public class UserService {
     public Boolean checkId(SignupRequestDto requestDto) {
         Optional<User> user = userRepository.findByUsername(requestDto.getUsername());
         if (user.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
+            throw new IdDuplicationException("중복된 사용자 ID 가 존재합니다.");
         }
         return true;
     }
@@ -110,7 +114,7 @@ public class UserService {
     public Boolean checkNick(SignupRequestDto requestDto) {
         Optional<User> foundNickName = userRepository.findByNickName(requestDto.getNickName());
         if (foundNickName.isPresent()){
-            throw new IllegalArgumentException("중복된 사용자 닉네임이 존재합니다.");
+            throw new NickDuplicationException("중복된 사용자 닉네임이 존재합니다.");
         }
         return true;
     }
@@ -123,11 +127,11 @@ public class UserService {
     ) {
 
         User user = userRepository.findByUsername(loginRequestDto.getUsername())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
+                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 ID 입니다."));
 
 
         if (!passwordEncoder.matches(loginRequestDto.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("비밀번호를 다시 확인해 주세요.");
+            throw new EqualPasswordException("비밀번호를 다시 확인해 주세요.");
         }
 
         //개근상 뱃지 로직

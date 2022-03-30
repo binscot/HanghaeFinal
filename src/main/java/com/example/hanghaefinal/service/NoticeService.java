@@ -3,6 +3,7 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.NoticeRequestDto;
 import com.example.hanghaefinal.dto.responseDto.NoticeResponseDto;
 import com.example.hanghaefinal.exception.exception.AdminOnlyException;
+import com.example.hanghaefinal.exception.exception.NoticeNotFoundException;
 import com.example.hanghaefinal.model.Notice;
 import com.example.hanghaefinal.repository.NoticeRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
@@ -60,7 +61,7 @@ public class NoticeService {
             throw new AdminOnlyException("관리자만 접근 가능합니다.");
         }
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(
-                () -> new IllegalArgumentException("공지가 존재하지 않습니다.")
+                () -> new NoticeNotFoundException("공지가 존재하지 않습니다.")
         );
         MultipartFile multipartFile = requestDto.getNoticeImg();
         //로고 이미지로 수정 해야함
@@ -81,7 +82,7 @@ public class NoticeService {
             throw new AdminOnlyException("관리자만 접근 가능합니다.");
         }
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(
-                () -> new IllegalArgumentException("공지가 존재하지 않습니다.")
+                () -> new NoticeNotFoundException("공지가 존재하지 않습니다.")
         );
         noticeRepository.delete(notice);
     }
@@ -92,7 +93,7 @@ public class NoticeService {
 
     public NoticeResponseDto showNotice(Long noticeId) {
         Notice notice = noticeRepository.findById(noticeId).orElseThrow(
-                () -> new IllegalArgumentException("공지가 존재하지 않습니다.")
+                () -> new NoticeNotFoundException("공지가 존재하지 않습니다.")
         );
         return new NoticeResponseDto(
                 notice.getTitle(),
