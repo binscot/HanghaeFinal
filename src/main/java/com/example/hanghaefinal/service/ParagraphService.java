@@ -44,7 +44,7 @@ public class ParagraphService {
         );
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자2222222222 ----------------------");
         if(paragraphReqDto.getParagraph().length() > 2000){
-            throw new IllegalArgumentException("문단은 2000자 이내로 입력해주세요.");
+            throw new ParagraphLimitException("문단은 2000자 이내로 입력해주세요.");
         }
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자3333333333333----------------------");
         if(paragraphReqDto.getParagraph().equals("")){
@@ -77,7 +77,7 @@ public class ParagraphService {
             log.info("---------------------- 111111aaaa ----------------------");
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
-        } else throw new ParagraphLimitException("문단 개수를 초과했습니다.");
+        } else throw new ParagraphCountException("문단 개수를 초과했습니다.");
 
         return true;
     }

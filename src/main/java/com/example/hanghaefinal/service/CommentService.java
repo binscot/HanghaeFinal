@@ -1,10 +1,7 @@
 package com.example.hanghaefinal.service;
 
 
-import com.example.hanghaefinal.exception.exception.CommentNotFoundException;
-import com.example.hanghaefinal.exception.exception.ContentNullException;
-import com.example.hanghaefinal.exception.exception.IllegalUserException;
-import com.example.hanghaefinal.exception.exception.PostNotFoundException;
+import com.example.hanghaefinal.exception.exception.*;
 import com.example.hanghaefinal.model.Comment;
 import com.example.hanghaefinal.repository.CommentRepository;
 import com.example.hanghaefinal.dto.requestDto.CommentRequestDto;
@@ -43,7 +40,7 @@ public class CommentService {
             throw new ContentNullException("내용을 입력해주세요.");
         }
         if (commentRequestDto.getComment().length() > 200){
-            throw new IllegalArgumentException("200자 이하로 작성해주세요.");
+            throw new CommentLimitException("200자 이하로 작성해주세요.");
         }
         else{
             Comment comment = new Comment(commentRequestDto,post,user);
@@ -67,7 +64,7 @@ public class CommentService {
             throw new ContentNullException("댓글을 입력해주세요.");
         }
         if (commentRequestDto.getComment().length() > 200) {
-            throw new IllegalArgumentException("댓글은 200자 이하로 작성해주세요!!");
+            throw new CommentLimitException("댓글은 200자 이하로 작성해주세요!!");
         } else {
             comment.update(commentRequestDto);
             return comment;
