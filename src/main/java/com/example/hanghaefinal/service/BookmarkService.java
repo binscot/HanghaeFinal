@@ -65,7 +65,7 @@ public class BookmarkService {
     public BookmarkResponseDto addBookmark(@PathVariable Long postId, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("user가 존재하지 않습니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         Post post = postRepository.findById(postId).orElseThrow(

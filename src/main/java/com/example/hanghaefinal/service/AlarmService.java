@@ -129,7 +129,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             if (!Objects.equals(userid, paragraphOwner.getId())){ // 문단을 작성한 사람과 다르면
                 User user = userRepository.findById(userid).orElseThrow(
-                        () -> new UserNotFoundException ("user가 존재하지 않습니다.")
+                        () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
                 );
                 user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -183,7 +183,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             if (!Objects.equals(userid, LastParagraphOwner.getId())){
                 User user = userRepository.findById(userid).orElseThrow(
-                        () -> new UserNotFoundException ("user가 존재하지 않습니다.")
+                        () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
                 );
                 user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -226,7 +226,7 @@ public class AlarmService {
         log.info("---------------------- 333333bbbb ----------------------");
 
         User user = userRepository.findById(ParagraphOwner.getId()).orElseThrow(
-                () -> new UserNotFoundException ("user가 존재하지 않습니다.")
+                () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
         );
         user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -280,7 +280,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             log.info("------------------- 444userid : " + userid);
             User user = userRepository.findById(userid).orElseThrow(
-                    () -> new UserNotFoundException ("user가 존재하지 않습니다.")
+                    () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
             );
             user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 

@@ -90,7 +90,7 @@ public class PostService {
         log.info("-------------------테스트로그2---------------------");
         log.info("----------- 카테고리 로그 : " + categoryRequestDto.getCategory());
         User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
-                () -> new UserNotFoundException("userId가 존재하지 않습니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         Post post = postRepository.findById(postId).orElseThrow(
@@ -439,7 +439,7 @@ public class PostService {
         int postLikeCnt = 0;
         for(PostLikes postLikes : postMyLikesList){
             Post post = postRepository.findById(postLikes.getPost().getId()).orElseThrow(
-                    () -> new UserNotFoundException("user가 존재하지 않습니다.")
+                    () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
             );
 
             // 게시글을 좋아요한 사람의 userKey리스트를 구한다.
@@ -535,7 +535,7 @@ public class PostService {
     // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
     public OtherUserResDto2 viewUserCreatePost(Long userKey, int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
-                () -> new UserNotFoundException("user가 존재하지 않습니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         Pageable pageable = PageRequest.of(page,size);
@@ -554,7 +554,7 @@ public class PostService {
     // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
     public OtherUserResDto2 viewUserParticipatePost(Long userKey, int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
-                () -> new UserNotFoundException("user가 존재하지 않습니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         Pageable pageable = PageRequest.of(page,size);

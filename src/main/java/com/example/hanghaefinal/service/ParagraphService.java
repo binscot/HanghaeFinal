@@ -3,6 +3,7 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.exception.exception.ParagraphNotFoundException;
 import com.example.hanghaefinal.exception.exception.PostNotFoundException;
 import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Paragraph;
@@ -120,7 +121,7 @@ public class ParagraphService {
     // 게시글에 있는 사람들에게 response데이터 보내기
     public Boolean paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
         User user = userRepository.findById(paragraphReqDto.getUserId()).orElseThrow(
-                ()-> new UserNotFoundException("user가 존재하지 않습니다.")
+                ()-> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         log.info("--------------------------- sendChatMessage user.getUsername() : " + user.getUsername());
@@ -142,11 +143,11 @@ public class ParagraphService {
     @Transactional
     public ParagraphLikesResDto paragraphLikes(Long paragraphId, Long userId){
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("user가 존재하지 않습니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         Paragraph paragraph = paragraphRepository.findById(paragraphId).orElseThrow(
-                () -> new IllegalArgumentException("해당 문단이 없습니다.")
+                () -> new ParagraphNotFoundException("문단이 존재하지 않습니다.")
         );
 
         ParagraphLikes findParagraphLikes = paragraphLikesRepository.findByUserAndParagraph(user, paragraph).orElse(null);
