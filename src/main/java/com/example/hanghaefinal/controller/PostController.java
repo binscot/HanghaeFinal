@@ -5,6 +5,7 @@ import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.OtherUserResDto2;
 import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostResponseDto;
+import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostService;
@@ -40,7 +41,7 @@ public class PostController {
             //postService.uploadImageFile(multipartFile, postRequestDto);
             //postService.savePost(postRequestDto ,user, defaultImg, bindingResult);
             return ResponseEntity.ok(postService.savePost(postRequestDto ,user, defaultImg, bindingResult));
-        } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");
+        } else throw new UserNotFoundException("user가 존재하지 않습니다.");
         //return true; // postId로 return 할지 고려하자
     }
 
@@ -102,7 +103,7 @@ public class PostController {
     ){
         if(userDetails !=null ){
             return postService.viewMyLikesPost(page, size, userDetails.getUser());
-        } else throw new IllegalArgumentException("로그인한 유저 정보가 없습니다.");
+        } else throw new UserNotFoundException("user가 존재하지 않습니다.");
     }
 
     // 다른 유저 페이지
