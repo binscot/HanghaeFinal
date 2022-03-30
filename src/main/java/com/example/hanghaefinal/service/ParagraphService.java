@@ -3,9 +3,7 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.*;
-import com.example.hanghaefinal.exception.exception.ParagraphNotFoundException;
-import com.example.hanghaefinal.exception.exception.PostNotFoundException;
-import com.example.hanghaefinal.exception.exception.UserNotFoundException;
+import com.example.hanghaefinal.exception.exception.*;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.ParagraphLikes;
 import com.example.hanghaefinal.model.Post;
@@ -50,7 +48,7 @@ public class ParagraphService {
         }
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자3333333333333----------------------");
         if(paragraphReqDto.getParagraph().equals("")){
-            throw new IllegalArgumentException("문단을 작성해주세요");
+            throw new ContentNullException("내용을 작성해주세요");
         }
 
         int limit = post.getLimitCnt();
@@ -79,7 +77,7 @@ public class ParagraphService {
             log.info("---------------------- 111111aaaa ----------------------");
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
-        } else throw new IllegalArgumentException("문단 개수를 초과했습니다.");
+        } else throw new ParagraphLimitException("문단 개수를 초과했습니다.");
 
         return true;
     }

@@ -3,6 +3,7 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.exception.exception.ContentNullException;
 import com.example.hanghaefinal.exception.exception.PostNotFoundException;
 import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.*;
@@ -68,10 +69,10 @@ public class PostService {
         }
 
         if(postRequestDto.getTitle().equals("null")){
-            throw new IllegalArgumentException("제목이 비어있으면 안됩니다.");
+            throw new ContentNullException("내용을 입력해주세요.");
         }
         if(postRequestDto.getParagraph().equals("null")){
-            throw new IllegalArgumentException("문단이 비어있으면 안됩니다.");
+            throw new ContentNullException("내용을 입력해주세요.");
         }
 
         Post post = new Post(postRequestDto, user, defaultImg);
