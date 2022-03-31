@@ -46,6 +46,7 @@ public class UserService {
     private final BadgeRepository badgeRepository;
     private final AttendanceCheckRepository attendanceCheckRepository;
     private final ParagraphRepository paragraphRepository;
+    private final AlarmRepository alarmRepository;
 
     @Transactional
     public Boolean registerUser(
@@ -308,16 +309,23 @@ public class UserService {
         attendanceCheckRepository.deleteAllByUser(user);
         bookmarkRepository.deleteAllByUser(user);
         commentRepository.deleteAllByUser(user);
+        paragraphRepository.findAllByUser(user);
         commentLikesRepository.deleteAllByUser(user);
         postLikesRepository.deleteAllByUser(user);
+        alarmRepository.deleteAllByUser(user);
+
 
         List<Post> postList = postRepository.findAllByUser(user);
+        User AnonymousUser = userRepository.findById(319L)
+         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
         for (Post post : postList){
-            post.setUser(null);
-            postRepository.save(post);
+           post.setUser(AnonymousUser);
+           postRepository.save(post);
+
         }
         List<Paragraph> paragraphList = paragraphRepository.findAllByUser(user);
         for (Paragraph paragraph:paragraphList){
+
             paragraph.setUser(null);
             paragraphRepository.save(paragraph);
 

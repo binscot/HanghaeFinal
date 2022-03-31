@@ -30,7 +30,6 @@ public class NoticeService {
             NoticeRequestDto requestDto,
             UserDetailsImpl userDetails
     ) throws IOException {
-
         if (!checkAdmin(userDetails)){
            throw new IllegalArgumentException("관리자만 작성 할 수 있습니다!");
         }
@@ -45,7 +44,6 @@ public class NoticeService {
                 noticeImg
         );
         noticeRepository.save(notice);
-
     }
 
     @Transactional
