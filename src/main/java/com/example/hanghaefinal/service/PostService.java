@@ -40,6 +40,7 @@ public class PostService {
     private final BookmarkRepository bookmarkRepository;
     private final AlarmService alarmService;
     private final S3Uploader s3Uploader;
+    private final AlarmRepository alarmRepository;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
         //String originalFileName = multipartFile.getOriginalFilename();
@@ -95,10 +96,12 @@ public class PostService {
                 () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
         );
 
-        int cnt = paragraphRepository.countByParagraph(postId);
-        if(post.getLimitCnt() != cnt ){
+
+/*        int paragraphCnt = paragraphRepository.findAllByPostId(postId).size();
+
+        if(post.getLimitCnt() != paragraphCnt ){
             throw new IllegalArgumentException("문단 작성이 완료되지 않았습니다.");
-        }
+        }*/
 
         // 마지막 문단 작성자가 카테고리를 생성하면 새로운 카테고리 등록, category가 있으면 카테고리를 생성
         if(categoryRequestDto.getCategory() != null){
@@ -179,7 +182,7 @@ public class PostService {
         }
 
         log.info("---------------------- 222222aaaa ----------------------");
-        // 알람 호출
+        // 게시글이 완성 되었을 때 알림을 보낸다
         alarmService.generateCompletePostAlarm(user, post);
 
         //return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt,postUsername);
@@ -529,7 +532,7 @@ public class PostService {
     }*/
 
     // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
-    public OtherUserResDto2 viewUserPage2(Long userKey, int page, int size){
+    public OtherUserResDto2 viewUserCreatePost(Long userKey, int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
@@ -548,7 +551,7 @@ public class PostService {
     }
 
     // 다른 유저 페이지 ( 다른 유저가 작성한 게시글들의 정보 )
-    public OtherUserResDto2 viewUserPage3(Long userKey, int page, int size){
+    public OtherUserResDto2 viewUserParticipatePost(Long userKey, int page, int size){
         User user = userRepository.findById(userKey).orElseThrow(
                 () -> new IllegalArgumentException("해당 유저가 존재하지 않습니다.")
         );
