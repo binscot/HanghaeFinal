@@ -69,7 +69,7 @@ public class BookmarkService {
         );
 
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostNotFoundException("postId가 존재하지 않습니다."));
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다."));
 
         Bookmark bookmarkCheck = bookmarkRepository.findByUserAndPost(user, post).orElse(null);
 

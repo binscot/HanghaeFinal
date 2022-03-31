@@ -319,7 +319,7 @@ public class UserService {
         alarmRepository.deleteAllByUserId(user.getId());
 
         User anonymousUser = userRepository.findByUsername("wewrite06@gmail.com").orElseThrow(
-                () -> new IllegalArgumentException("존재하지 않는 ID 입니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
                 );
         List<Post> postList = postRepository.findAllByUser(user);
         for (Post post : postList){

@@ -33,7 +33,7 @@ public class CommentService {
     @Transactional
     public Comment addComment(Long postId, CommentRequestDto commentRequestDto, User user){
         Post post = postRepository.findById(postId).orElseThrow(
-                ()-> new PostNotFoundException("postId가 존재하지 않습니다.")
+                ()-> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
 
         if (commentRequestDto.getComment() == null){

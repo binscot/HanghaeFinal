@@ -70,10 +70,10 @@ public class PostService {
         }
 
         if(postRequestDto.getTitle().equals("null")){
-            throw new ContentNullException("내용을 입력해주세요.");
+            throw new ContentNullException("제목을 입력해주세요.");
         }
         if(postRequestDto.getParagraph().equals("null")){
-            throw new ContentNullException("내용을 입력해주세요.");
+            throw new ContentNullException("문단을 입력해주세요.");
         }
 
         Post post = new Post(postRequestDto, user, defaultImg);
@@ -96,7 +96,7 @@ public class PostService {
         );
 
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostNotFoundException("postId가 존재하지 않습니다.")
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
 
 
@@ -196,7 +196,7 @@ public class PostService {
     // 게시글 상세조회 ( 완성, 미완성 둘다)
     public PostDetailResponseDto viewPostDetail(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostNotFoundException("postId가 존재하지 않습니다.")
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
         // commentList 조회
         //List<Comment> commentList = commentRepository.findAllByPostIdOrderByModifiedAtDesc(postId);
@@ -577,7 +577,7 @@ public class PostService {
 
         for(Long postKey : postKeyList){
             Post post = postRepository.findById(postKey).orElseThrow(
-                    () -> new PostNotFoundException("postId가 존재하지 않습니다.")
+                    () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
             );
             postTempList.add(post);
         }
@@ -597,7 +597,7 @@ public class PostService {
     // '문단 시작'버튼을 눌렀을 때 writing이 true가 되고 writer의 닉네임을 준다.
     public Boolean startWritingStatus(Long postId, User user) {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostNotFoundException("postId가 존재하지 않습니다.")
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
         post.updatePostByStart(true, user.getNickName(), LocalDateTime.now());
 
@@ -607,7 +607,7 @@ public class PostService {
     // '문단 완료'버튼을 눌렀을 때 writing이 false가 되고 writer의 nickName을 null 로 한다.
     public Boolean talkWritingStatus(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostNotFoundException("postId가 존재하지 않습니다.")
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
         post.updatePostWriting(false, null,null);
 
@@ -616,7 +616,7 @@ public class PostService {
 
     public Boolean cancelIsWriting(Long postId) {
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new PostNotFoundException("postId가 존재하지 않습니다.")
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
         if (post.isWriting()){
             log.info("isWriting---------------------------------------false");

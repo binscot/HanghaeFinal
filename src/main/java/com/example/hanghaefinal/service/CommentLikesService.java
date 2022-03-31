@@ -33,7 +33,7 @@ public class CommentLikesService {
         );
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new PostNotFoundException("postId가 존재하지 않습니다.")
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
 
         CommentLikes findCommentLike = commentLikesRepository.findByUserAndComment(user, comment).orElse(null);
