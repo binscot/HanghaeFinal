@@ -315,7 +315,7 @@ public class UserService {
         commentLikesRepository.deleteAllByUser(user);
         paragraphLikesRepository.deleteAllByUser(user);
         postLikesRepository.deleteAllByUser(user);
-        alarmRepository.deleteAllByUser(user);
+        alarmRepository.deleteAllByUserId(user.getId());
 
         User anonymousUser = userRepository.findByUsername("wewrite06@gmail.com").orElseThrow(
                 () -> new IllegalArgumentException("존재하지 않는 ID 입니다.")
