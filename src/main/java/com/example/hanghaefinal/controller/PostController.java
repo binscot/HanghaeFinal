@@ -112,7 +112,7 @@ public class PostController {
             @RequestParam int page,
             @RequestParam int size
     ) {
-        return postService.viewUserPage2(userKey, page, size);
+        return postService.viewUserParticipatePost(userKey, page, size);
     }
 
     // 다른 유저 페이지

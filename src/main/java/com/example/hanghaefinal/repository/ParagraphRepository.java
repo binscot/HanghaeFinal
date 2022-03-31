@@ -6,7 +6,6 @@ import com.example.hanghaefinal.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface ParagraphRepository extends JpaRepository<Paragraph, Long> {
     List<Paragraph> findAllByPostIdOrderByModifiedAtDesc(Long postId);
@@ -16,6 +15,4 @@ public interface ParagraphRepository extends JpaRepository<Paragraph, Long> {
     List<Paragraph> findAllByPostId(Long postId);
 
     List<Paragraph> findAllByUserId(Long userId);
-
-    int countByParagraph(Long postId);
 }
