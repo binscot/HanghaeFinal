@@ -320,6 +320,7 @@ public class UserService {
         for (Paragraph paragraph:paragraphList){
             paragraph.setUser(null);
             paragraphRepository.save(paragraph);
+
         }
 
 
