@@ -321,8 +321,6 @@ public class UserService {
             paragraph.setUser(null);
             paragraphRepository.save(paragraph);
         }
-
-
         userRepository.delete(user);
     }
 
