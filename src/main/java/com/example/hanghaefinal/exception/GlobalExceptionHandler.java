@@ -47,7 +47,10 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST
         );
     }
-
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException e) {
+        return new ResponseEntity<>(new ErrorResponse("U001", e.getMessage()), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUsernameNotFoundException(UsernameNotFoundException e) {
         return new ResponseEntity<>(new ErrorResponse("U001", e.getMessage()), HttpStatus.BAD_REQUEST);
@@ -79,27 +82,55 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
 
     }
-    @ExceptionHandler(AdminOnlyException.class)
-    public ResponseEntity<ErrorResponse> handleAdminOnlyException(AdminOnlyException e){
+    @ExceptionHandler(IdDuplicationException.class)
+    public ResponseEntity<ErrorResponse> handleIdDuplicationException(IdDuplicationException e){
         return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
 
     }
-    @ExceptionHandler(AdminOnlyException.class)
-    public ResponseEntity<ErrorResponse> handleAdminOnlyException(AdminOnlyException e){
+    @ExceptionHandler(IllegalUserException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalUserException(IllegalUserException e){
         return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
 
     }
-    @ExceptionHandler(AdminOnlyException.class)
-    public ResponseEntity<ErrorResponse> handleAdminOnlyException(AdminOnlyException e){
-        return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
-
-    }    @ExceptionHandler(AdminOnlyException.class)
-    public ResponseEntity<ErrorResponse> handleAdminOnlyException(AdminOnlyException e){
+    @ExceptionHandler(IntroductionLimitException.class)
+    public ResponseEntity<ErrorResponse> handleIntroductionLimitException(IntroductionLimitException e){
         return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
 
     }
+    @ExceptionHandler(NickDuplicationException.class)
+    public ResponseEntity<ErrorResponse> handleNickDuplicationException(NickDuplicationException e){
+        return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
 
+    }
+    @ExceptionHandler(NoticeNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoticeNotFoundException(NoticeNotFoundException e){
+        return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
 
+    }
+    @ExceptionHandler(ParagraphCountException.class)
+    public ResponseEntity<ErrorResponse> handleParagraphCountException(ParagraphCountException e){
+        return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
 
+    }
+    @ExceptionHandler(ParagraphLimitException.class)
+    public ResponseEntity<ErrorResponse> handleParagraphLimitException(ParagraphLimitException e){
+        return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
+
+    }
+    @ExceptionHandler(ParagraphNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleParagraphNotFoundException(ParagraphNotFoundException e){
+        return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
+
+    }
+    @ExceptionHandler(PasswordCheckException.class)
+    public ResponseEntity<ErrorResponse> handlePasswordCheckException(PasswordCheckException e){
+        return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
+
+    }
+    @ExceptionHandler(PostNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handlePostNotFoundException(PostNotFoundException e){
+        return new ResponseEntity<>(new ErrorResponse("", e.getMessage()), HttpStatus.UNAUTHORIZED);
+
+    }
 }
 
