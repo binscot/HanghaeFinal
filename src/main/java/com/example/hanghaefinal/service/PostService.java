@@ -40,6 +40,7 @@ public class PostService {
     private final BookmarkRepository bookmarkRepository;
     private final AlarmService alarmService;
     private final S3Uploader s3Uploader;
+    private final AlarmRepository alarmRepository;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
         //String originalFileName = multipartFile.getOriginalFilename();
@@ -181,7 +182,7 @@ public class PostService {
         }
 
         log.info("---------------------- 222222aaaa ----------------------");
-        // 알람 호출
+        // 게시글이 완성 되었을 때 알림을 보낸다
         alarmService.generateCompletePostAlarm(user, post);
 
         //return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt,postUsername);
