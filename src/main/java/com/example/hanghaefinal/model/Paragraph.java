@@ -13,6 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @Table(name = "paragraph")
 public class Paragraph extends Timestamped{
+
     public enum MessageType {
         ENTER, // 구독시작
         START,  // 문단 작성 시작
@@ -51,6 +52,10 @@ public class Paragraph extends Timestamped{
         this.paragraph = paragraphReqDto.getParagraph();
         this.user = user;
         this.post = post;
+    }
+
+    public void updateUser(User anonymousUser) {
+        this.user=anonymousUser;
     }
 
 }
