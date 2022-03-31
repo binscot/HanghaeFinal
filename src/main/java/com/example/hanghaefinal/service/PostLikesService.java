@@ -53,15 +53,6 @@ public class PostLikesService {
             log.info("---------------------- 444444aaaa ----------------------");
             alarmService.generatePostLikesAlarm(post);
 
-            List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId()); //asc로 가져옴
-
-            if(alarmList.size() > 20){
-                Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
-                        () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
-                );
-                alarmList.remove(oldAlarm);
-            }
-
         } else {
             postLikesRepository.deleteById(findLike.getId());
         }

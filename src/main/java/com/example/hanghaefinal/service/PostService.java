@@ -185,15 +185,6 @@ public class PostService {
         // 게시글이 완성 되었을 때 알림을 보낸다
         alarmService.generateCompletePostAlarm(user, post);
 
-        List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId()); //asc로 가져옴
-
-        if(alarmList.size() > 20){
-            Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
-                    () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
-            );
-            alarmList.remove(oldAlarm);
-        }
-
         //return new PostDetailResponseDto(post, paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt,postUsername);
         return new PostDetailResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
                 paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);

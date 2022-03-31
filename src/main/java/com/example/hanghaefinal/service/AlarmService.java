@@ -158,6 +158,18 @@ public class AlarmService {
                         .postKey(alarm.getPostId().toString())
                         .build();
 
+                // 소설에 참여한 유저들의 알람리스트를 asc로 가져온다.
+                // + 그 알람리스트가 20개가 넘어가면 가장 오래된 알람을 삭제해준다.
+                List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId());
+                System.out.println("-------------------- alarmList.size() :  "+alarmList.size());
+                System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
+                if(alarmList.size() > 20){
+                    Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
+                            () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                    );
+                    alarmRepository.delete(oldAlarm);
+                }
+
                 redisTemplate.convertAndSend(channelTopic.getTopic(),
                         alarmResponseDto);
             }
@@ -212,6 +224,19 @@ public class AlarmService {
                  * redis로 알림메시지 pub, alarmRepository에 저장
                  * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
                  */
+
+                // 게시글에 참여한 사람들의 알람리스트를 asc로 가져옴
+                // + 그 알람리스트가 20개가 넘어가면 가장 오래된 알람을 삭제해준다.
+                List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId());
+                System.out.println("-------------------- alarmList.size() :  "+alarmList.size());
+                System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
+                if(alarmList.size() > 20){
+                    Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
+                            () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                    );
+                    alarmRepository.delete(oldAlarm);
+                }
+
                 redisTemplate.convertAndSend(channelTopic.getTopic(),
                         alarmResponseDto);
             }
@@ -256,6 +281,19 @@ public class AlarmService {
          * redis로 알림메시지 pub, alarmRepository에 저장
          * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
          */
+
+        // 문단을 작성한 user의 알람리스트를 asc로 가져오고 문단을 그 알람리스트가 20가 넘어가면 그 중에 가장 오래된 알람을 삭제한다.
+        List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId());
+        System.out.println("-------------------- alarmList.size() :  "+alarmList.size());
+        System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
+        if(alarmList.size() > 20){
+            Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
+                    () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+            );
+            System.out.println("문단 좋아요 ----------------------- oldAlarm : " +oldAlarm.getId());
+            alarmRepository.delete(oldAlarm);
+        }
+
         redisTemplate.convertAndSend(channelTopic.getTopic(),
                 alarmResponseDto);
 
@@ -311,6 +349,20 @@ public class AlarmService {
              * redis로 알림메시지 pub, alarmRepository에 저장
              * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
              */
+
+            // 알람을 받은 user의 알람리스트를 asc로 가져옴
+            // + 그 알람리스트가 20개가 넘어가면 가장 오래된 알람을 삭제해준다.
+            List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId());
+            System.out.println("-------------------- alarmList.size() :  "+alarmList.size());
+            System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
+            if(alarmList.size() > 20){
+                Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
+                        () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                );
+                System.out.println("게시글 좋아요 ----------------------- oldAlarm : " +oldAlarm.getId());
+                alarmRepository.delete(oldAlarm);
+            }
+
             redisTemplate.convertAndSend(channelTopic.getTopic(),
                     alarmResponseDto);
         }

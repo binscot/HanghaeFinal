@@ -72,15 +72,6 @@ public class ParagraphService {
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
 
-            List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId()); //asc로 가져옴
-
-            if(alarmList.size() > 20){
-                Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
-                        () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
-                );
-                alarmList.remove(oldAlarm);
-            }
-
         } else throw new IllegalArgumentException("문단 개수를 초과했습니다.");
 
         return true;
@@ -162,15 +153,6 @@ public class ParagraphService {
             log.info("---------------------- 333333aaaa ----------------------");
             // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
             alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
-
-            List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId()); //asc로 가져옴
-
-            if(alarmList.size() > 20){
-                Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
-                        () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
-                );
-                alarmList.remove(oldAlarm);
-            }
 
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
