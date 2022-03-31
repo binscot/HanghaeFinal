@@ -594,7 +594,7 @@ public class PostService {
                 () -> new IllegalArgumentException("해당 게시글이 없습니다.")
         );
         post.updatePostByStart(true, user.getNickName(), LocalDateTime.now());
-
+        log.info("-------------------LocalDateTime.now()"+LocalDateTime.now());
         return true;
     }
 

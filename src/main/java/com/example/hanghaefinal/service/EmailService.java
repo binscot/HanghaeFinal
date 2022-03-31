@@ -21,14 +21,9 @@ public class EmailService {
         String email = requestDto.getEmail();
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(email);
-        //message.setFrom("ohohgeunhy@gamil.com");
-//        String content = " 안녕하세요! \n위라이트 입니다!\n회원가입을 위한 인증번호를 보내드립니다! \n회원가입 창으로 돌아가 인증번호를 입력해 주세요! \n 인증 번호 : " + key;
-//        String contents = content + "<img src=\"https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/%E1%84%89%E1%85%B3%E1%84%8F%E1%85%B3%E1%84%85%E1%85%B5%E1%86%AB%E1%84%89%E1%85%A3%E1%86%BA+2022-03-12+%E1%84%8B%E1%85%A9%E1%84%92%E1%85%AE+7.13.28.png\">";
-//        messageHelper.setText(contents, true);
 
         for(int i = 0;i<3;i++){
             int index = random.nextInt(25)+65;
-
             key+=(char)index;
         }
         int numIndex = random.nextInt(9999)+1000;
