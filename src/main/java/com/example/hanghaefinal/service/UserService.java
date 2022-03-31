@@ -319,13 +319,16 @@ public class UserService {
         User AnonymousUser = userRepository.findById(319L)
          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 ID 입니다."));
         for (Post post : postList){
-//            post.setUser(AnonymousUser);
-//            postRepository.save(post);
-            post.updatePost(AnonymousUser);
+           post.setUser(AnonymousUser);
+           postRepository.save(post);
+
         }
         List<Paragraph> paragraphList = paragraphRepository.findAllByUser(user);
         for (Paragraph paragraph:paragraphList){
-            paragraph.updateParagraph(AnonymousUser);
+
+            paragraph.setUser(null);
+            paragraphRepository.save(paragraph);
+
         }
 
 
