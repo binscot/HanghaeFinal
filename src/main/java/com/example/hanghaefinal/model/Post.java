@@ -71,4 +71,8 @@ public class Post extends Timestamped {
         this.writer = writer;
         this.paragraphStartTime = paragraphStartTime;
     }
+
+    public void updateUser(User anonymousUser) {
+        this.user=anonymousUser;
+    }
 }
