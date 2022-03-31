@@ -3,11 +3,9 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.PostLikesRequestDto;
 import com.example.hanghaefinal.dto.responseDto.PostLikeClickersResponseDto;
 import com.example.hanghaefinal.dto.responseDto.PostLikesResponseDto;
-import com.example.hanghaefinal.model.Alarm;
 import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.PostLikes;
 import com.example.hanghaefinal.model.User;
-import com.example.hanghaefinal.repository.AlarmRepository;
 import com.example.hanghaefinal.repository.PostLikesRepository;
 import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
@@ -28,7 +26,6 @@ public class PostLikesService {
     private final UserRepository userRepository;
     private final PostRepository postRepository;
     private final AlarmService alarmService;
-    private final AlarmRepository alarmRepository;
 
     //좋아요 등록
     @Transactional
@@ -50,9 +47,9 @@ public class PostLikesService {
             postLikesRepository.save(postLikes);
 
             // 내가 참여한 게시글에 좋아요를 받았을 때
+
             log.info("---------------------- 444444aaaa ----------------------");
             alarmService.generatePostLikesAlarm(post);
-
         } else {
             postLikesRepository.deleteById(findLike.getId());
         }
