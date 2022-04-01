@@ -2,6 +2,9 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.Enum.AlarmType;
 import com.example.hanghaefinal.dto.responseDto.AlarmResponseDto;
+import com.example.hanghaefinal.exception.exception.AlarmNotFoundException;
+import com.example.hanghaefinal.exception.exception.PostNotFoundException;
+import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Alarm;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.Post;
@@ -50,7 +53,7 @@ public class AlarmService {
 
         for (Alarm alarm : alarmListPage) {
             Post post = postRepository.findById(alarm.getPostId()).orElseThrow(
-                    () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
+                    () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
             );
 
                 /* 내가 참여한 게시글에 새로운 문단이 등록 됐을 때 */
@@ -127,7 +130,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             if (!Objects.equals(userid, paragraphOwner.getId())){ // 문단을 작성한 사람과 다르면
                 User user = userRepository.findById(userid).orElseThrow(
-                        () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                        () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
                 );
                 user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -165,7 +168,7 @@ public class AlarmService {
                 System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
                 if(alarmList.size() > 20){
                     Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
-                            () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                            () -> new AlarmNotFoundException("알람이 존재하지 않습니다.")
                     );
                     alarmRepository.delete(oldAlarm);
                 }
@@ -193,7 +196,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             if (!Objects.equals(userid, LastParagraphOwner.getId())){
                 User user = userRepository.findById(userid).orElseThrow(
-                        () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                        () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
                 );
                 user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -232,7 +235,7 @@ public class AlarmService {
                 System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
                 if(alarmList.size() > 20){
                     Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
-                            () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                            () -> new AlarmNotFoundException("알람이 존재하지 않습니다.")
                     );
                     alarmRepository.delete(oldAlarm);
                 }
@@ -249,7 +252,7 @@ public class AlarmService {
         log.info("---------------------- 333333bbbb ----------------------");
 
         User user = userRepository.findById(ParagraphOwner.getId()).orElseThrow(
-                () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
         );
         user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -288,7 +291,7 @@ public class AlarmService {
         System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
         if(alarmList.size() > 20){
             Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
-                    () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                    () -> new AlarmNotFoundException("알람이 존재하지 않습니다.")
             );
             System.out.println("문단 좋아요 ----------------------- oldAlarm : " +oldAlarm.getId());
             alarmRepository.delete(oldAlarm);
@@ -316,7 +319,7 @@ public class AlarmService {
         for(Long userid : userIdList){
             log.info("------------------- 444userid : " + userid);
             User user = userRepository.findById(userid).orElseThrow(
-                    () -> new IllegalArgumentException("user가 존재하지 않습니다.")
+                    () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
             );
             user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
 
@@ -357,7 +360,7 @@ public class AlarmService {
             System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
             if(alarmList.size() > 20){
                 Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
-                        () -> new IllegalArgumentException("알람이 존재하지 않습니다.")
+                        () -> new AlarmNotFoundException("알람이 존재하지 않습니다.")
                 );
                 System.out.println("게시글 좋아요 ----------------------- oldAlarm : " +oldAlarm.getId());
                 alarmRepository.delete(oldAlarm);

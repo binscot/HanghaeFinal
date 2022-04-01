@@ -3,6 +3,8 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.CommentLikesRequestDto;
 import com.example.hanghaefinal.dto.responseDto.CommentLikeClickersResponseDto;
 import com.example.hanghaefinal.dto.responseDto.CommentLikesResponseDto;
+import com.example.hanghaefinal.exception.exception.PostNotFoundException;
+import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Comment;
 import com.example.hanghaefinal.model.CommentLikes;
 import com.example.hanghaefinal.model.User;
@@ -27,11 +29,11 @@ public class CommentLikesService {
     @Transactional
     public CommentLikesResponseDto addCommentLike(Long commentId, Long userId){
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("유저정보가 없습니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         Comment comment = commentRepository.findById(commentId).orElseThrow(
-                () -> new IllegalArgumentException("해당 게시글이 없습니다.")
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
 
         CommentLikes findCommentLike = commentLikesRepository.findByUserAndComment(user, comment).orElse(null);

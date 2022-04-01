@@ -2,6 +2,8 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.BookmarkRequestDto;
 import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.exception.exception.PostNotFoundException;
+import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -63,11 +65,11 @@ public class BookmarkService {
     public BookmarkResponseDto addBookmark(@PathVariable Long postId, Long userId) {
 
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("유저정보가 없습니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("게시글이 존재하지 않습니다."));
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다."));
 
         Bookmark bookmarkCheck = bookmarkRepository.findByUserAndPost(user, post).orElse(null);
 
