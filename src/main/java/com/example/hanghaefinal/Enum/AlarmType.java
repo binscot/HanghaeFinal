@@ -5,5 +5,6 @@ public enum AlarmType {
     NEWPARAGRAPH,
     COMPLETEPOST,
     LIKEPARAGRAPH,
-    LIKEPOST
+    LIKEPOST,
+    GOPOST
 }

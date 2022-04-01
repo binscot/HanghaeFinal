@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.CategoryRequestDto;
+import com.example.hanghaefinal.dto.requestDto.PostContinueReqDto;
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
 import com.example.hanghaefinal.dto.responseDto.OtherUserResDto2;
 import com.example.hanghaefinal.dto.responseDto.PostDetailResponseDto;
@@ -9,6 +10,7 @@ import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.User;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.service.PostService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +56,14 @@ public class PostController {
                                               @AuthenticationPrincipal UserDetailsImpl userDetails){
         log.info(" ------ testcode1 ------ ");
         return postService.completePost(postId, categoryRequestDto, userDetails);
+    }
+
+    @ApiOperation(value = "게시글 더 작성하기 요청", notes = "게시글 더 작성하기 요청")
+    @PatchMapping("/posts/continue/{postId}")
+    public Boolean continuePost(@PathVariable Long postId,
+                                @RequestBody PostContinueReqDto postContinueReqDto,
+                                @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return postService.continuePost(postId, postContinueReqDto, userDetails);
     }
 
     // 게시글 상세 페이지 조회 (완성/미완성)

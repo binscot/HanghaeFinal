@@ -75,4 +75,8 @@ public class Post extends Timestamped {
     public void updateUser(User anonymousUser) {
         this.user=anonymousUser;
     }
+
+    public void updateLimitCnt(int limitCnt){
+        this.limitCnt = limitCnt;
+    }
 }
