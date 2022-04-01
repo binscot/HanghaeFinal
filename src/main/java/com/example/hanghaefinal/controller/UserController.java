@@ -154,7 +154,7 @@ public class UserController {
         return ResponseEntity.ok(userService.search(requestDto));
     }
 
-    //비밀번호 찾기
+    //비밀번호 변경
     @PutMapping("/updatePassword")
     public ResponseEntity<Boolean> updatePassword(@RequestBody PasswordRequestDto requestDto,
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
