@@ -155,9 +155,10 @@ public class UserController {
     }
 
     //비밀번호 찾기
-    @PutMapping("/findPassword")
-    public ResponseEntity<Boolean> updatePassword(@RequestBody PasswordRequestDto requestDto){
-        return ResponseEntity.ok(userService.updatePassword(requestDto));
+    @PutMapping("/updatePassword")
+    public ResponseEntity<Boolean> updatePassword(@RequestBody PasswordRequestDto requestDto,
+                                                  @AuthenticationPrincipal UserDetailsImpl userDetails){
+        return ResponseEntity.ok(userService.updatePassword(requestDto, userDetails));
     }
     
     @GetMapping("/health") 
