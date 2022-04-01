@@ -195,18 +195,25 @@ public class PostService {
     }
 
     public Boolean continuePost(Long postId, PostContinueReqDto postContinueReqDto, UserDetailsImpl userDetails){
-        if(userDetails == null){    // findBy는 db 탐색해야하니까 이렇게 하자
-            throw new UserNotFoundException("존재하지 않는 ID 입니다.");
-        }
+        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
+        );
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
 
+        // 게시글 최초 생성자와 'GO'를 누른 사람이 다르면 false를 반환
+        if(!Objects.equals(user.getId(), post.getUser().getId())){
+            return false;
+        }
+
         // 기존 limitCnt 에 추가할만큼의 문단 수를 더한다.
         post.updateLimitCnt(post.getLimitCnt() + postContinueReqDto.getAddParagraphSize());
         postRepository.save(post);
         // complete도 수정할 필요 없으니 그대로 두면 된다.
+
+        alarmService.generateGoAlarm(post, user);
 
         return true;
     }
