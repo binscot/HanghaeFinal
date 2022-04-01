@@ -3,6 +3,7 @@ package com.example.hanghaefinal.service;
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.exception.exception.*;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
 import com.example.hanghaefinal.security.UserDetailsImpl;
@@ -34,15 +35,15 @@ public class ParagraphService {
     public Boolean saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자1111111111 ----------------------");
         Post post = postRepository.findById(postId).orElseThrow(
-                () -> new IllegalArgumentException("postId가 존재하지 않습니다.")
+                () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자2222222222 ----------------------");
         if(paragraphReqDto.getParagraph().length() > 2000){
-            throw new IllegalArgumentException("문단은 2000자 이내로 입력해주세요.");
+            throw new ParagraphLimitException("문단은 2000자 이내로 입력해주세요.");
         }
         log.info("---------------------- 랙규야~~~~~~~~~~밥먹자3333333333333----------------------");
         if(paragraphReqDto.getParagraph().equals("")){
-            throw new IllegalArgumentException("문단을 작성해주세요");
+            throw new ContentNullException("문단을 작성해주세요");
         }
 
         int limit = post.getLimitCnt();
@@ -72,7 +73,7 @@ public class ParagraphService {
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
 
-        } else throw new IllegalArgumentException("문단 개수를 초과했습니다.");
+        } else throw new ParagraphCountException("문단 개수를 초과했습니다.");
 
         return true;
     }
@@ -114,7 +115,7 @@ public class ParagraphService {
     // 게시글에 있는 사람들에게 response데이터 보내기
     public Boolean paragraphStartAndComplete(ParagraphReqDto paragraphReqDto, Long postId) {
         User user = userRepository.findById(paragraphReqDto.getUserId()).orElseThrow(
-                ()-> new IllegalArgumentException("로그인한 사용자가 존재하지 않습니다.")
+                ()-> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         log.info("--------------------------- sendChatMessage user.getUsername() : " + user.getUsername());
@@ -136,11 +137,11 @@ public class ParagraphService {
     @Transactional
     public ParagraphLikesResDto paragraphLikes(Long paragraphId, Long userId){
         User user = userRepository.findById(userId).orElseThrow(
-                () -> new IllegalArgumentException("유저 정보가 없습니다.")
+                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );
 
         Paragraph paragraph = paragraphRepository.findById(paragraphId).orElseThrow(
-                () -> new IllegalArgumentException("해당 문단이 없습니다.")
+                () -> new ParagraphNotFoundException("문단이 존재하지 않습니다.")
         );
 
         ParagraphLikes findParagraphLikes = paragraphLikesRepository.findByUserAndParagraph(user, paragraph).orElse(null);
