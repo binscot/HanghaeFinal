@@ -40,84 +40,77 @@ public class AlarmService {
 
 
     /* 알림 목록 */
-    public List<AlarmResponseDto> getAlamList(User user, int page, int size) {
+    public List<AlarmResponseDto> getAlamList(UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
         Long userId = user.getId();
-
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt")
-                .descending());
-
         List<Alarm> alarmListPage = alarmRepository
-                .findAllByUserIdOrderByIdDesc(userId, pageable).getContent();
-
+                .findAllByUserIdOrderByIdDesc(userId);
         List<AlarmResponseDto> alarmResponseDtoList = new ArrayList<>();
-
         for (Alarm alarm : alarmListPage) {
             Post post = postRepository.findById(alarm.getPostId()).orElseThrow(
                     () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
             );
+            AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+                        .alarmId(alarm.getId().toString())
+                        .type(alarm.getType().toString())
+                        .message(alarm.getAlarmMessage())
+                        .isRead(alarm.getIsRead())
+                        .postKey(alarm.getPostId().toString())
+                        .postTitle(post.getTitle())
+                        .postUrl(post.getPostImageUrl())
+                        .build();
+                alarmResponseDtoList.add(alarmDto);
 
-                /* 내가 참여한 게시글에 새로운 문단이 등록 됐을 때 */
-            if (alarm.getType().equals(AlarmType.NEWPARAGRAPH)) {
-
-                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-                        .alarmId(alarm.getId().toString())
-                        .type(alarm.getType().toString())
-                        .message(alarm.getAlarmMessage())
-                        .isRead(alarm.getIsRead())
-                        .postKey(alarm.getPostId().toString())
-                        .postTitle(post.getTitle())
-                        .postUrl(post.getPostImageUrl())
-                        .build();
-                alarmResponseDtoList.add(alarmDto);
-            } /* 내가 참여한 게시글이 완성 됐을 때 */
-            else if (alarm.getType().equals(AlarmType.COMPLETEPOST)) {
-                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-                        .alarmId(alarm.getId().toString())
-                        .type(alarm.getType().toString())
-                        .message(alarm.getAlarmMessage())
-                        .isRead(alarm.getIsRead())
-                        .postKey(alarm.getPostId().toString())
-                        .postTitle(post.getTitle())
-                        .postUrl(post.getPostImageUrl())
-                        .build();
-                alarmResponseDtoList.add(alarmDto);
-            } /* 내가 작성한 문단이 좋아요 받았을 때 */
-            else if (alarm.getType().equals(AlarmType.LIKEPARAGRAPH)) {
-                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-                        .alarmId(alarm.getId().toString())
-                        .type(alarm.getType().toString())
-                        .message(alarm.getAlarmMessage())
-                        .isRead(alarm.getIsRead())
-                        .postKey(alarm.getPostId().toString())
-                        .postTitle(post.getTitle())
-                        .postUrl(post.getPostImageUrl())
-                        .build();
-                alarmResponseDtoList.add(alarmDto);
-            } /* 내가 참여한 게시글이 좋아요 받았을 때 */
-            else if (alarm.getType().equals(AlarmType.LIKEPOST)) {
-                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-                        .alarmId(alarm.getId().toString())
-                        .type(alarm.getType().toString())
-                        .message(alarm.getAlarmMessage())
-                        .isRead(alarm.getIsRead())
-                        .postKey(alarm.getPostId().toString())
-                        .postTitle(post.getTitle())
-                        .postUrl(post.getPostImageUrl())
-                        .build();
-                alarmResponseDtoList.add(alarmDto);
-            }
-            else if (alarm.getType().equals(AlarmType.GOPOST)){
-                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-                        .alarmId(alarm.getId().toString())
-                        .type(alarm.getType().toString())
-                        .message(alarm.getAlarmMessage())
-                        .isRead(alarm.getIsRead())
-                        .postKey(alarm.getPostId().toString())
-                        .postTitle(post.getTitle())
-                        .postUrl(post.getPostImageUrl())
-                        .build();
-                alarmResponseDtoList.add(alarmDto);
-            }
+//                /* 내가 참여한 게시글에 새로운 문단이 등록 됐을 때 */
+//            if (alarm.getType().equals(AlarmType.NEWPARAGRAPH)) {
+//
+//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+//                        .alarmId(alarm.getId().toString())
+//                        .type(alarm.getType().toString())
+//                        .message(alarm.getAlarmMessage())
+//                        .isRead(alarm.getIsRead())
+//                        .postKey(alarm.getPostId().toString())
+//                        .postTitle(post.getTitle())
+//                        .postUrl(post.getPostImageUrl())
+//                        .build();
+//                alarmResponseDtoList.add(alarmDto);
+//            } /* 내가 참여한 게시글이 완성 됐을 때 */
+//            else if (alarm.getType().equals(AlarmType.COMPLETEPOST)) {
+//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+//                        .alarmId(alarm.getId().toString())
+//                        .type(alarm.getType().toString())
+//                        .message(alarm.getAlarmMessage())
+//                        .isRead(alarm.getIsRead())
+//                        .postKey(alarm.getPostId().toString())
+//                        .postTitle(post.getTitle())
+//                        .postUrl(post.getPostImageUrl())
+//                        .build();
+//                alarmResponseDtoList.add(alarmDto);
+//            } /* 내가 작성한 문단이 좋아요 받았을 때 */
+//            else if (alarm.getType().equals(AlarmType.LIKEPARAGRAPH)) {
+//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+//                        .alarmId(alarm.getId().toString())
+//                        .type(alarm.getType().toString())
+//                        .message(alarm.getAlarmMessage())
+//                        .isRead(alarm.getIsRead())
+//                        .postKey(alarm.getPostId().toString())
+//                        .postTitle(post.getTitle())
+//                        .postUrl(post.getPostImageUrl())
+//                        .build();
+//                alarmResponseDtoList.add(alarmDto);
+//            } /* 내가 참여한 게시글이 좋아요 받았을 때 */
+//            else if (alarm.getType().equals(AlarmType.LIKEPOST)) {
+//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+//                        .alarmId(alarm.getId().toString())
+//                        .type(alarm.getType().toString())
+//                        .message(alarm.getAlarmMessage())
+//                        .isRead(alarm.getIsRead())
+//                        .postKey(alarm.getPostId().toString())
+//                        .postTitle(post.getTitle())
+//                        .postUrl(post.getPostImageUrl())
+//                        .build();
+//                alarmResponseDtoList.add(alarmDto);
+//            }
         }
         
         user.updateUserAlaram(true);    // 알림을 읽었다고 표시함

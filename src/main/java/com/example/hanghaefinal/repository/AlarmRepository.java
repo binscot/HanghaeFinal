@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface AlarmRepository extends JpaRepository<Alarm, Long> {
 
-    Page<Alarm> findAllByUserIdOrderByIdDesc(Long userId, Pageable pageable);
+    List<Alarm> findAllByUserIdOrderByIdDesc(Long userId);
     List<Alarm> findAllByUserId(Long userId);
     void deleteAllByPostId(Long postId);
 

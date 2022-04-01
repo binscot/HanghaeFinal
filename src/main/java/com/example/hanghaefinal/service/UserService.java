@@ -366,15 +366,13 @@ public class UserService {
 
     //비밀번호 찾기
     @Transactional
-    public Boolean updatePassword(PasswordRequestDto requestDto) {
-        User user = userRepository.findByUsername(requestDto.getUsername())
-                .orElseThrow(() -> new UserNotFoundException("존재하지 않는 ID 입니다.")
-        );
-        if (!requestDto.getPassword().matches(requestDto.getCheckPassword())){
-            throw new EqualPasswordException("비밀번호가 비밀번호 확인과 일치하지 않습니다!");
+    public Boolean updatePassword(PasswordRequestDto requestDto,UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
+            throw new EqualPasswordException("비밀번호를 다시 확인해 주세요.");
         }
-        String password = passwordEncoder.encode(requestDto.getPassword());
-        user.updateUser(password);
+        String password = passwordEncoder.encode(requestDto.getNewPassword());
+        user.updateUserPassword(password);
         userRepository.save(user);
         return true;
     }
