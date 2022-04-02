@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -31,6 +32,7 @@ public class PostLikesService {
     private final PostRepository postRepository;
     private final AlarmService alarmService;
     private final AlarmRepository alarmRepository;
+    private final LevelService levelService;
 
     //좋아요 등록
     @Transactional
@@ -43,12 +45,18 @@ public class PostLikesService {
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
 
+        User likedUser = userRepository.findById(postId).orElseThrow(
+                () -> new UserNotFoundException("존재하지 않는 ID입니다.")
+        );
+
         PostLikes findLike = postLikesRepository.findByUserAndPost(user, post).orElse(null);
 
         //좋아요가 되어있는지 아닌지 체크해서 등록/해제
         if (findLike == null) {
             PostLikesRequestDto postLikesRequestDto = new PostLikesRequestDto(user, post);
             PostLikes postLikes = new PostLikes(postLikesRequestDto);
+            likedUser.setPoint(likedUser.getPoint()+1);
+            levelService.LevelCheck(user);
             postLikesRepository.save(postLikes);
 
             // 내가 참여한 게시글에 좋아요를 받았을 때
@@ -57,6 +65,8 @@ public class PostLikesService {
 
         } else {
             postLikesRepository.deleteById(findLike.getId());
+            likedUser.setPoint(likedUser.getPoint()-1);
+            levelService.LevelCheck(user);
         }
 
         List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);
@@ -64,6 +74,13 @@ public class PostLikesService {
         for (PostLikes postLikesTemp : postLikes) {
             postLikeClickersResponseDtos.add(new PostLikeClickersResponseDto(postLikesTemp));
         }
+
+
+
+
+
+
+
 
         return  new PostLikesResponseDto(postId, postLikeClickersResponseDtos,postLikesRepository.countByPost(post));
     }
