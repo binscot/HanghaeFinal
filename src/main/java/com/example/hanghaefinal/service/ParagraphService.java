@@ -71,7 +71,8 @@ public class ParagraphService {
             paragraphRepository.save(paragraph);
 
             //포인트 추가
-            user.setPoint(user.getPoint()+2);
+            int userPoint = user.getPoint()+2;
+            user.updatePoint(userPoint);
             levelService.LevelCheck(user);
 
             log.info("---------------------- 111111aaaa ----------------------");
@@ -149,17 +150,20 @@ public class ParagraphService {
                 () -> new ParagraphNotFoundException("문단이 존재하지 않습니다.")
         );
 
-        User likedUser = userRepository.findById(paragraphId).orElseThrow(
-                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
-        );
+        User likedUser = paragraph.getUser();
+        int userPoint = user.getPoint()+1;
+
 
         ParagraphLikes findParagraphLikes = paragraphLikesRepository.findByUserAndParagraph(user, paragraph).orElse(null);
 
         if(findParagraphLikes == null){
             ParagraphLikesReqDto paragraphLikesReqDto = new ParagraphLikesReqDto(user, paragraph);
             ParagraphLikes paragraphLikes = new ParagraphLikes(paragraphLikesReqDto);
-            likedUser.setPoint(likedUser.getPoint()+1);
+
+            int likePoint = user.getPoint()+1;
+            likedUser.updatePoint(likePoint);
             levelService.LevelCheck(user);
+
             paragraphLikesRepository.save(paragraphLikes);
 
             log.info("---------------------- 333333aaaa ----------------------");
@@ -168,7 +172,9 @@ public class ParagraphService {
 
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
-            likedUser.setPoint(likedUser.getPoint()-1);
+
+            int likePoint = user.getPoint()-1;
+            likedUser.updatePoint(likePoint);
             levelService.LevelCheck(user);
         }
 

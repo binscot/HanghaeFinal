@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Slf4j
 @RequiredArgsConstructor
@@ -45,9 +45,8 @@ public class PostLikesService {
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
 
-        User likedUser = userRepository.findById(postId).orElseThrow(
-                () -> new UserNotFoundException("존재하지 않는 ID입니다.")
-        );
+        User likedUser = post.getUser();
+
 
         PostLikes findLike = postLikesRepository.findByUserAndPost(user, post).orElse(null);
 
@@ -55,8 +54,11 @@ public class PostLikesService {
         if (findLike == null) {
             PostLikesRequestDto postLikesRequestDto = new PostLikesRequestDto(user, post);
             PostLikes postLikes = new PostLikes(postLikesRequestDto);
-            likedUser.setPoint(likedUser.getPoint()+1);
+
+            int userPoint = user.getPoint()+1;
+            likedUser.updatePoint(userPoint);
             levelService.LevelCheck(user);
+
             postLikesRepository.save(postLikes);
 
             // 내가 참여한 게시글에 좋아요를 받았을 때
@@ -65,23 +67,20 @@ public class PostLikesService {
 
         } else {
             postLikesRepository.deleteById(findLike.getId());
-            likedUser.setPoint(likedUser.getPoint()-1);
+
+            int likePoint = user.getPoint()-1;
+            likedUser.updatePoint(likePoint);
             levelService.LevelCheck(user);
         }
 
-        List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);
-        List<PostLikeClickersResponseDto> postLikeClickersResponseDtos = new ArrayList<>();
-        for (PostLikes postLikesTemp : postLikes) {
-            postLikeClickersResponseDtos.add(new PostLikeClickersResponseDto(postLikesTemp));
+            List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);
+            List<PostLikeClickersResponseDto> postLikeClickersResponseDtos = new ArrayList<>();
+            for (PostLikes postLikesTemp : postLikes) {
+                postLikeClickersResponseDtos.add(new PostLikeClickersResponseDto(postLikesTemp));
+            }
+
+
+            return new PostLikesResponseDto(postId, postLikeClickersResponseDtos, postLikesRepository.countByPost(post));
         }
-
-
-
-
-
-
-
-
-        return  new PostLikesResponseDto(postId, postLikeClickersResponseDtos,postLikesRepository.countByPost(post));
     }
-}
+

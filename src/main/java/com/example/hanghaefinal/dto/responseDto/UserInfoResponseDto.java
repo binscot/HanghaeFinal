@@ -20,6 +20,7 @@ public class UserInfoResponseDto {
     private List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList;
     private List<BadgeResponseDto> badgeResponseDtoList;
     private String userLevel;
+    private Integer userPoint;
 
     public UserInfoResponseDto(User user){
         this.userKey = user.getId();
@@ -29,7 +30,7 @@ public class UserInfoResponseDto {
         this.introduction = user.getIntroduction();
     }
 
-    public UserInfoResponseDto(Long id, String username, String nickName, boolean bool, String userProfileImage, String introduction, List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList, List<BadgeResponseDto> badgeResponseDtoList) {
+    public UserInfoResponseDto(Long id, String username, String nickName, boolean bool, String userProfileImage, String introduction, List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList, List<BadgeResponseDto> badgeResponseDtoList, Integer userPoint, String userLevel) {
         this.userKey=id;
         this.username=username;
         this.nickname=nickName;
@@ -38,6 +39,9 @@ public class UserInfoResponseDto {
         this.introduction=introduction;
         this.bookmarkInfoResponseDtoList=bookmarkInfoResponseDtoList;
         this.badgeResponseDtoList = badgeResponseDtoList;
+        this.userPoint = userPoint;
+        this.userLevel = userLevel;
+
     }
 
     public UserInfoResponseDto(Long id, String username, String nickName, String userProfileImage, String introduction) {

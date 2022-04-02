@@ -222,7 +222,9 @@ public class UserService {
                 user.getUserProfileImage(),
                 user.getIntroduction(),
                 bookmarkInfoResponseDtoList,
-                badgeResponseDtoList
+                badgeResponseDtoList,
+                user.getPoint(),
+                user.getLevel()
         );
     }
 

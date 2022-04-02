@@ -105,4 +105,8 @@ public class User extends Timestamped{
     public void updateUserPassword(String password) {
         this.password=password;
     }
+
+    public void updatePoint(int userPoint) {
+        this.point = userPoint;
+    }
 }

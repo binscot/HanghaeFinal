@@ -64,7 +64,7 @@ public class PostService {
 
     // 게시글 최초 생성 -> 미완성 게시글 생성
     @Transactional
-    public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg, BindingResult bindingResult, UserDetailsImpl userDetails){
+    public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg, BindingResult bindingResult){
 
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException(
@@ -87,7 +87,8 @@ public class PostService {
         paragraphRepository.save(paragraph);
 
         //포인트 추가
-        user.setPoint(user.getPoint()+3);
+        int userPoint = user.getPoint()+3;
+        user.updatePoint(userPoint);
         levelService.LevelCheck(user);
 
 
