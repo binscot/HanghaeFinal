@@ -73,6 +73,7 @@ public class ParagraphService {
             //포인트 추가
             int userPoint = user.getPoint()+2;
             user.updatePoint(userPoint);
+            userRepository.save(user);
 
 
             log.info("---------------------- 111111aaaa ----------------------");

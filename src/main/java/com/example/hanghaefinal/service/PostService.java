@@ -89,6 +89,7 @@ public class PostService {
         //포인트 추가
         int userPoint = user.getPoint()+3;
         user.updatePoint(userPoint);
+        userRepository.save(user);
 
         return true;
     }
