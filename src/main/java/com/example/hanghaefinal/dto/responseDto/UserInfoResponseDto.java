@@ -19,6 +19,7 @@ public class UserInfoResponseDto {
     private String introduction;
     private List<BookmarkInfoResponseDto> bookmarkInfoResponseDtoList;
     private List<BadgeResponseDto> badgeResponseDtoList;
+    private String userLevel;
 
     public UserInfoResponseDto(User user){
         this.userKey = user.getId();

@@ -42,6 +42,12 @@ public class User extends Timestamped{
     @Column
     private Long kakaoId;
 
+    @Column
+    private String level;
+
+    @Column
+    private Integer point;
+
 
 
     public User(String username, String password, String nickName, String introduction, String userProfile) {
