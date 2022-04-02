@@ -55,22 +55,21 @@ public class PostLikesService {
             PostLikesRequestDto postLikesRequestDto = new PostLikesRequestDto(user, post);
             PostLikes postLikes = new PostLikes(postLikesRequestDto);
 
-            int userPoint = user.getPoint()+1;
-            likedUser.updatePoint(userPoint);
-            levelService.LevelCheck(user);
-
             postLikesRepository.save(postLikes);
 
             // 내가 참여한 게시글에 좋아요를 받았을 때
             log.info("---------------------- 444444aaaa ----------------------");
             alarmService.generatePostLikesAlarm(post);
 
+            int userPoint = likedUser.getPoint()+1;
+            likedUser.updatePoint(userPoint);
+
+
         } else {
             postLikesRepository.deleteById(findLike.getId());
 
-            int likePoint = user.getPoint()-1;
+            int likePoint = likedUser.getPoint()-1;
             likedUser.updatePoint(likePoint);
-            levelService.LevelCheck(user);
         }
 
             List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);

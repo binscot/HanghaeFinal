@@ -73,7 +73,7 @@ public class ParagraphService {
             //포인트 추가
             int userPoint = user.getPoint()+2;
             user.updatePoint(userPoint);
-            levelService.LevelCheck(user);
+
 
             log.info("---------------------- 111111aaaa ----------------------");
             // 소설에 문단이 등록 됐을 때 알림 -
@@ -160,9 +160,8 @@ public class ParagraphService {
             ParagraphLikesReqDto paragraphLikesReqDto = new ParagraphLikesReqDto(user, paragraph);
             ParagraphLikes paragraphLikes = new ParagraphLikes(paragraphLikesReqDto);
 
-            int likePoint = user.getPoint()+1;
+            int likePoint = likedUser.getPoint()+1;
             likedUser.updatePoint(likePoint);
-            levelService.LevelCheck(user);
 
             paragraphLikesRepository.save(paragraphLikes);
 
@@ -173,9 +172,8 @@ public class ParagraphService {
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
 
-            int likePoint = user.getPoint()-1;
+            int likePoint = likedUser.getPoint()-1;
             likedUser.updatePoint(likePoint);
-            levelService.LevelCheck(user);
         }
 
         List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphId);

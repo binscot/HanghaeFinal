@@ -50,23 +50,30 @@ public class User extends Timestamped{
 
 
 
-    public User(String username, String password, String nickName, String introduction, String userProfile) {
+    public User(String username, String password, String nickName, String introduction, String userProfile, String userLevel, Integer userPoint) {
         this.username = username;
         this.password = password;
         this.nickName = nickName;
         this.introduction = introduction;
         this.userProfileImage = userProfile;
         this.kakaoId = null;
+        this.level = userLevel;
+        this.point = userPoint;
     }
 
-    public User(String username, String encodedPassword, String email, Long kakaoId, String userProfileImage) {
+    public User(String username, String encodedPassword, String email, Long kakaoId, String userProfileImage, String userLevel, Integer userPoint) {
         this.username=email;
         this.password=encodedPassword;
         this.nickName=username;
         this.userProfileImage = userProfileImage;
         this.kakaoId=kakaoId;
+        this.level = userLevel;
+        this.point = userPoint;
 
     }
+
+
+
 
 //    public User(String username, String nickName, String encodedPassword, Long kakaoId) {
 //        this.username=username;
@@ -108,5 +115,9 @@ public class User extends Timestamped{
 
     public void updatePoint(int userPoint) {
         this.point = userPoint;
+    }
+
+    public void updateLevel(String level) {
+        this.level = level;
     }
 }
