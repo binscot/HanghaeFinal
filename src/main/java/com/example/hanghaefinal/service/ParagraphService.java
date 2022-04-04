@@ -118,6 +118,7 @@ public class ParagraphService {
             QuitResDto quitResDto = new QuitResDto();
             quitResDto.setType(Paragraph.MessageType.QUIT);
             quitResDto.setNickName(user.getNickName());
+            quitResDto.setPostId(paragraphReqDto.getPostId());
             redisTemplate.convertAndSend(channelTopic.getTopic(), quitResDto);
         }
     }
