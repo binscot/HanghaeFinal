@@ -2,6 +2,7 @@ package com.example.hanghaefinal.model;
 
 import com.example.hanghaefinal.dto.responseDto.CommentResponseDto;
 import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import com.example.hanghaefinal.dto.requestDto.CommentRequestDto;
 import com.example.hanghaefinal.model.Post;
@@ -31,11 +32,15 @@ public class Comment extends Timestamped {
     @Column(name = "comment", nullable = false)
     private String comment;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 

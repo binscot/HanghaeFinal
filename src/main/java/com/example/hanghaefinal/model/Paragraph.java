@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.model;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,10 +37,12 @@ public class Paragraph extends Timestamped{
     private MessageType type;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY) // ...
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "post_id")
     private Post post;
 
