@@ -113,9 +113,10 @@ public class ParagraphService {
             // paragraphAccessResDto 를 RedisSubscriber의 sendMessage의 인자로 String 형태로 풀어버린다.
 
         } else if (Paragraph.MessageType.QUIT.equals(paragraphReqDto.getType())) {
-            paragraphReqDto.setParagraph(user.getNickName());
-            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
-            redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
+//            paragraphReqDto.setParagraph(user.getNickName());
+//            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
+            QuitResDto quitResDto = new QuitResDto(paragraphReqDto.getType(),user.getNickName());
+            redisTemplate.convertAndSend(channelTopic.getTopic(), quitResDto);
         }
     }
 
