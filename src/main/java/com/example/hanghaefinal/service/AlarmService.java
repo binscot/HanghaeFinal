@@ -60,62 +60,13 @@ public class AlarmService {
                         .postUrl(post.getPostImageUrl())
                         .build();
                 alarmResponseDtoList.add(alarmDto);
-//                /* 내가 참여한 게시글에 새로운 문단이 등록 됐을 때 */
-//            if (alarm.getType().equals(AlarmType.NEWPARAGRAPH)) {
-//
-//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-//                        .alarmId(alarm.getId().toString())
-//                        .type(alarm.getType().toString())
-//                        .message(alarm.getAlarmMessage())
-//                        .isRead(alarm.getIsRead())
-//                        .postKey(alarm.getPostId().toString())
-//                        .postTitle(post.getTitle())
-//                        .postUrl(post.getPostImageUrl())
-//                        .build();
-//                alarmResponseDtoList.add(alarmDto);
-//            } /* 내가 참여한 게시글이 완성 됐을 때 */
-//            else if (alarm.getType().equals(AlarmType.COMPLETEPOST)) {
-//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-//                        .alarmId(alarm.getId().toString())
-//                        .type(alarm.getType().toString())
-//                        .message(alarm.getAlarmMessage())
-//                        .isRead(alarm.getIsRead())
-//                        .postKey(alarm.getPostId().toString())
-//                        .postTitle(post.getTitle())
-//                        .postUrl(post.getPostImageUrl())
-//                        .build();
-//                alarmResponseDtoList.add(alarmDto);
-//            } /* 내가 작성한 문단이 좋아요 받았을 때 */
-//            else if (alarm.getType().equals(AlarmType.LIKEPARAGRAPH)) {
-//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-//                        .alarmId(alarm.getId().toString())
-//                        .type(alarm.getType().toString())
-//                        .message(alarm.getAlarmMessage())
-//                        .isRead(alarm.getIsRead())
-//                        .postKey(alarm.getPostId().toString())
-//                        .postTitle(post.getTitle())
-//                        .postUrl(post.getPostImageUrl())
-//                        .build();
-//                alarmResponseDtoList.add(alarmDto);
-//            } /* 내가 참여한 게시글이 좋아요 받았을 때 */
-//            else if (alarm.getType().equals(AlarmType.LIKEPOST)) {
-//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
-//                        .alarmId(alarm.getId().toString())
-//                        .type(alarm.getType().toString())
-//                        .message(alarm.getAlarmMessage())
-//                        .isRead(alarm.getIsRead())
-//                        .postKey(alarm.getPostId().toString())
-//                        .postTitle(post.getTitle())
-//                        .postUrl(post.getPostImageUrl())
-//                        .build();
-//                alarmResponseDtoList.add(alarmDto);
-//            }
         }
-        
         user.updateUserAlaram(true);    // 알림을 읽었다고 표시함
         userRepository.save(user);
         return alarmResponseDtoList;
     }
+
+
 
     // 1. 내가 참여한 소설에 새로운 문단이 달렸을 경우
     // paragraphOwner 빼고 알림을 보내줌

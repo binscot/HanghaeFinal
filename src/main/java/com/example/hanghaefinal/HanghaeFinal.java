@@ -17,7 +17,6 @@ public class HanghaeFinal {
 //             + "classpath:application.yml";
 
     public static void main(String[] args) {
-        //SpringApplication.run(HanghaeFinal.class, args);
         new SpringApplicationBuilder(HanghaeFinal.class)
                 .properties(APPLICATION_LOCATIONS)
                 .run(args);
