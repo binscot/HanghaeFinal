@@ -25,6 +25,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -97,13 +101,24 @@ public class ParagraphController {
         // 웹소켓 통신으로 게시글 안에 있는 사람들한테 response데이터 보내기
         if(paragraphReqDto.getType().equals(Paragraph.MessageType.START)){
             log.info("---------------- START START START ---------");
-//            Post post = postRepository.findById(postId).orElseThrow(
-//                    () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
-//            );
-//            int paragraphCnt = paragraphRepository.countByPost(post);
-//            paragraphService.rateJob(post, paragraphCnt);
+            Post post = postRepository.findById(postId).orElseThrow(
+                    () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+            );
+            Long paragraphCnt = paragraphRepository.countByPost(post);
             bool = paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
             bool = postService.startWritingStatus(postId, user);
+            Timer m = new Timer();
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+
+                    if (Objects.equals(paragraphCnt, paragraphRepository.countByPost(post)) && post.isWriting()){
+                        log.info("isWriting---------------------------------------false");
+                        post.updatePostWriting(false, null,null);
+                    }
+                }
+            };
+            m.schedule(task,20000);
         }
         else if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK)) {
             log.info("---------------TALK TALK TALK ----------------");
