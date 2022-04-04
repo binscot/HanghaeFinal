@@ -35,14 +35,14 @@ public class ParagraphService {
     public final AlarmRepository alarmRepository;
     private final LevelService levelService;
 
-    @Scheduled(fixedRate = 5000)
-    public void rateJob(Post post,int paragraphCnt) {
-        int nowParagraphCnt = paragraphRepository.countByPost(post);
-        if (paragraphCnt==nowParagraphCnt){
-            post.updatePostWriting(false, null,null);
-        }
-        log.info("schedule..");
-    }
+//    @Scheduled(fixedRate = 5000)
+//    public void rateJob(Post post,int paragraphCnt) {
+//        int nowParagraphCnt = paragraphRepository.countByPost(post);
+//        if (paragraphCnt==nowParagraphCnt){
+//            post.updatePostWriting(false, null,null);
+//        }
+//        log.info("schedule..");
+//    }
 
     @Transactional
     public Boolean saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){

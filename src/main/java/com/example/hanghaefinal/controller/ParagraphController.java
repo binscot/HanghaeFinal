@@ -97,11 +97,11 @@ public class ParagraphController {
         // 웹소켓 통신으로 게시글 안에 있는 사람들한테 response데이터 보내기
         if(paragraphReqDto.getType().equals(Paragraph.MessageType.START)){
             log.info("---------------- START START START ---------");
-            Post post = postRepository.findById(postId).orElseThrow(
-                    () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
-            );
-            int paragraphCnt = paragraphRepository.countByPost(post);
-            paragraphService.rateJob(post, paragraphCnt);
+//            Post post = postRepository.findById(postId).orElseThrow(
+//                    () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+//            );
+//            int paragraphCnt = paragraphRepository.countByPost(post);
+//            paragraphService.rateJob(post, paragraphCnt);
             bool = paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
             bool = postService.startWritingStatus(postId, user);
         }
