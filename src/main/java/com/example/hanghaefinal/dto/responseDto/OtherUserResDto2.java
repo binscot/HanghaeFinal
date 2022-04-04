@@ -15,6 +15,8 @@ public class OtherUserResDto2 {
     private String userProfileImage;
     private String introduction;
     private List<PostResponseDto> postResponseDtoList;
+    private int point;
+    private String level;
 
     public OtherUserResDto2(User user, List<PostResponseDto> postResponseDtoList){
         this.userKey = user.getId();
@@ -23,5 +25,7 @@ public class OtherUserResDto2 {
         this.userProfileImage = user.getUserProfileImage();
         this.introduction = user.getIntroduction();
         this.postResponseDtoList = postResponseDtoList;
+        this.point = user.getPoint();
+        this.level=user.getLevel();
     }
 }
