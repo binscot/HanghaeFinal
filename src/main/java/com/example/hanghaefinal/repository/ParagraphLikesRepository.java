@@ -14,7 +14,7 @@ public interface ParagraphLikesRepository extends JpaRepository<ParagraphLikes, 
     Long countByParagraph(Paragraph paragraph);
     //ParagraphLikes findByUserId();
 
-    @Query(value = "select distinct p from ParagraphLikes p join fetch p.user join fetch p.paragraph")
+    //@Query(value = "select distinct p from ParagraphLikes p join fetch p.user join fetch p.paragraph")
     List<ParagraphLikes> findAllByParagraphId(Long paragraphKey);
 
     void deleteAllByUser(User user);
