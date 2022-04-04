@@ -96,6 +96,12 @@ public class ParagraphController {
             bool = paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
             bool = postService.talkWritingStatus(postId);
         }
+        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.STOP)) {
+            log.info("---------------STOP ----------------");
+//            bool = paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
+            paragraphService.accessChatMessage(paragraphReqDto);
+            bool = postService.talkWritingStatus(postId);
+        }
 //        else if(paragraphReqDto.getType().equals(Paragraph.MessageType.ENTER))
 //            paragraphService.sendChatMessage();
 

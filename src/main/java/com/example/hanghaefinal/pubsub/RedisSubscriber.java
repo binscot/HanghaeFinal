@@ -3,7 +3,10 @@ package com.example.hanghaefinal.pubsub;
 import com.example.hanghaefinal.dto.responseDto.AlarmResponseDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
 import com.example.hanghaefinal.dto.responseDto.QuitResDto;
+import com.example.hanghaefinal.exception.exception.PostNotFoundException;
 import com.example.hanghaefinal.model.Paragraph;
+import com.example.hanghaefinal.model.Post;
+import com.example.hanghaefinal.repository.PostRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ public class RedisSubscriber {
 
     private final ObjectMapper objectMapper;
     private final SimpMessageSendingOperations messagingTemplate;
+    private final PostRepository postRepository;
     //private final ChatMessageRepository chatMessageRepository;
 
     // 타입을 stompHandler에서 잡는다?
@@ -66,13 +70,14 @@ public class RedisSubscriber {
                 messagingTemplate.convertAndSend(
                         "/sub/alarm/" + alarmResponseDto.getAlarmTargetId(),
                         alarmResponseDto);
-            } else if(publishMessage.startsWith("QUIT", 9)){
+            }else if(publishMessage.startsWith("STOP", 9)){
                 QuitResDto quitResDto = objectMapper.readValue(publishMessage, QuitResDto.class);
-//                ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
                 messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + quitResDto.getPostId(), quitResDto);
-                //ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
-                //messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             }
+//            else if(publishMessage.startsWith("QUIT", 9)){
+//                QuitResDto quitResDto = objectMapper.readValue(publishMessage, QuitResDto.class);
+//                messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + quitResDto.getPostId(), quitResDto);
+//            }
 
             // Paragraph 객채로 맵핑
             //Paragraph paragraph = objectMapper.readValue(publishMessage, Paragraph.class);
