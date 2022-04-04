@@ -215,7 +215,6 @@ public class PostService {
         post.updateLimitCnt(post.getLimitCnt() + postContinueReqDto.getAddParagraphSize());
         post.updatePostComplete(false); // 계속 작성중인 게시글로 변환
         postRepository.save(post);
-        // complete도 수정할 필요 없으니 그대로 두면 된다.
 
         alarmService.generateGoAlarm(post, user);
 
