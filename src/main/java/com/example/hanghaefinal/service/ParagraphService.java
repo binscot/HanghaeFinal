@@ -115,7 +115,9 @@ public class ParagraphService {
         } else if (Paragraph.MessageType.QUIT.equals(paragraphReqDto.getType())) {
 //            paragraphReqDto.setParagraph(user.getNickName());
 //            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
-            QuitResDto quitResDto = new QuitResDto(paragraphReqDto.getType(),user.getNickName());
+            QuitResDto quitResDto = new QuitResDto();
+            quitResDto.setType(Paragraph.MessageType.QUIT);
+            quitResDto.setNickName(user.getNickName());
             redisTemplate.convertAndSend(channelTopic.getTopic(), quitResDto);
         }
     }
