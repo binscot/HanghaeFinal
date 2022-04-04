@@ -18,11 +18,11 @@ public class ParagraphLikes {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)  // ...
     @JoinColumn(name = "paragraph_id", nullable = false)
     private Paragraph paragraph;
 

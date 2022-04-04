@@ -1,5 +1,6 @@
 package com.example.hanghaefinal.dto.responseDto;
 
+import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.ParagraphLikes;
 import lombok.Getter;
 
