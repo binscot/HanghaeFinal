@@ -112,6 +112,11 @@ public class StompHandler implements ChannelInterceptor {
 
         // disconnect 확인
         else if (StompCommand.DISCONNECT == accessor.getCommand()) {
+            log.info("~~~~~~~~~~~~~~~~~~~~~~~~~~ DISCONNECT");
+            String postId = paragraphService.getPostId(
+                    Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId")
+            );
+
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String findInOutKey = redisRepository.getSessionUserInfo(sessionId);
 
@@ -125,6 +130,7 @@ public class StompHandler implements ChannelInterceptor {
             paragraphService.accessChatMessage(
                     ParagraphReqDto.builder()
                             .type(Paragraph.MessageType.QUIT)
+                            .postId(postId)
                             .nickName(user.get().getNickName())
                             .build()
             );
