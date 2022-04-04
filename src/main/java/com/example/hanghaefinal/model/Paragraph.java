@@ -21,6 +21,7 @@ public class Paragraph extends Timestamped{
         START,  // 문단 작성 시작
         TALK, // 문단 작성 완료
         QUIT,
+        STOP,
         DELETE
     }
 

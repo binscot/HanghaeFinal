@@ -3,9 +3,7 @@ package com.example.hanghaefinal.pubsub;
 import com.example.hanghaefinal.dto.responseDto.AlarmResponseDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
 import com.example.hanghaefinal.dto.responseDto.QuitResDto;
-import com.example.hanghaefinal.model.Paragraph;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
