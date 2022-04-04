@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -33,6 +34,15 @@ public class ParagraphService {
     private final AlarmService alarmService;
     public final AlarmRepository alarmRepository;
     private final LevelService levelService;
+
+    @Scheduled(fixedRate = 5000)
+    public void rateJob(Post post,int paragraphCnt) {
+        int nowParagraphCnt = paragraphRepository.countByPost(post);
+        if (paragraphCnt==nowParagraphCnt){
+            post.updatePostWriting(false, null,null);
+        }
+        log.info("schedule..");
+    }
 
     @Transactional
     public Boolean saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
@@ -117,11 +127,14 @@ public class ParagraphService {
         } else if (Paragraph.MessageType.QUIT.equals(paragraphReqDto.getType())) {
 //            paragraphReqDto.setParagraph(user.getNickName());
 //            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
-            QuitResDto quitResDto = new QuitResDto();
-            quitResDto.setType(Paragraph.MessageType.QUIT);
-            quitResDto.setNickName(user.getNickName());
-            quitResDto.setPostId(paragraphReqDto.getPostId());
-            redisTemplate.convertAndSend(channelTopic.getTopic(), quitResDto);
+            paragraphReqDto.setParagraph(user.getNickName());
+            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
+            redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
+//            QuitResDto quitResDto = new QuitResDto();
+//            quitResDto.setType(Paragraph.MessageType.QUIT);
+//            quitResDto.setNickName(user.getNickName());
+//            quitResDto.setPostId(paragraphReqDto.getPostId());
+//            redisTemplate.convertAndSend(channelTopic.getTopic(), quitResDto);
         }
     }
 

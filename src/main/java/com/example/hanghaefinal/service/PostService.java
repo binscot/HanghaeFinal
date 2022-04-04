@@ -44,8 +44,6 @@ public class PostService {
     private final BookmarkRepository bookmarkRepository;
     private final AlarmService alarmService;
     private final S3Uploader s3Uploader;
-    private final AlarmRepository alarmRepository;
-    private final LevelService levelService;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
         //String originalFileName = multipartFile.getOriginalFilename();

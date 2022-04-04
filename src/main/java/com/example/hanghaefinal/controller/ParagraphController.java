@@ -4,7 +4,10 @@ import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
 import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Paragraph;
+import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.repository.ParagraphRepository;
+import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.UserDetailsImpl;
 import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
@@ -15,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +34,8 @@ public class ParagraphController {
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final PostService postService;
+    private final PostRepository postRepository;
+    private final ParagraphRepository paragraphRepository;
 
     // 문단 생성
     /*@PostMapping("/paragraph/{postId}")
@@ -50,6 +56,8 @@ public class ParagraphController {
         log.info("cancelIsWriting----------------------------------");
         return postService.cancelIsWriting(postId);
     }
+
+
 
     // 예를들어 좋아요 알림 같은 것도 controller에 @PostMapping으로 만들 수 있다.
     // 위에 api 를 대체해야한다.
@@ -89,6 +97,11 @@ public class ParagraphController {
         // 웹소켓 통신으로 게시글 안에 있는 사람들한테 response데이터 보내기
         if(paragraphReqDto.getType().equals(Paragraph.MessageType.START)){
             log.info("---------------- START START START ---------");
+            Post post = postRepository.findById(postId).orElseThrow(
+                    () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
+            );
+            int paragraphCnt = paragraphRepository.countByPost(post);
+            paragraphService.rateJob(post, paragraphCnt);
             bool = paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
             bool = postService.startWritingStatus(postId, user);
         }
@@ -103,6 +116,8 @@ public class ParagraphController {
 
         return ResponseEntity.ok(bool);
     }
+
+
 
     @PostMapping("/paragraph/likes/{paragraphId}")
     public ParagraphLikesResDto paragraphLikes(@PathVariable Long paragraphId, @AuthenticationPrincipal UserDetailsImpl userDetails){
