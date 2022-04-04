@@ -34,7 +34,7 @@ public class PostLikesService {
     private final AlarmRepository alarmRepository;
     private final LevelService levelService;
 
-    //좋아요 등록
+    //좋아요
     @Transactional
     public PostLikesResponseDto addLike(Long postId, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(
@@ -50,14 +50,14 @@ public class PostLikesService {
 
         PostLikes findLike = postLikesRepository.findByUserAndPost(user, post).orElse(null);
 
-        //좋아요가 되어있는지 아닌지 체크해서 등록/해제
+        //좋아요 등록/해제
         if (findLike == null) {
             PostLikesRequestDto postLikesRequestDto = new PostLikesRequestDto(user, post);
             PostLikes postLikes = new PostLikes(postLikesRequestDto);
 
             postLikesRepository.save(postLikes);
 
-            // 내가 참여한 게시글에 좋아요를 받았을 때
+            // 내가 참여한 게시글에 좋아요를 받았을 때요 알람생성
             log.info("---------------------- 444444aaaa ----------------------");
             alarmService.generatePostLikesAlarm(post);
 

@@ -32,6 +32,8 @@ public class PostLikes {
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+
+
     public PostLikes(PostLikesRequestDto postLikesRequestDto) {
 
         this.user = postLikesRequestDto.getUser();

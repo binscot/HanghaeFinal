@@ -26,6 +26,7 @@ public class CommentLikesService {
     private final UserRepository userRepository;
     private final CommentRepository commentRepository;
 
+    /* 댓글 좋아요 */
     @Transactional
     public CommentLikesResponseDto addCommentLike(Long commentId, Long userId){
         User user = userRepository.findById(userId).orElseThrow(
