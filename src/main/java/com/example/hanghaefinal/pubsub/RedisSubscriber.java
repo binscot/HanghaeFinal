@@ -65,11 +65,11 @@ public class RedisSubscriber {
                         "/sub/alarm/" + alarmResponseDto.getAlarmTargetId(),
                         alarmResponseDto);
             } else if(publishMessage.startsWith("QUIT", 9)){
-                QuitResDto quitResDto = objectMapper.readValue(publishMessage, QuitResDto.class);
-//                ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
-                messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + quitResDto.getPostId(), quitResDto);
-                //ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
-                //messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
+//                QuitResDto quitResDto = objectMapper.readValue(publishMessage, QuitResDto.class);
+//                messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + quitResDto.getPostId(), quitResDto);
+
+                ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
+                messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             }
 
             // Paragraph 객채로 맵핑
