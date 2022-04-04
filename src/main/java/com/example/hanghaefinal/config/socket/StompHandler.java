@@ -2,8 +2,12 @@ package com.example.hanghaefinal.config.socket;
 
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
+import com.example.hanghaefinal.exception.exception.PostNotFoundException;
 import com.example.hanghaefinal.model.Paragraph;
+import com.example.hanghaefinal.model.Post;
 import com.example.hanghaefinal.model.User;
+import com.example.hanghaefinal.repository.ParagraphRepository;
+import com.example.hanghaefinal.repository.PostRepository;
 import com.example.hanghaefinal.repository.RedisRepository;
 import com.example.hanghaefinal.repository.UserRepository;
 import com.example.hanghaefinal.security.jwt.JwtTokenProvider;
@@ -29,6 +33,7 @@ public class StompHandler implements ChannelInterceptor {
     private final RedisRepository redisRepository;
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final PostRepository postRepository;
 
     // websocket 을 통해 들어온 요청이 처리 되기전 실행된다.
     @Override
@@ -118,6 +123,13 @@ public class StompHandler implements ChannelInterceptor {
             );
             log.info("~~~~~~~~~~~~~~~~~~~~ ");
             Long userId = user.get().getId();
+            Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(
+                    () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
+            );
+            if (post.getWriter().equals(user.get().getNickName()) && post.isWriting()){
+                log.info("isWriting---------------------------------------false"+"post.getWriter()=="+post.getWriter()+"user.get().getNickName()=="+user.get().getNickName());
+                post.updatePostWriting(false, null,null);
+            }
 
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String findInOutKey = redisRepository.getSessionUserInfo(sessionId);
