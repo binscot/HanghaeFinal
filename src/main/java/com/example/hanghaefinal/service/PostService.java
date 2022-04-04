@@ -92,15 +92,18 @@ public class PostService {
     public PostDetailResponseDto completePost(Long postId, CategoryRequestDto categoryRequestDto, UserDetailsImpl userDetails){
         log.info("-------------------테스트로그2---------------------");
         log.info("----------- 카테고리 로그 : " + categoryRequestDto.getCategory());
-        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
+        /*User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
                 () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
-        );
+        );*/
+
+        if(userDetails == null){
+            throw new UserNotFoundException("존재하지 않는 ID 입니다.");
+        }
+        User user = userDetails.getUser();
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
-
-
 /*        int paragraphCnt = paragraphRepository.findAllByPostId(postId).size();
 
         if(post.getLimitCnt() != paragraphCnt ){
@@ -169,13 +172,13 @@ public class PostService {
         for (Comment comment:commentList ) {
             Long commentLikesCnt = commentLikesRepository.countByComment(comment);
 
-            List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-            List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-            for(CommentLikes commentLikesTemp : commentLikesList){
-                commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-            }
+//            List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+//            List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+//            for(CommentLikes commentLikesTemp : commentLikesList){
+//                commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+//            }
 
-            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
+            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
         }
 
         Long postLikesCnt =  postLikesRepository.countByPost(post);
@@ -210,6 +213,7 @@ public class PostService {
 
         // 기존 limitCnt 에 추가할만큼의 문단 수를 더한다.
         post.updateLimitCnt(post.getLimitCnt() + postContinueReqDto.getAddParagraphSize());
+        post.updatePostComplete(false); // 계속 작성중인 게시글로 변환
         postRepository.save(post);
         // complete도 수정할 필요 없으니 그대로 두면 된다.
 
@@ -235,7 +239,6 @@ public class PostService {
 
         List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(postId);
         List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList = new ArrayList<>();
-
         for (Bookmark bookmark:bookmarkList){
             bookmarkClickUserKeyResDtoList.add(new BookmarkClickUserKeyResDto(bookmark));
         }
@@ -243,21 +246,62 @@ public class PostService {
 
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(postId);
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
+/*
+        // Paragraph, ParagraphLikesList
+        HashMap<Object, Paragraph> map = new HashMap<>();
+        // ParagraphLikes, userPkList
+        HashMap<Object, Object> map2 = new HashMap<>();
+
+        List<ParagraphLikes> paragraphLikesList = new ArrayList<>();
+
+        // 유저를 가져오는 repository에서 fetch join을 잘 걸어라
+        for(int i = 0; i < paragraphList.size(); i++){
+            //map.put(String.valueOf(i), paragraphList.get(i).getId());
+            //map.put(String.valueOf(i), paragraphList.get(i).getParagraphLikesList());
+            paragraphLikesList = paragraphList.get(i).getParagraphLikesList();
+            //map.put(paragraphList.get(i), paragraphLikesList);
+            map.put(i, paragraphList.get(i));
+            map2.put(i, paragraphLikesList);
+        }
+        System.out.println("------------------------ paragraphLikesList : " + paragraphLikesList.size());
+
+        List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
+        for(int k = 0; k < paragraphLikesList.size(); k++){
+//            map2.put(paragraphLikesList.get(i), paragraphLikesList.get(i).getUser().getId());
+            //map2.put(k, paragraphLikesList.get(k));
+            paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesList.get(k)));
+        }
+
+        // 이게 지금 paragraphLikesClickUserKeyResDtoList 는 마지막것만 넣어주네..
+        for(int i = 0; i < paragraphList.size(); i++){
+            paragraphResDtoList.add(new ParagraphResDto( map.get(i), paragraphLikesClickUserKeyResDtoList, paragraphList.get(i).getParagraphLikesList().size() ));
+        }*/
+
+        /*for( Object key : map.keySet() ){
+            System.out.println( String.format("키 : %s, 값 : %s", key, map.get(key)) );
+            paragraphResDtoList.add(new ParagraphResDto( key , map.get(key) ) );
+        }
+
+        HashMap<String, Long> map2 = new HashMap<>();
+        for(int i = 0; i < paragraphList.size(); i++){
+            List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(map.get(String.valueOf(i)));
+            map2.put(String.valueOf(i), paragraphLikes.get(i).getUser().getId());
+
+        }*/
 
         for (Paragraph paragraph : paragraphList) {
             // a. 이거는 UserInfoResponseDto를 여기서 생성해서 ParagraphResDto로 가져가고
 //            UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
 //            paragraphResDtoList.add(new ParagraphResDto(paragraph, userInfoResDto));
-            
+
             // b. 이거는 UserInfoResponseDto를 ParagraphResDto로 가서 생성한다. ㅇㅇ
             // 각 문단에 좋아요를 한 userKey(PK)의 리스트
             Long paragraphLikesCnt = paragraphLikesRepository.countByParagraph(paragraph);
             Long paragraphKey = paragraph.getId();
 
-            List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);
+            List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphKey);  // 이거 fetch join 해봐
             List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
             for(ParagraphLikes paragraphLikesTemp : paragraphLikes){
-                // paragraphLikesRepository.findAllByParagraphId(paragraphKey);
                 paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesTemp));
             }
 
@@ -279,13 +323,13 @@ public class PostService {
         for (Comment comment : commentList) {
             Long commentLikesCnt = commentLikesRepository.countByComment(comment);
 
-            List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-            List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-            for(CommentLikes commentLikesTemp : commentLikesList){
-                commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-            }
+//            List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+//            List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+//            for(CommentLikes commentLikesTemp : commentLikesList){
+//                commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+//            }
 
-            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
+            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
         }
 
         // postLikes 조회
@@ -305,7 +349,6 @@ public class PostService {
         log.info("-----------------------PostDetailResponseDto---------:"+post.isWriting());
         return new PostDetailResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
                 paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
-//        return new PostDetailResponseDto(post, commentList, postLikesCnt);
     }
 
     // 완성작 게시글 전체 조회 - 최신순
@@ -402,13 +445,13 @@ public class PostService {
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
 
-                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-                for(CommentLikes commentLikesTemp : commentLikesList){
-                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-                }
+//                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+//                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+//                for(CommentLikes commentLikesTemp : commentLikesList){
+//                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+//                }
 
-                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
             List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -510,13 +553,13 @@ public class PostService {
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
                 // 각 댓글을 좋아요한 사람의 userKey 리스트를 구한다.
-                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-                for(CommentLikes commentLikesTemp : commentLikesList){
-                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-                }
+//                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+//                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+//                for(CommentLikes commentLikesTemp : commentLikesList){
+//                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+//                }
 
-                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
             List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -708,13 +751,13 @@ public class PostService {
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
                 // 각 댓글을 좋아요한 사람의 userKey 리스트를 구한다.
-                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-                for(CommentLikes commentLikesTemp : commentLikesList){
-                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-                }
+//                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+//                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+//                for(CommentLikes commentLikesTemp : commentLikesList){
+//                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+//                }
 
-                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
 
@@ -736,5 +779,28 @@ public class PostService {
             postResponseDtoList.add(postResponseDto);
         }
         return postResponseDtoList;
+    }
+
+    public Boolean viewTest(Long postKey, UserDetailsImpl userDetails){
+
+        /*if(userDetails == null){
+            throw new UserNotFoundException("유저가 없네용 ㅜㅜ");
+        }*/
+
+        /*System.out.println("---------------------- 와이 ---------------------");
+        List<Post> postList = postRepository.findAllByUserIdOrderByModifiedAtDesc(userDetails.getUser().getId());
+        System.out.println("------------------- postList  size : " + postList.size());
+
+        List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(postKey);
+        System.out.println("------------------- bookmarkList  size : " + bookmarkList.size());
+
+        List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(postKey);
+        System.out.println("------------------- paragraphList  size : " + paragraphList.size());*/
+
+        List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postKey);
+        System.out.println("------------------- postLikes  size : " + postLikes.size());
+
+
+        return true;
     }
 }

@@ -60,11 +60,14 @@ public class PostDetailResponseDto {
         this.commentList = commentList;
     }
 
+
     public PostDetailResponseDto(Post post,
+                                 List<PostLikeClickersResponseDto> postLikeClickersResponseDtoList,
+                                 List<BookmarkClickUserKeyResDto> bookmarkClickUserKeyResDtoList,
                                  List<ParagraphResDto> paragraphResDtoList,
-                                 List<CommentResponseDto> commentList,
                                  List<CategoryResponseDto> categoryList,
-                                 Long postLikesCnt, String postUsername){
+                                 Long postLikesCnt, String postUsername
+    ){
         this.postKey = post.getId();
         this.title = post.getTitle();
         this.postUsername = postUsername;
@@ -73,26 +76,16 @@ public class PostDetailResponseDto {
         this.color = post.getColor();
         this.limitCnt = post.getLimitCnt();
         this.complete = post.isComplete();  // boolean형은 get이 아니라 is로 가져온다.
-
+        this.writing = post.isWriting();
+        this.writer = post.getWriter();
+        this.paragraphStartTime = post.getParagraphStartTime();
+        this.postLikesCnt = postLikesCnt;
+        this.postLikeClickersResponseDtoList = postLikeClickersResponseDtoList;
+        this.bookmarkLikesCnt = bookmarkClickUserKeyResDtoList.size();
+        this.bookmarkClickUserKeyResDtoList = bookmarkClickUserKeyResDtoList;
         this.paragraphResDtoList = paragraphResDtoList;
-        this.postLikesCnt = postLikesCnt;
         this.categoryList = categoryList;
-        this.commentList = commentList;
     }
 
-
-    public PostDetailResponseDto(Post post, List<CommentResponseDto> commentList, Long postLikesCnt){
-        this.postKey = post.getId();
-        this.title = post.getTitle();
-        this.postUsername = post.getUser().getUsername();
-        this.postModifiedAt = post.getModifiedAt().toString();
-        this.postImageUrl = post.getPostImageUrl();
-        this.color = post.getColor();
-        this.limitCnt = post.getLimitCnt();
-        this.complete = post.isComplete();  // boolean형은 get이 아니라 is로 가져온다.
-        this.postLikesCnt = postLikesCnt;
-        //this.categoryList = categoryList;
-        this.commentList = commentList;
-    }
 
 }
