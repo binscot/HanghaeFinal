@@ -112,11 +112,11 @@ public class ParagraphService {
             redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
             // paragraphAccessResDto 를 RedisSubscriber의 sendMessage의 인자로 String 형태로 풀어버린다.
 
-        } else if (Paragraph.MessageType.STOP.equals(paragraphReqDto.getType())) {
+        } else if (Paragraph.MessageType.QUIT.equals(paragraphReqDto.getType())) {
 //            paragraphReqDto.setParagraph(user.getNickName());
 //            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
             QuitResDto quitResDto = new QuitResDto();
-            quitResDto.setType(Paragraph.MessageType.STOP);
+            quitResDto.setType(Paragraph.MessageType.QUIT);
             quitResDto.setNickName(user.getNickName());
             quitResDto.setPostId(paragraphReqDto.getPostId());
             redisTemplate.convertAndSend(channelTopic.getTopic(), quitResDto);
