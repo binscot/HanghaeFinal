@@ -30,6 +30,7 @@ public class ParagraphService {
     private final ChannelTopic channelTopic;
     private final AlarmService alarmService;
     public final AlarmRepository alarmRepository;
+    private final LevelService levelService;
 
     @Transactional
     public Boolean saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
@@ -69,6 +70,12 @@ public class ParagraphService {
             log.info("---------------------- 랙규야~~~~~~~~~~밥먹자7777777777777777 ----------------------");
             paragraphRepository.save(paragraph);
 
+            //포인트 추가
+            int userPoint = user.getPoint()+2;
+            user.updatePoint(userPoint);
+            userRepository.save(user);
+
+
             log.info("---------------------- 111111aaaa ----------------------");
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
@@ -106,9 +113,13 @@ public class ParagraphService {
             // paragraphAccessResDto 를 RedisSubscriber의 sendMessage의 인자로 String 형태로 풀어버린다.
 
         } else if (Paragraph.MessageType.QUIT.equals(paragraphReqDto.getType())) {
-            paragraphReqDto.setParagraph(user.getNickName() + "님이 방에서 나갔습니다.");
-            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
-            redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
+//            paragraphReqDto.setParagraph(user.getNickName());
+//            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
+            QuitResDto quitResDto = new QuitResDto();
+            quitResDto.setType(Paragraph.MessageType.QUIT);
+            quitResDto.setNickName(user.getNickName());
+            quitResDto.setPostId(paragraphReqDto.getPostId());
+            redisTemplate.convertAndSend(channelTopic.getTopic(), quitResDto);
         }
     }
 
@@ -144,11 +155,19 @@ public class ParagraphService {
                 () -> new ParagraphNotFoundException("문단이 존재하지 않습니다.")
         );
 
+        User likedUser = paragraph.getUser();
+        int userPoint = user.getPoint()+1;
+
+
         ParagraphLikes findParagraphLikes = paragraphLikesRepository.findByUserAndParagraph(user, paragraph).orElse(null);
 
         if(findParagraphLikes == null){
             ParagraphLikesReqDto paragraphLikesReqDto = new ParagraphLikesReqDto(user, paragraph);
             ParagraphLikes paragraphLikes = new ParagraphLikes(paragraphLikesReqDto);
+
+            int likePoint = likedUser.getPoint()+1;
+            likedUser.updatePoint(likePoint);
+
             paragraphLikesRepository.save(paragraphLikes);
 
             log.info("---------------------- 333333aaaa ----------------------");
@@ -157,6 +176,9 @@ public class ParagraphService {
 
         } else {
             paragraphLikesRepository.deleteById(findParagraphLikes.getId());
+
+            int likePoint = likedUser.getPoint()-1;
+            likedUser.updatePoint(likePoint);
         }
 
         List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(paragraphId);
@@ -164,6 +186,10 @@ public class ParagraphService {
         for(ParagraphLikes paragraphLikeTemp : paragraphLikes){
             paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikeTemp));
         }
+
+
+
+
 
         return new ParagraphLikesResDto(paragraphId, paragraphLikesClickUserKeyResDtoList, paragraphLikesRepository.countByParagraph(paragraph));
     }

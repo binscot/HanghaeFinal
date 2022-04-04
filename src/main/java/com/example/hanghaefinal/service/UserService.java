@@ -49,6 +49,7 @@ public class UserService {
     private final ParagraphRepository paragraphRepository;
     private final AlarmRepository alarmRepository;
     private final ParagraphLikesRepository paragraphLikesRepository;
+    private final LevelService levelService;
 
 
     @Transactional
@@ -66,6 +67,8 @@ public class UserService {
         String nickName = requestDto.getNickName();
         String introduction = requestDto.getIntroduction();
         String password = passwordEncoder.encode(requestDto.getPassword());
+        String userLevel = "lv.1 작가지망생";
+        Integer userPoint = 0;
 
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException(
@@ -79,7 +82,7 @@ public class UserService {
             throw new IntroductionLimitException("소개는 300자 이하로 작성해주세요!");
         }
 
-        User user = new User(username, password, nickName, introduction, userProfile);
+        User user = new User(username, password, nickName, introduction, userProfile, userLevel, userPoint);
         userRepository.save(user);
 
         Badge firstBadge = new Badge();
@@ -214,6 +217,8 @@ public class UserService {
             badgeResponseDtoList.add(badgeResponseDto);
         }
 
+        levelService.LevelCheck(user);
+
         return new UserInfoResponseDto(
                 user.getId(),
                 user.getUsername(),
@@ -222,7 +227,9 @@ public class UserService {
                 user.getUserProfileImage(),
                 user.getIntroduction(),
                 bookmarkInfoResponseDtoList,
-                badgeResponseDtoList
+                badgeResponseDtoList,
+                user.getPoint(),
+                user.getLevel()
         );
     }
 
@@ -383,10 +390,13 @@ public class UserService {
             HttpServletResponse response
     ) {
         // 카카오 OAuth2 를 통해 카카오 사용자 정보 조회
+        Integer userPoint = 0;
+        String userLevel = "lv.1 작가지망생";
         KakaoUserInfo userInfo = kakaoOAuth2.getUserInfo(accessToken);
         Long kakaoId = userInfo.getId();
         String nickname = userInfo.getNickname();
         String email = userInfo.getEmail();
+
         // DB 에 중복된 Kakao Id 가 있는지 확인
         User kakaoUser = userRepository.findByKakaoId(kakaoId)
                 .orElse(null);
@@ -412,11 +422,11 @@ public class UserService {
 
                 if (email != null) {
                     String userImg = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
-                    kakaoUser = new User(nickname, encodedPassword, email, kakaoId, userImg);
+                    kakaoUser = new User(nickname, encodedPassword, email, kakaoId, userImg, userLevel, userPoint);
                 } else {
                     String userImg = "https://binscot-bucket.s3.ap-northeast-2.amazonaws.com/default/photo.png";
                     String username = "kakaoUser" + kakaoId;
-                    kakaoUser = new User(nickname, encodedPassword,username, kakaoId, userImg);
+                    kakaoUser = new User(nickname, encodedPassword,username, kakaoId, userImg, userLevel, userPoint);
                 }
                 userRepository.save(kakaoUser);
 

@@ -45,6 +45,7 @@ public class PostService {
     private final AlarmService alarmService;
     private final S3Uploader s3Uploader;
     private final AlarmRepository alarmRepository;
+    private final LevelService levelService;
 
     public String uploadImageFile(MultipartFile multipartFile, PostRequestDto requestDto) throws IOException {
         //String originalFileName = multipartFile.getOriginalFilename();
@@ -64,6 +65,7 @@ public class PostService {
     // 게시글 최초 생성 -> 미완성 게시글 생성
     @Transactional
     public Boolean savePost(PostRequestDto postRequestDto, User user, String defaultImg, BindingResult bindingResult){
+
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException(
                     Objects.requireNonNull(bindingResult.getFieldError()
@@ -83,6 +85,11 @@ public class PostService {
         postRepository.save(post);
         categoryRepository.save(category);
         paragraphRepository.save(paragraph);
+
+        //포인트 추가
+        int userPoint = user.getPoint()+3;
+        user.updatePoint(userPoint);
+        userRepository.save(user);
 
         return true;
     }

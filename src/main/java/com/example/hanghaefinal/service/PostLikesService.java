@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -31,6 +32,7 @@ public class PostLikesService {
     private final PostRepository postRepository;
     private final AlarmService alarmService;
     private final AlarmRepository alarmRepository;
+    private final LevelService levelService;
 
     //좋아요 등록
     @Transactional
@@ -43,28 +45,41 @@ public class PostLikesService {
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
 
+        User likedUser = post.getUser();
+
+
         PostLikes findLike = postLikesRepository.findByUserAndPost(user, post).orElse(null);
 
         //좋아요가 되어있는지 아닌지 체크해서 등록/해제
         if (findLike == null) {
             PostLikesRequestDto postLikesRequestDto = new PostLikesRequestDto(user, post);
             PostLikes postLikes = new PostLikes(postLikesRequestDto);
+
             postLikesRepository.save(postLikes);
 
             // 내가 참여한 게시글에 좋아요를 받았을 때
             log.info("---------------------- 444444aaaa ----------------------");
             alarmService.generatePostLikesAlarm(post);
 
+            int userPoint = likedUser.getPoint()+1;
+            likedUser.updatePoint(userPoint);
+
+
         } else {
             postLikesRepository.deleteById(findLike.getId());
+
+            int likePoint = likedUser.getPoint()-1;
+            likedUser.updatePoint(likePoint);
         }
 
-        List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);
-        List<PostLikeClickersResponseDto> postLikeClickersResponseDtos = new ArrayList<>();
-        for (PostLikes postLikesTemp : postLikes) {
-            postLikeClickersResponseDtos.add(new PostLikeClickersResponseDto(postLikesTemp));
-        }
+            List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postId);
+            List<PostLikeClickersResponseDto> postLikeClickersResponseDtos = new ArrayList<>();
+            for (PostLikes postLikesTemp : postLikes) {
+                postLikeClickersResponseDtos.add(new PostLikeClickersResponseDto(postLikesTemp));
+            }
 
-        return  new PostLikesResponseDto(postId, postLikeClickersResponseDtos,postLikesRepository.countByPost(post));
+
+            return new PostLikesResponseDto(postId, postLikeClickersResponseDtos, postLikesRepository.countByPost(post));
+        }
     }
-}
+
