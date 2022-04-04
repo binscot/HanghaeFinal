@@ -17,10 +17,10 @@ public class CommentResponseDto {
     private Long commentUserId;
     private String commentUsername;
     private Long commentLikesCnt;
-    //private List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList;
+    private List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList;
     private UserInfoResponseDto userInfoResponseDto;
 
-    /*public CommentResponseDto(Comment comment, Long commentLikesCnt, List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList){
+    public CommentResponseDto(Comment comment, Long commentLikesCnt, List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList){
         this.commentId = comment.getId();
         this.comment = comment.getComment();
         this.commentModifiedAt = comment.getModifiedAt().toString();
@@ -29,7 +29,7 @@ public class CommentResponseDto {
         this.commentLikesCnt = commentLikesCnt;
         this.commentLikeClickersResponseDtoList = commentLikeClickersResponseDtoList;
         this.userInfoResponseDto = new UserInfoResponseDto(comment.getUser());
-    }*/
+    }
 
     public CommentResponseDto(Comment comment, Long commentLikesCnt){
         this.commentId = comment.getId();
