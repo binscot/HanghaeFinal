@@ -116,6 +116,8 @@ public class StompHandler implements ChannelInterceptor {
             String postId = paragraphService.getPostId(
                     Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId")
             );
+            log.info("~~~~~~~~~~~~~~~~~~~~ ");
+            Long userId = user.get().getId();
 
             String sessionId = (String) message.getHeaders().get("simpSessionId");
             String findInOutKey = redisRepository.getSessionUserInfo(sessionId);
@@ -127,13 +129,7 @@ public class StompHandler implements ChannelInterceptor {
             //그 사람이 글을 start 를 눌렀던 유저라면 post의 writing 상태값을 변경 해줘야한다
 
             // disconnect 됐다는 메시지는 주지 말자
-            paragraphService.accessChatMessage(
-                    ParagraphReqDto.builder()
-                            .type(Paragraph.MessageType.QUIT)
-                            .postId(postId)
-                            .nickName(user.get().getNickName())
-                            .build()
-            );
+            paragraphService.accessChatMessage(ParagraphReqDto.builder().type(Paragraph.MessageType.QUIT).postId(postId).userId(userId).build());
         }
         return message;
     }
