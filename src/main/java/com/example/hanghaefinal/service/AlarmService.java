@@ -60,13 +60,63 @@ public class AlarmService {
                         .postUrl(post.getPostImageUrl())
                         .build();
                 alarmResponseDtoList.add(alarmDto);
+
+//                /* 내가 참여한 게시글에 새로운 문단이 등록 됐을 때 */
+//            if (alarm.getType().equals(AlarmType.NEWPARAGRAPH)) {
+//
+//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+//                        .alarmId(alarm.getId().toString())
+//                        .type(alarm.getType().toString())
+//                        .message(alarm.getAlarmMessage())
+//                        .isRead(alarm.getIsRead())
+//                        .postKey(alarm.getPostId().toString())
+//                        .postTitle(post.getTitle())
+//                        .postUrl(post.getPostImageUrl())
+//                        .build();
+//                alarmResponseDtoList.add(alarmDto);
+//            } /* 내가 참여한 게시글이 완성 됐을 때 */
+//            else if (alarm.getType().equals(AlarmType.COMPLETEPOST)) {
+//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+//                        .alarmId(alarm.getId().toString())
+//                        .type(alarm.getType().toString())
+//                        .message(alarm.getAlarmMessage())
+//                        .isRead(alarm.getIsRead())
+//                        .postKey(alarm.getPostId().toString())
+//                        .postTitle(post.getTitle())
+//                        .postUrl(post.getPostImageUrl())
+//                        .build();
+//                alarmResponseDtoList.add(alarmDto);
+//            } /* 내가 작성한 문단이 좋아요 받았을 때 */
+//            else if (alarm.getType().equals(AlarmType.LIKEPARAGRAPH)) {
+//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+//                        .alarmId(alarm.getId().toString())
+//                        .type(alarm.getType().toString())
+//                        .message(alarm.getAlarmMessage())
+//                        .isRead(alarm.getIsRead())
+//                        .postKey(alarm.getPostId().toString())
+//                        .postTitle(post.getTitle())
+//                        .postUrl(post.getPostImageUrl())
+//                        .build();
+//                alarmResponseDtoList.add(alarmDto);
+//            } /* 내가 참여한 게시글이 좋아요 받았을 때 */
+//            else if (alarm.getType().equals(AlarmType.LIKEPOST)) {
+//                AlarmResponseDto alarmDto = AlarmResponseDto.builder()
+//                        .alarmId(alarm.getId().toString())
+//                        .type(alarm.getType().toString())
+//                        .message(alarm.getAlarmMessage())
+//                        .isRead(alarm.getIsRead())
+//                        .postKey(alarm.getPostId().toString())
+//                        .postTitle(post.getTitle())
+//                        .postUrl(post.getPostImageUrl())
+//                        .build();
+//                alarmResponseDtoList.add(alarmDto);
+//            }
         }
+        
         user.updateUserAlaram(true);    // 알림을 읽었다고 표시함
         userRepository.save(user);
         return alarmResponseDtoList;
     }
-
-
 
     // 1. 내가 참여한 소설에 새로운 문단이 달렸을 경우
     // paragraphOwner 빼고 알림을 보내줌
@@ -327,6 +377,80 @@ public class AlarmService {
 
     }
 
+    // 5. 내가 참여한 게시글이 GO 했을 때
+    public void generateGoAlarm(Post post, User postOwner){
+        List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
+        List<Long> userIdList = new ArrayList<>();
+
+        // user 중복 제거
+        for(Paragraph paragraph : paragraphList){
+            if( !userIdList.contains(paragraph.getUser().getId()) ) {
+                userIdList.add(paragraph.getUser().getId());
+            }
+        }
+
+        // 게시글에 참여한 모든 유저에게 알림을 보낸다
+        log.info("------------------- userIdList의 SIZE : " + userIdList.size());
+        for(Long userid : userIdList){
+            // 게시글을 go한사람이 아니면 (게시글을 최초로 만든사람이 아니면
+            if(!Objects.equals(postOwner.getId(), userid))
+            {
+                log.info("------------------- 555userid : " + userid);
+                User user = userRepository.findById(userid).orElseThrow(
+                        () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
+                );
+                user.updateUserAlaram(false);   // 알림을 안 읽었다고 표시
+
+                Alarm alarm = Alarm.builder()
+                        .userId(userid)
+                        .type(AlarmType.GOPOST)
+                        .postId(post.getId())
+                        .isRead(false)
+                        .alarmMessage("[알림] ["
+                                + post.getTitle()
+                                + "]이(가) 문단 개수가 증가 되었습니다!")
+                        .build();
+
+                log.info("--------------- alarmRepository.save(alarm); 직전");
+                // 조건문 없으니 밑에서 alarm.getId()를 찾기위해선 여기서 먼저 저장해야한다.
+                alarmRepository.save(alarm);
+
+                /* 알림 메시지를 보낼 DTO 생성 */
+                AlarmResponseDto alarmResponseDto = AlarmResponseDto.builder()
+                        .alarmId(alarm.getId().toString())
+                        .type(alarm.getType().toString())
+                        .message("[알림] ["
+                                + post.getTitle()
+                                + "]이(가) 문단 개수가 증가 되었습니다.")
+                        .alarmTargetId(userid.toString())
+                        .isRead(alarm.getIsRead())
+                        .postKey(alarm.getPostId().toString())
+                        .build();
+                /*-
+                 * redis로 알림메시지 pub, alarmRepository에 저장
+                 * 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외
+                 */
+
+                // 알람을 받은 user의 알람리스트를 asc로 가져옴
+                // + 그 알람리스트가 20개가 넘어가면 가장 오래된 알람을 삭제해준다.
+                List<Alarm> alarmList = alarmRepository.findAllByUserId(user.getId());
+                System.out.println("-------------------- alarmList.size() :  "+alarmList.size());
+                System.out.println("-------------------- 알림 삭제할 유저 user.getId() : "+user.getId());
+                if(alarmList.size() > 20){
+                    Alarm oldAlarm = alarmList.stream().findFirst().orElseThrow(
+                            () -> new AlarmNotFoundException("알람이 존재하지 않습니다.")
+                    );
+                    System.out.println("게시글 좋아요 ----------------------- oldAlarm : " +oldAlarm.getId());
+                    alarmRepository.delete(oldAlarm);
+                }
+
+                redisTemplate.convertAndSend(channelTopic.getTopic(),
+                        alarmResponseDto);
+            }
+
+        }
+    }
+
     /* 알림 읽었을 경우 체크 */
     @Transactional
     public AlarmResponseDto alarmReadCheck(Long alarmId,
@@ -336,20 +460,6 @@ public class AlarmService {
         alarm.setIsRead(true);
         alarmRepository.save(alarm);
         AlarmResponseDto alarmDto = new AlarmResponseDto();
-
-
-        /*UserInfoResponseDto userInfoResponseDto = new UserInfoResponseDto();
-
-        userInfoResponseDto = UserInfoResponseDto.builder()
-                .userKey(user.getId())
-                .username(user.getUsername())
-                .nickname(user.getNickName())
-                .isAlaramRead(true)
-                .userProfileImage(user.getUserProfileImage())
-                .introduction(user.getIntroduction())
-                .build();*/
-
-        //user.updateUserAlaram(true);
 
             /* 내가 참여한 게시글에 새로운 문단이 달렸을 때 */
         if (alarm.getType().equals(AlarmType.NEWPARAGRAPH)) {
@@ -382,6 +492,15 @@ public class AlarmService {
         else if(alarm.getType().equals(AlarmType.LIKEPOST)) {
             alarmDto = AlarmResponseDto.builder()
                     .alarmId(alarm.getId().toString())
+                    .type(alarm.getType().toString())
+                    .message(alarm.getAlarmMessage())
+                    .isRead(alarm.getIsRead())
+                    .postKey(alarm.getPostId().toString())
+                    .build();
+        }
+        else if(alarm.getType().equals(AlarmType.GOPOST)){
+            alarmDto = AlarmResponseDto.builder()
+            .alarmId(alarm.getId().toString())
                     .type(alarm.getType().toString())
                     .message(alarm.getAlarmMessage())
                     .isRead(alarm.getIsRead())
