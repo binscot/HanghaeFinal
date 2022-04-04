@@ -22,10 +22,10 @@ public class ParagraphResDto {
         this.paragraph = paragraph.getParagraph();
     }
 
-    public ParagraphResDto(Paragraph paragraph, UserInfoResponseDto userInfoResponseDto){
+    /*public ParagraphResDto(Paragraph paragraph, UserInfoResponseDto userInfoResponseDto){
         this.paragraph = paragraph.getParagraph();
         this.userInfoResDto = userInfoResponseDto;
-    }
+    }*/
 
     public ParagraphResDto(Paragraph paragraph,
                            List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList,

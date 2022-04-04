@@ -43,7 +43,7 @@ public class Post extends Timestamped {
     @Column(name = "paragraph_start_time")  // 문단 작성 시작 버튼을 누른 시간
     private String paragraphStartTime;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
