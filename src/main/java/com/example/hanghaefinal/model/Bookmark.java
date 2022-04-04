@@ -21,9 +21,8 @@ public class Bookmark {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    //@ManyToOne(fetch = FetchType.LAZY)
-    //@JsonIgnore
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
