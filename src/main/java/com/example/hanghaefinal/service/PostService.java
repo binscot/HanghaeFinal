@@ -179,13 +179,13 @@ public class PostService {
         for (Comment comment:commentList ) {
             Long commentLikesCnt = commentLikesRepository.countByComment(comment);
 
-//            List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-//            List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-//            for(CommentLikes commentLikesTemp : commentLikesList){
-//                commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-//            }
+            List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+            List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+            for(CommentLikes commentLikesTemp : commentLikesList){
+                commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+            }
 
-            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
         }
 
         Long postLikesCnt =  postLikesRepository.countByPost(post);
@@ -329,13 +329,13 @@ public class PostService {
         for (Comment comment : commentList) {
             Long commentLikesCnt = commentLikesRepository.countByComment(comment);
 
-//            List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-//            List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-//            for(CommentLikes commentLikesTemp : commentLikesList){
-//                commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-//            }
+            List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+            List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+            for(CommentLikes commentLikesTemp : commentLikesList){
+                commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+            }
 
-            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+            commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
         }
 
         // postLikes 조회
@@ -451,13 +451,13 @@ public class PostService {
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
 
-//                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-//                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-//                for(CommentLikes commentLikesTemp : commentLikesList){
-//                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-//                }
+                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+                for(CommentLikes commentLikesTemp : commentLikesList){
+                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+                }
 
-                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
             }
 
             List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -559,13 +559,13 @@ public class PostService {
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
                 // 각 댓글을 좋아요한 사람의 userKey 리스트를 구한다.
-//                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-//                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-//                for(CommentLikes commentLikesTemp : commentLikesList){
-//                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-//                }
+                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+                for(CommentLikes commentLikesTemp : commentLikesList){
+                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+                }
 
-                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
             }
 
             List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
@@ -702,6 +702,8 @@ public class PostService {
 
     // Page 사용하는 전체조회 메서드
     public List<PostResponseDto> viewPostList(Page<Post> posts){
+        long beforeTime = System.currentTimeMillis(); //코드 실행 전에 시간 받아오기
+
         List<PostResponseDto> postResponseDtoList = new ArrayList<>();
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
@@ -757,13 +759,13 @@ public class PostService {
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
                 // 각 댓글을 좋아요한 사람의 userKey 리스트를 구한다.
-//                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-//                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-//                for(CommentLikes commentLikesTemp : commentLikesList){
-//                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-//                }
+                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+                for(CommentLikes commentLikesTemp : commentLikesList){
+                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+                }
 
-                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
             }
 
 
@@ -784,6 +786,9 @@ public class PostService {
                     paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikeCnt, postUsername);
             postResponseDtoList.add(postResponseDto);
         }
+        long afterTime = System.currentTimeMillis(); // 코드 실행 후에 시간 받아오기
+        long secDiffTime = (afterTime - beforeTime); //두 시간에 차 계산
+        System.out.println("-------------------- 시간차이(m) : "+secDiffTime);
         return postResponseDtoList;
     }
 
