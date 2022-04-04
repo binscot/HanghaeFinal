@@ -19,7 +19,6 @@ public class PostLikesController {
     public PostLikesResponseDto postLike(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return postLikesService.addLike(postId, userDetails.getUser().getId());
     }
-
 }
 
 

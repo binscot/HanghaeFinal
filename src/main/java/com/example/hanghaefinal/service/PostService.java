@@ -116,7 +116,8 @@ public class PostService {
         }*/
 
         // 마지막 문단 작성자가 카테고리를 생성하면 새로운 카테고리 등록, category가 있으면 카테고리를 생성
-        if(categoryRequestDto.getCategory() != null){
+        List<Category> categories = categoryRepository.findAllByPostId(postId);
+        if(categoryRequestDto.getCategory() != null && categories.size()<2 ){
             Category category = new Category(categoryRequestDto.getCategory(), post);
             categoryRepository.save(category);
         } else {

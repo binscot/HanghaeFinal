@@ -20,5 +20,4 @@ public class CommentLikesController {
     public CommentLikesResponseDto commentLike(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return commentLikesService.addCommentLike(commentId, userDetails.getUser().getId());
     }
-
 }

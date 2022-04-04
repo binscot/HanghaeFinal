@@ -33,10 +33,6 @@ public class Bookmark {
     private Post post;
 
 
-    public Bookmark(User user, Post post) {
-        this.user = user;
-        this.post = post;
-    }
 
     public Bookmark(BookmarkRequestDto bookmarkRequestDto) {
 
