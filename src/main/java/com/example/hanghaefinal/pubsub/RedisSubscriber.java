@@ -2,6 +2,7 @@ package com.example.hanghaefinal.pubsub;
 
 import com.example.hanghaefinal.dto.responseDto.AlarmResponseDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
+import com.example.hanghaefinal.dto.responseDto.QuitResDto;
 import com.example.hanghaefinal.model.Paragraph;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,7 +34,7 @@ public class RedisSubscriber {
         try {
             // if 타입이 alarm 이면 똑같이 원하는 주소로 dto를 보내주면 된다. ㅇㅇ
 
-            if (publishMessage.startsWith("ENTER", 9) || publishMessage.startsWith("QUIT", 9)) {
+            if (publishMessage.startsWith("ENTER", 9)) {
                 log.info("------------------------ RedisSubscriber ENTER ----------- ");
                 // 위에서 인자로 String으로 풀려져있는 publishMessage를 다시 Dto형태로 바꿔서 담는다.
                 ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
@@ -65,6 +66,12 @@ public class RedisSubscriber {
                 messagingTemplate.convertAndSend(
                         "/sub/alarm/" + alarmResponseDto.getAlarmTargetId(),
                         alarmResponseDto);
+            } else if(publishMessage.startsWith("QUIT", 9)){
+                QuitResDto quitResDto = objectMapper.readValue(publishMessage, QuitResDto.class);
+//                ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
+                messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + quitResDto.getPostId(), quitResDto);
+                //ParagraphAccessResDto paragraphAccessResDto = objectMapper.readValue(publishMessage, ParagraphAccessResDto.class);
+                //messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             }
 
             // Paragraph 객채로 맵핑
