@@ -29,11 +29,14 @@ public class BookmarkService {
     private final BadgeRepository badgeRepository;
     private final CategoryRepository categoryRepository;
 
-    //북마크조회
+    /* 북마크조회 */
     public List<BookmarkGetResponseDto> getBookmark(int page, int size, User user) {
+
+        /* 무한스크롤 */
         Pageable pageable = PageRequest.of(page, size);
         Page<Bookmark> bookmarkList = bookmarkRepository.findAllByUserId(user.getId(),pageable);
         List<BookmarkGetResponseDto> bookmarkGetResponseDtos =new ArrayList<>();
+
 
         for(Bookmark bookmark : bookmarkList){
             if(bookmark.getUser().getId().equals(user.getId())){
@@ -105,20 +108,4 @@ public class BookmarkService {
 
         return  new BookmarkResponseDto(postId, bookmarkClickerUserKeyResponseDtos, bookmarkRepository.countByPost(post));
     }
-
-
-//    //북마크 삭제
-//    public boolean deleteBookmark(@PathVariable Long postId, User user) {
-//
-//        List<Bookmark> bookmarksList= bookmarkRepository.findAllByPostId(postId);
-//        Long userId = user.getId();
-//        for(Bookmark bookmark:bookmarksList){
-//            if(bookmark.getUser().getId().equals(userId)){
-//                bookmarkRepository.deleteById(bookmark.getId());
-//            }
-//        }
-//        return false;
-//    }
-
-
 }

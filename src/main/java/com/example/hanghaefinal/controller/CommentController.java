@@ -23,40 +23,27 @@ public class CommentController {
     //코멘트 조회
     @GetMapping("/comment/{postId}")
     public List<Comment> getComment(@PathVariable Long postId){
-
         return commentService.getComment(postId);
     }
 
     //코멘트 작성
     @PostMapping("/comment/{postId}")
-    public Comment addComment(
-            @PathVariable Long postId,
-            @Validated @RequestBody CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
+    public Comment addComment(@PathVariable Long postId, @Validated @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
-
         return commentService.addComment(postId, commentRequestDto,user);
     }
 
 
     //코멘트 수정
     @PutMapping("/comment/{commentId}")
-    public Comment update(
-            @PathVariable Long commentId,
-            @RequestBody CommentRequestDto commentRequestDto,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
+    public Comment update(@PathVariable Long commentId, @RequestBody CommentRequestDto commentRequestDto, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return commentService.update(commentId,commentRequestDto,userDetails);
     }
 
 
     //코멘트 삭제
     @DeleteMapping("/comment/{commentId}")
-    public void deleteComment(
-            @PathVariable Long commentId,
-            @AuthenticationPrincipal UserDetailsImpl userDetails){
-
+    public void deleteComment(@PathVariable Long commentId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         commentService.deleteComment(commentId, userDetails);
     }
 }
