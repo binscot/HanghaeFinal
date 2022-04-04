@@ -91,13 +91,13 @@ public class CategoryService {
             for (Comment comment:commentList ) {
                 Long commentLikesCnt = commentLikesRepository.countByComment(comment);
 
-                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
-                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
-                for(CommentLikes commentLikesTemp : commentLikesList){
-                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
-                }
+//                List<CommentLikes> commentLikesList = commentLikesRepository.findAllByCommentId(comment.getId());
+//                List<CommentLikeClickersResponseDto> commentLikeClickersResponseDtoList = new ArrayList<>();
+//                for(CommentLikes commentLikesTemp : commentLikesList){
+//                    commentLikeClickersResponseDtoList.add(new CommentLikeClickersResponseDto(commentLikesTemp));
+//                }
 
-                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt, commentLikeClickersResponseDtoList));
+                commentResDtoList.add(new CommentResponseDto(comment, commentLikesCnt));
             }
 
             List<Category> categoryList = categoryRepository.findAllByPostIdOrderByModifiedAtDesc(post.getId());
