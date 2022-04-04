@@ -3,6 +3,7 @@ package com.example.hanghaefinal.model;
 
 import com.example.hanghaefinal.dto.requestDto.BookmarkRequestDto;
 import com.example.hanghaefinal.dto.requestDto.PostLikesRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -20,10 +21,14 @@ public class Bookmark {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    //@OneToOne(fetch = FetchType.LAZY)
+    //@JsonIgnore
     @OneToOne
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;

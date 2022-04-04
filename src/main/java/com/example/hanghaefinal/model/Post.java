@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.model;
 
 import com.example.hanghaefinal.dto.requestDto.PostRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -44,6 +45,7 @@ public class Post extends Timestamped {
     private String paragraphStartTime;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     @JoinColumn(name = "user_id")
     private User user;
 

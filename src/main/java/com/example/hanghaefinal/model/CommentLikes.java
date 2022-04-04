@@ -1,6 +1,7 @@
 package com.example.hanghaefinal.model;
 
 import com.example.hanghaefinal.dto.requestDto.CommentLikesRequestDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -18,11 +19,15 @@ public class CommentLikes {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    //@ManyToOne(fetch = FetchType.LAZY)
+    //@JsonIgnore
+    @ManyToOne
     @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
