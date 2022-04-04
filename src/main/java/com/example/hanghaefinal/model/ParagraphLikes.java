@@ -29,6 +29,8 @@ public class ParagraphLikes {
     @JoinColumn(name = "paragraph_id", nullable = false)
     private Paragraph paragraph;
 
+
+
     public ParagraphLikes(ParagraphLikesReqDto paragraphLikesReqDto){
         this.user = paragraphLikesReqDto.getUser();
         this.paragraph = paragraphLikesReqDto.getParagraph();

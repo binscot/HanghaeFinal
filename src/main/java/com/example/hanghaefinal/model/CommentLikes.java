@@ -31,6 +31,8 @@ public class CommentLikes {
     @JoinColumn(name = "comment_id", nullable = false)
     private Comment comment;
 
+
+
     public CommentLikes(CommentLikesRequestDto commentLikesRequestDto) {
         this.user = commentLikesRequestDto.getUser();
         this.comment = commentLikesRequestDto.getComment();

@@ -1,7 +1,6 @@
 package com.example.hanghaefinal.repository;
 
 import com.example.hanghaefinal.model.Category;
-import com.example.hanghaefinal.model.Post;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -14,4 +13,7 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 
 
     List<Category> findByCategoryNameOrderByModifiedAtDesc(String categoryName, Pageable pageable);
+
+
+    List<Category> findAllByPostId(Long postId);
 }

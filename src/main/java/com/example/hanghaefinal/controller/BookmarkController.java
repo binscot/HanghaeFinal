@@ -20,24 +20,14 @@ public class BookmarkController {
 
     //북마크 조회
     @GetMapping("/bookmark")
-    public List<BookmarkGetResponseDto> getBookmark(
-            @RequestParam int page,
-            @RequestParam int size,
-            @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public List<BookmarkGetResponseDto> getBookmark(@RequestParam int page, @RequestParam int size, @AuthenticationPrincipal UserDetailsImpl userDetails){
         User user = userDetails.getUser();
         return bookmarkService.getBookmark(page, size, user);
     }
 
+    //북마크 등록
     @PostMapping("/bookmark/{postId}")
-    public BookmarkResponseDto addBookmarks(@PathVariable Long postId,
-                                                 @AuthenticationPrincipal UserDetailsImpl userDetails){
+    public BookmarkResponseDto addBookmarks(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
         return bookmarkService.addBookmark(postId, userDetails.getUser().getId());
     }
-
-//    @DeleteMapping("/bookmark/{postId}")
-//    public boolean deleteBookmark(@PathVariable Long postId,
-//                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
-//        User user = userDetails.getUser();
-//        return bookmarkService.deleteBookmark(postId,user);
-//    }
 }

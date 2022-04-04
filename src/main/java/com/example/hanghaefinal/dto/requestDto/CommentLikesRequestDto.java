@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class CommentLikesRequestDto {
+
     private User user;
     private Comment comment;
 }
