@@ -204,25 +204,20 @@ public class PostService {
     }
 
     public Boolean continuePost(Long postId, PostContinueReqDto postContinueReqDto, UserDetailsImpl userDetails){
-        User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
-                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
-        );
+        if(userDetails == null){
+            throw new UserNotFoundException("존재하지 않는 ID입니다.");
+        }
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
-
-        // 게시글 최초 생성자와 'GO'를 누른 사람이 다르면 false를 반환
-        if(!Objects.equals(user.getId(), post.getUser().getId())){
-            return false;
-        }
 
         // 기존 limitCnt 에 추가할만큼의 문단 수를 더한다.
         post.updateLimitCnt(post.getLimitCnt() + postContinueReqDto.getAddParagraphSize());
         post.updatePostComplete(false); // 계속 작성중인 게시글로 변환
         postRepository.save(post);
 
-        alarmService.generateGoAlarm(post, user);
+        alarmService.generateGoAlarm(post, userDetails.getUser());
 
         return true;
     }
@@ -251,49 +246,9 @@ public class PostService {
 
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(postId);
         List<ParagraphResDto> paragraphResDtoList = new ArrayList<>();
-/*
-        // Paragraph, ParagraphLikesList
-        HashMap<Object, Paragraph> map = new HashMap<>();
-        // ParagraphLikes, userPkList
-        HashMap<Object, Object> map2 = new HashMap<>();
-
-        List<ParagraphLikes> paragraphLikesList = new ArrayList<>();
-
-        // 유저를 가져오는 repository에서 fetch join을 잘 걸어라
-        for(int i = 0; i < paragraphList.size(); i++){
-            //map.put(String.valueOf(i), paragraphList.get(i).getId());
-            //map.put(String.valueOf(i), paragraphList.get(i).getParagraphLikesList());
-            paragraphLikesList = paragraphList.get(i).getParagraphLikesList();
-            //map.put(paragraphList.get(i), paragraphLikesList);
-            map.put(i, paragraphList.get(i));
-            map2.put(i, paragraphLikesList);
-        }
-        System.out.println("------------------------ paragraphLikesList : " + paragraphLikesList.size());
-
-        List<ParagraphLikesClickUserKeyResDto> paragraphLikesClickUserKeyResDtoList = new ArrayList<>();
-        for(int k = 0; k < paragraphLikesList.size(); k++){
-//            map2.put(paragraphLikesList.get(i), paragraphLikesList.get(i).getUser().getId());
-            //map2.put(k, paragraphLikesList.get(k));
-            paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikesList.get(k)));
-        }
-
-        // 이게 지금 paragraphLikesClickUserKeyResDtoList 는 마지막것만 넣어주네..
-        for(int i = 0; i < paragraphList.size(); i++){
-            paragraphResDtoList.add(new ParagraphResDto( map.get(i), paragraphLikesClickUserKeyResDtoList, paragraphList.get(i).getParagraphLikesList().size() ));
-        }*/
-
-        /*for( Object key : map.keySet() ){
-            System.out.println( String.format("키 : %s, 값 : %s", key, map.get(key)) );
-            paragraphResDtoList.add(new ParagraphResDto( key , map.get(key) ) );
-        }
-
-        HashMap<String, Long> map2 = new HashMap<>();
-        for(int i = 0; i < paragraphList.size(); i++){
-            List<ParagraphLikes> paragraphLikes = paragraphLikesRepository.findAllByParagraphId(map.get(String.valueOf(i)));
-            map2.put(String.valueOf(i), paragraphLikes.get(i).getUser().getId());
-
-        }*/
-
+        
+        // map 사용 코드 수정
+        
         for (Paragraph paragraph : paragraphList) {
             // a. 이거는 UserInfoResponseDto를 여기서 생성해서 ParagraphResDto로 가져가고
 //            UserInfoResponseDto userInfoResDto = new UserInfoResponseDto(paragraph.getUser());
@@ -351,7 +306,6 @@ public class PostService {
             postUsername = post.getUser().getUsername();
         }
 
-        log.info("-----------------------PostDetailResponseDto---------:"+post.isWriting());
         return new PostDetailResponseDto(post, postLikeClickersResponseDtoList, bookmarkClickUserKeyResDtoList,
                 paragraphResDtoList, commentResDtoList, categoryResDtoList, postLikesCnt, postUsername);
     }
