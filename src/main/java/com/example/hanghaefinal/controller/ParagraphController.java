@@ -104,20 +104,9 @@ public class ParagraphController {
             Post post = postRepository.findById(postId).orElseThrow(
                     () -> new IllegalArgumentException("해당 게시글이 존재하지 않습니다.")
             );
-            Long paragraphCnt = paragraphRepository.countByPost(post);
             bool = paragraphService.paragraphStartAndComplete(paragraphReqDto, postId);
             bool = postService.startWritingStatus(postId, user);
-            Timer m = new Timer();
-            TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    if (Objects.equals(paragraphCnt, paragraphRepository.countByPost(post)) && post.isWriting()){
-                        log.info("isWriting---------------------------------------false");
-                        post.updatePostWriting(false, null,null);
-                    }
-                }
-            };
-            m.schedule(task,20000);
+
         }
         else if(paragraphReqDto.getType().equals(Paragraph.MessageType.TALK)) {
             log.info("---------------TALK TALK TALK ----------------");
