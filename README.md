@@ -21,7 +21,7 @@ FE(React) [🔰유동건](https://github.com/peppermintt0504)
 FE(React) [소정현](https://github.com/sojh93)  
 FE(React) [조현준](https://github.com/johj703)  
 
-UX/UI 조효진  
+UX/UI 유효진  
 UX/UI 김소연
 
 <br/>
@@ -73,7 +73,7 @@ UX/UI 김소연
 ## 📃 ERD
 
 ---
-![스크린샷(167)](https://user-images.githubusercontent.com/97423483/161708729-9230946c-b903-4781-b70a-0a4f628956e2.png)
+![스크린샷(261)](https://user-images.githubusercontent.com/32161395/162142745-a939e052-e162-4e26-aa06-ae9c7edafc94.png)
 
 <br/>
 <br/>
