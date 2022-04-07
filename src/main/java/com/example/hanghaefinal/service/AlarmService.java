@@ -71,7 +71,6 @@ public class AlarmService {
     // 1. 내가 참여한 소설에 새로운 문단이 달렸을 경우
     // paragraphOwner 빼고 알림을 보내줌
     public void generateNewParagraphAlarm(User paragraphOwner, Post post) {
-        log.info("---------------------- 111111bbbb ----------------------");
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
         List<Long> userIdList = new ArrayList<>();
 
@@ -81,7 +80,6 @@ public class AlarmService {
             }
         }
 
-        log.info("------------------- userIdList의 SIZE : " + userIdList.size());
         for(Long userid : userIdList){
             if (!Objects.equals(userid, paragraphOwner.getId())){ // 문단을 작성한 사람과 다르면
                 User user = userRepository.findById(userid).orElseThrow(
@@ -99,7 +97,6 @@ public class AlarmService {
                                 + "] 소설에 문단이 등록되었습니다. 확인해보세요!")
                         .build();
 
-                //log.info("--------------- 터짐11 ---------------");
                 // redis로 알림메시지 pub, alarmRepository에 저장
                 // 단, 게시글 작성자와 댓글 작성자가 일치할 경우는 제외 ?
                 alarmRepository.save(alarm);
@@ -137,7 +134,6 @@ public class AlarmService {
 
     // 2. 미완성 -> 완성 됐을 때 알림         LastParagraphOwner 만 빼고 알림을 보내줌
     public void generateCompletePostAlarm(User LastParagraphOwner, Post post) {
-        log.info("---------------------- 222222bbbb ----------------------");
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
         List<Long> userIdList = new ArrayList<>();
 
@@ -147,7 +143,6 @@ public class AlarmService {
             }
         }
 
-        log.info("------------------- userIdList의 SIZE : " + userIdList.size());
         for(Long userid : userIdList){
             if (!Objects.equals(userid, LastParagraphOwner.getId())){
                 User user = userRepository.findById(userid).orElseThrow(
@@ -204,8 +199,6 @@ public class AlarmService {
 
     // 3. 내가 작성한 문단이 좋아요를 받았을 때 알림
     public void generateParagraphLikestAlarm(User ParagraphOwner, Post post ) {
-        log.info("---------------------- 333333bbbb ----------------------");
-
         User user = userRepository.findById(ParagraphOwner.getId()).orElseThrow(
                 () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
         );
@@ -259,7 +252,6 @@ public class AlarmService {
 
     // 4. 내가 참여한 게시글이 좋아요를 받았을 때
     public void generatePostLikesAlarm(Post post) {
-        log.info("---------------------- 444444bbbb ----------------------");
         List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(post.getId());
         List<Long> userIdList = new ArrayList<>();
 
@@ -270,9 +262,7 @@ public class AlarmService {
         }
 
         // 게시글에 참여한 모든 유저에게 알림을 보낸다
-        log.info("------------------- userIdList의 SIZE : " + userIdList.size());
         for(Long userid : userIdList){
-            log.info("------------------- 444userid : " + userid);
             User user = userRepository.findById(userid).orElseThrow(
                     () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
             );
@@ -288,7 +278,6 @@ public class AlarmService {
                             + "]에 좋아요가 등록되었습니다!")
                     .build();
 
-            log.info("--------------- alarmRepository.save(alarm); 직전");
             // 조건문 없으니 밑에서 alarm.getId()를 찾기위해선 여기서 먼저 저장해야한다.
             alarmRepository.save(alarm);
 
@@ -340,12 +329,10 @@ public class AlarmService {
         }
 
         // 게시글에 참여한 모든 유저에게 알림을 보낸다
-        log.info("------------------- userIdList의 SIZE : " + userIdList.size());
         for(Long userid : userIdList){
             // 게시글을 go한사람이 아니면 (게시글을 최초로 만든사람이 아니면
             if(!Objects.equals(postOwner.getId(), userid))
             {
-                log.info("------------------- 555userid : " + userid);
                 User user = userRepository.findById(userid).orElseThrow(
                         () -> new UserNotFoundException ("존재하지 않는 ID 입니다.")
                 );
@@ -361,7 +348,6 @@ public class AlarmService {
                                 + "]이(가) 문단 개수가 증가 되었습니다!")
                         .build();
 
-                log.info("--------------- alarmRepository.save(alarm); 직전");
                 // 조건문 없으니 밑에서 alarm.getId()를 찾기위해선 여기서 먼저 저장해야한다.
                 alarmRepository.save(alarm);
 

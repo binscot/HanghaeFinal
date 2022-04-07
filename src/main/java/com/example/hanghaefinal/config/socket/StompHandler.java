@@ -91,7 +91,6 @@ public class StompHandler implements ChannelInterceptor {
             String postId = paragraphService.getPostId(
                     Optional.ofNullable((String) message.getHeaders().get("simpDestination")).orElse("InvalidRoomId")
             );
-            log.info("~~~~~~~~~~~~~~~~~~~~ ");
             Long userId = user.get().getId();
             Post post = postRepository.findById(Long.valueOf(postId)).orElseThrow(
                     () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
