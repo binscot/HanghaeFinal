@@ -52,7 +52,6 @@ public class RedisSubscriber {
                 messagingTemplate.convertAndSend("/sub/api/chat/rooms/" + paragraphAccessResDto.getPostId(), paragraphAccessResDto);
             } else if (publishMessage.contains("[알림]")){
                 log.info("------------------------ publishMessage : " + publishMessage);
-                log.info("----------------------- 알림이 들어오긴 하나");
                 AlarmResponseDto alarmResponseDto = objectMapper
                         .readValue(publishMessage, AlarmResponseDto.class);
 

@@ -126,11 +126,4 @@ public class PostController {
         return postService.viewUserParticipatePost(userKey, page, size);
     }
 
-    @GetMapping("/posts/test/{postKey}")
-    public Boolean viewTest(
-            @PathVariable Long postKey,
-            @AuthenticationPrincipal UserDetailsImpl userDetails
-    ){
-        return postService.viewTest(postKey, userDetails);
-    }
 }

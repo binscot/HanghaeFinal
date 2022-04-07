@@ -95,8 +95,6 @@ public class PostService {
     // 마지막 파라그래프 작성 후 게시글 완성 버튼 누름 -> 완성 게시글로 변경 ( 완성 게시글 상세 조회)
     @Transactional
     public PostDetailResponseDto completePost(Long postId, CategoryRequestDto categoryRequestDto, UserDetailsImpl userDetails){
-        log.info("-------------------테스트로그2---------------------");
-        log.info("----------- 카테고리 로그 : " + categoryRequestDto.getCategory());
         /*User user = userRepository.findById(userDetails.getUser().getId()).orElseThrow(
                 () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
         );*/
@@ -194,7 +192,6 @@ public class PostService {
             postUsername = post.getUser().getUsername();
         }
 
-        log.info("---------------------- 222222aaaa ----------------------");
         // 게시글이 완성 되었을 때 알림을 보낸다
         alarmService.generateCompletePostAlarm(user, post);
 
@@ -321,7 +318,7 @@ public class PostService {
 
     // 완성작 게시글 전체 조회 - 추천순(좋아요순)
     public List<PostResponseDto> viewPostRecommend(int page, int size){
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<PostResponseDto> postResponseDtoList;
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 true이며(완성작) 최근 수정한 시간순으로 불러온다.
         Pageable pageable = PageRequest.of(page, size);
@@ -346,7 +343,7 @@ public class PostService {
 
     // 미완성 게시글 전체 조회 - 최신순
     public List<PostResponseDto> viewPostIncomplete(int page, int size){
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<PostResponseDto> postResponseDtoList;
         //List<Post> posts = postRepository.findAllByOrderByModifiedAtDesc();
         // complete 가 false이며(미완성작품) 최근 수정한 시간순으로 불러온다.
         Pageable pageable = PageRequest.of(page, size);
@@ -577,7 +574,7 @@ public class PostService {
         final Page<Post> postPageableList = new PageImpl<>(postTempList.subList(start, end), pageable, postTempList.size());
 
 
-        List<PostResponseDto> postResponseDtoList = new ArrayList<>();
+        List<PostResponseDto> postResponseDtoList;
         postResponseDtoList = viewPostList(postPageableList);
 
         return new OtherUserResDto2(user, postResponseDtoList);
@@ -707,26 +704,4 @@ public class PostService {
         return postResponseDtoList;
     }
 
-    public Boolean viewTest(Long postKey, UserDetailsImpl userDetails){
-
-        /*if(userDetails == null){
-            throw new UserNotFoundException("유저가 없네용 ㅜㅜ");
-        }*/
-
-        /*System.out.println("---------------------- 와이 ---------------------");
-        List<Post> postList = postRepository.findAllByUserIdOrderByModifiedAtDesc(userDetails.getUser().getId());
-        System.out.println("------------------- postList  size : " + postList.size());
-
-        List<Bookmark> bookmarkList = bookmarkRepository.findAllByPostId(postKey);
-        System.out.println("------------------- bookmarkList  size : " + bookmarkList.size());
-
-        List<Paragraph> paragraphList = paragraphRepository.findAllByPostId(postKey);
-        System.out.println("------------------- paragraphList  size : " + paragraphList.size());*/
-
-        List<PostLikes> postLikes = postLikesRepository.findAllByPostId(postKey);
-        System.out.println("------------------- postLikes  size : " + postLikes.size());
-
-
-        return true;
-    }
 }

@@ -48,40 +48,24 @@ public class ParagraphService {
 
     @Transactional
     public Boolean saveParagraph(ParagraphReqDto paragraphReqDto, Long postId, User user){
-        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자1111111111 ----------------------");
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
-        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자2222222222 ----------------------");
         if(paragraphReqDto.getParagraph().length() > 2000){
             throw new ParagraphLimitException("문단은 2000자 이내로 입력해주세요.");
         }
-        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자3333333333333----------------------");
         if(paragraphReqDto.getParagraph().equals("")){
             throw new ContentNullException("문단을 작성해주세요");
         }
 
         int limit = post.getLimitCnt();
-        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자44444444444444 ----------------------");
         int paragraphListSize = paragraphRepository.findAllByPostId(postId).size();
-        log.info("---------------------- 랙규야~~~~~~~~~~밥먹자555555555555 ----------------------");
-
-
-        log.info("------------------------- paragraphListSize --------------------- : " + paragraphListSize);
-        log.info("------------------------- paragraphListSize --------------------- : " + paragraphListSize);
-        log.info("------------------------- paragraphListSize --------------------- : " + paragraphListSize);
-//        int countBySize = paragraphRepository.countByParagraph(postId);
-//        log.info("------------------------- countBySize ------------------------- : " + countBySize);
-//        log.info("------------------------- countBySize ------------------------- : " + countBySize);
-//        log.info("------------------------- countBySize ------------------------- : " + countBySize);
 
 
         if (limit >= paragraphListSize ){
-            log.info("---------------------- 랙규야~~~~~~~~~~밥먹자666666666666 ----------------------");
             // 우리는 roomId를 저장안하고 post와 연관관계 맺어서 postId를 저장한다.
             //Paragraph paragraph = new Paragraph(paragraphReqDto.getParagraph(), user, post);
             Paragraph paragraph = new Paragraph(paragraphReqDto, user, post);
-            log.info("---------------------- 랙규야~~~~~~~~~~밥먹자7777777777777777 ----------------------");
             paragraphRepository.save(paragraph);
 
             //포인트 추가
@@ -90,7 +74,6 @@ public class ParagraphService {
             userRepository.save(user);
 
 
-            log.info("---------------------- 111111aaaa ----------------------");
             // 소설에 문단이 등록 됐을 때 알림 -
             alarmService.generateNewParagraphAlarm(user, post);
 
