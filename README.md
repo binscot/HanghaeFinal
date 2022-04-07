@@ -21,7 +21,7 @@ FE(React) [🔰유동건](https://github.com/peppermintt0504)
 FE(React) [소정현](https://github.com/sojh93)  
 FE(React) [조현준](https://github.com/johj703)  
 
-UX/UI 조효진  
+UX/UI 유효진  
 UX/UI 김소연
 
 <br/>
