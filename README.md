@@ -74,7 +74,7 @@ UX/UI 김소연
 
 ---
 ![스크린샷(261)](https://user-images.githubusercontent.com/32161395/162142745-a939e052-e162-4e26-aa06-ae9c7edafc94.png)
-
+<img width="1213" alt="스크린샷 2022-04-07 오후 10 16 23" src="https://user-images.githubusercontent.com/93329407/162207673-e0238bb9-56d6-4fb1-83b0-b3f97bb4921c.png">
 <br/>
 <br/>
 
@@ -84,6 +84,7 @@ UX/UI 김소연
 [API 설계 노션 페이지](https://spiritual-notebook-05f.notion.site/API-f96da817c6eb4474a6988a34778b765d)
 
 <br/>
+
 <br/>
 
 
