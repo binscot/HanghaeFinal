@@ -13,6 +13,7 @@ public interface ParagraphLikesRepository extends JpaRepository<ParagraphLikes, 
     Optional<ParagraphLikes> findByUserAndParagraph(User user, Paragraph paragraph);
     Long countByParagraph(Paragraph paragraph);
 
+    // oneToMany이면 distinct 써야하는데 그게 아니면 안쓴다..?
     //@Query(value = "select p from ParagraphLikes p join fetch p.user join fetch p.paragraph")
     List<ParagraphLikes> findAllByParagraphId(Long paragraphKey);
 

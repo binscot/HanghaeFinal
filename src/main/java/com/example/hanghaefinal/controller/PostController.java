@@ -126,15 +126,6 @@ public class PostController {
         return postService.viewUserParticipatePost(userKey, page, size);
     }
 
-    // 다른 유저 페이지
-/*    @GetMapping("/posts/userPage/{userKey}")
-    public OtherUserResDto viewUserPage(
-            @PathVariable Long userKey,
-            @RequestParam int page,
-            @RequestParam int size){
-        return postService.viewUserPage(userKey,page, size);
-    }*/
-
     @GetMapping("/posts/test/{postKey}")
     public Boolean viewTest(
             @PathVariable Long postKey,
