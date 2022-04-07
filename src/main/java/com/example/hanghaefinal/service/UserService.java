@@ -334,8 +334,6 @@ public class UserService {
         }
         List<Paragraph> paragraphList = paragraphRepository.findAllByUser(user);
         for (Paragraph paragraph:paragraphList){
-//            paragraph.setUser(null);
-//            paragraphRepository.save(paragraph);
             paragraph.updateUser(anonymousUser);
         }
         userRepository.delete(user);
