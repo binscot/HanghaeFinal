@@ -2,7 +2,10 @@ package com.example.hanghaefinal.service;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphLikesReqDto;
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
-import com.example.hanghaefinal.dto.responseDto.*;
+import com.example.hanghaefinal.dto.responseDto.ParagraphAccessResDto;
+import com.example.hanghaefinal.dto.responseDto.ParagraphLikesClickUserKeyResDto;
+import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
+import com.example.hanghaefinal.dto.responseDto.UserInfoResponseDto;
 import com.example.hanghaefinal.exception.exception.*;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.ParagraphLikes;
@@ -13,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -125,16 +127,11 @@ public class ParagraphService {
             // paragraphAccessResDto 를 RedisSubscriber의 sendMessage의 인자로 String 형태로 풀어버린다.
 
         } else if (Paragraph.MessageType.QUIT.equals(paragraphReqDto.getType())) {
-//            paragraphReqDto.setParagraph(user.getNickName());
-//            ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
+
             paragraphReqDto.setParagraph(user.getNickName());
             ParagraphAccessResDto paragraphAccessResDto = new ParagraphAccessResDto(paragraphReqDto);
             redisTemplate.convertAndSend(channelTopic.getTopic(), paragraphAccessResDto);
-//            QuitResDto quitResDto = new QuitResDto();
-//            quitResDto.setType(Paragraph.MessageType.QUIT);
-//            quitResDto.setNickName(user.getNickName());
-//            quitResDto.setPostId(paragraphReqDto.getPostId());
-//            redisTemplate.convertAndSend(channelTopic.getTopic(), quitResDto);
+
         }
     }
 

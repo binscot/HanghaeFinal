@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "https://main.d2l6bnge3hnh7g.amplifyapp.com")
 @RequiredArgsConstructor
 @Api(tags = {"User"})
 public class UserController {
@@ -82,17 +81,6 @@ public class UserController {
         return ResponseEntity.ok(userInfoResponseDto);
     }
 
-    //회원정보 수정
-//    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
-//    @PutMapping("/user/update")
-//    public ResponseEntity<UserInfoResponseDto> updateUser(
-//            @ModelAttribute UserUpdateDto updateDto,
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
-//    ) throws IOException {
-//        UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails);
-//        return ResponseEntity.ok(userInfoResponseDto);
-//    }
-
     @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
     @PutMapping("/user/update")
     public ResponseEntity<UserInfoResponseDto> updateUser(
@@ -102,17 +90,6 @@ public class UserController {
         UserInfoResponseDto userInfoResponseDto = userService.updateUser(updateDto,userDetails);
         return ResponseEntity.ok(userInfoResponseDto);
     }
-
-    //유저 프로필 수정
-//    @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
-//    @PutMapping("/user/updateProfile")
-//    public ResponseEntity<UserInfoResponseDto> updateUserProfile(
-//            @RequestPart(value = "userProfile", required = false) MultipartFile multipartFile,
-//            @AuthenticationPrincipal UserDetailsImpl userDetails
-//    ) throws IOException {
-//        UserInfoResponseDto userInfoResponseDto = userService.updateUserProfile(multipartFile,userDetails);
-//        return ResponseEntity.ok(userInfoResponseDto);
-//    }
 
     //유저 사진 수정
     @ApiOperation(value = "회원정보 수정.", notes = "회원정보 수정.")
@@ -160,7 +137,8 @@ public class UserController {
                                                   @AuthenticationPrincipal UserDetailsImpl userDetails){
         return ResponseEntity.ok(userService.updatePassword(requestDto, userDetails));
     }
-    
+
+    //무중단 배포시 health체크
     @GetMapping("/health") 
     public String checkHealth() { 
         return "healthy"; 

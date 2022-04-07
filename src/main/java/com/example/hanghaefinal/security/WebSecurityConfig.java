@@ -58,7 +58,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
                 .exceptionHandling();
 
-                // enable h2-console
         http
                 .headers()
                 .frameOptions().sameOrigin();
@@ -72,16 +71,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//                .mvcMatchers(HttpMethod.OPTIONS,"/**").permitAll()
                 .antMatchers("/","/user/login","/user/signup",
                         "/user/signup/checkID","/user/signup/checkNick","/search",
                         "/mailCheck","/login/kakaoLogin","/categories","/category/posts",
                         "/posts/userPage/**","/posts/recent", "/posts/recommend","/posts/incomplete",
-                        "/posts/viewMain","/posts/{postId}","/comment/{postId}","/notice","/ws-stomp/**").permitAll()
-//                .antMatchers("/","/**").permitAll()
+                        "/posts/viewMain","/posts/{postId}","/comment/{postId}","/notice","/ws-stomp/**","/cancelIsWriting/**").permitAll()
                 .anyRequest().authenticated()
-
-                //.and().cors().configurationSource(corsConfigurationSource())    // 추가
 
                 .and()
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
