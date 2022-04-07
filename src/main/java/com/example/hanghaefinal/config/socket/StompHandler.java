@@ -40,38 +40,17 @@ public class StompHandler implements ChannelInterceptor {
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         // substring 해줘야 토큰만 제대로 빼내올 수 있을 거다 - 이건 확인하자
-        //String token = accessor.getFirstNativeHeader("Authorization").substring(7);
         // 토큰의 값만 확인 (로그인 여부를 확인하기 위함) - 헤더의 토큰값을 빼오기
-        log.info("~~~~~~~~~~~~~~~~~~~~ message : "+message);
-        log.info("~~~~~~~~~~~~~~~~~~~~ accessor : " + accessor);
-
-
         String token = accessor.getFirstNativeHeader("Authorization");
 
         // 로그인 안한 사용자 예외처리 필요
         String username = jwtTokenProvider.getAuthentication(token).getName();
         Optional<User> user = userRepository.findByUsername(username);
-        log.info("---------------------------유저정보"+user.get().getUsername());
-        log.info("---------------------------유저정보"+user.get().getIntroduction());
-        log.info("---------------------------유저정보"+user.get().getNickName());
-        log.info("---------------------------유저정보"+user.get().getUserProfileImage());
-
-
-
 
         // websocket 연결시 헤더의 jwt token 검증 ( 만약 CONNECT라면 -> 초기 연결임 )
 
-
         if (StompCommand.CONNECT == accessor.getCommand()) {
-            //
-//            String username = jwtDecoder.decodeUsername(token); // decodeUsername에서 이미 토큰 validation 검사를 한다.
             log.info("~~~~~~~~ CONNECT 할 때 username = {}", username);
-            // 여기왜 validateToken은 왜 안하지?
-//            if(username == null) {
-//                log.info("~~~~~~~~ CONNECT 할 때");
-//                throw new IllegalArgumentException("로그인을 해주세요");
-//                //throw new LoginUserNotFoundException("로그인을 해주시기 바랍니다.");
-//            }
         }
 
         // 구독 했는지 확인
@@ -102,17 +81,8 @@ public class StompHandler implements ChannelInterceptor {
                     paragraphService.accessChatMessage(ParagraphReqDto.builder().type(Paragraph.MessageType.ENTER).postId(postId).userId(userId).build());
                     log.info("~~~~~~~~ TYPE Enter 일 때");
                 } else throw new IllegalArgumentException("로그인을 해주시기 바랍니다.");
-                //} else throw new LoginUserNotFoundException("로그인을 해주시기 바랍니다.");
             }
 
-//        } else if (StompCommand.SEND == accessor.getCommand()) {
-//            log.info("-------------------------StompCommand.SEND: "+StompCommand.SEND);
-//            log.info("-------------------------accessor.getCommand(): "+accessor.getCommand());
-//            log.info("-------------------------accessor.getCommand(): "+accessor);
-//            String username = jwtDecoder.decodeUsername(token);
-//            User user = userRepository.findByUsername(username).orElseThrow(IllegalArgumentException::new);
-//            String nickname = user.getNickname();
-//            chatMessageService.itemChatMessage(ChatMessageRequestDto.builder().build());
         }
 
         // disconnect 확인
