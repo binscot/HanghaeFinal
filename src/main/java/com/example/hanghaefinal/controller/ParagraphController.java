@@ -2,6 +2,7 @@ package com.example.hanghaefinal.controller;
 
 import com.example.hanghaefinal.dto.requestDto.ParagraphReqDto;
 import com.example.hanghaefinal.dto.responseDto.ParagraphLikesResDto;
+import com.example.hanghaefinal.exception.exception.NickDuplicationException;
 import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.Paragraph;
 import com.example.hanghaefinal.model.Post;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -85,6 +87,11 @@ public class ParagraphController {
                 () -> new UserNotFoundException("user가 존재하지 않습니다.")
         );
         Boolean bool = true;
+        Optional<Post> foundNickName = postRepository.findByWriter(user.getNickName());
+        if (foundNickName.isPresent()){
+            throw new NickDuplicationException("문단작성은 한번에 하나만 할 수 있습니다.");
+        }
+
 
         log.info("~~~~~~~~~~~~~~~~~~~~~~/chat/message/ 안에서 token : " + token+"\n");
         // 로그인 회원 정보를 들어온 메시지에 값 세팅
