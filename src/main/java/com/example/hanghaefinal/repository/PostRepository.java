@@ -31,4 +31,5 @@ public interface PostRepository extends JpaRepository<Post, Long> {
     //List<Post> findAllByCompleteTrueOrderByModifiedAtDesc();
     List<Post> findAllByUser(User user);
 
+    Optional<Post> findByWriter(String nickName);
 }
