@@ -28,6 +28,6 @@ public class BookmarkController {
     //북마크 등록
     @PostMapping("/bookmark/{postId}")
     public BookmarkResponseDto addBookmarks(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails){
-        return bookmarkService.addBookmark(postId, userDetails.getUser().getId());
+        return bookmarkService.addBookmark(postId, userDetails);
     }
 }

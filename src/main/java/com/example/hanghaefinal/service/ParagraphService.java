@@ -165,7 +165,6 @@ public class ParagraphService {
 
             paragraphLikesRepository.save(paragraphLikes);
 
-            log.info("---------------------- 333333aaaa ----------------------");
             // 문단이 좋아요를 받으면 문단 작성자에게 좋아요 알림이 간다.
             alarmService.generateParagraphLikestAlarm(paragraph.getUser(), paragraph.getPost());
 
@@ -181,10 +180,6 @@ public class ParagraphService {
         for(ParagraphLikes paragraphLikeTemp : paragraphLikes){
             paragraphLikesClickUserKeyResDtoList.add(new ParagraphLikesClickUserKeyResDto(paragraphLikeTemp));
         }
-
-
-
-
 
         return new ParagraphLikesResDto(paragraphId, paragraphLikesClickUserKeyResDtoList, paragraphLikesRepository.countByParagraph(paragraph));
     }

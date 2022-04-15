@@ -6,6 +6,7 @@ import com.example.hanghaefinal.exception.exception.PostNotFoundException;
 import com.example.hanghaefinal.exception.exception.UserNotFoundException;
 import com.example.hanghaefinal.model.*;
 import com.example.hanghaefinal.repository.*;
+import com.example.hanghaefinal.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -65,11 +66,13 @@ public class BookmarkService {
 
     //북마크생성
     @Transactional
-    public BookmarkResponseDto addBookmark(@PathVariable Long postId, Long userId) {
+    public BookmarkResponseDto addBookmark(@PathVariable Long postId, UserDetailsImpl userDetails) {
 
-        User user = userRepository.findById(userId).orElseThrow(
-                () -> new UserNotFoundException("존재하지 않는 ID 입니다.")
-        );
+        if(userDetails == null){
+            throw new UserNotFoundException("존재하지 않는 ID 입니다.");
+        }
+
+        User user = userDetails.getUser();
 
         Post post = postRepository.findById(postId).orElseThrow(
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다."));
