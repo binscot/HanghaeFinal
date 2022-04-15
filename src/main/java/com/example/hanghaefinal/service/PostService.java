@@ -605,7 +605,6 @@ public class PostService {
                 () -> new PostNotFoundException("게시물이 존재하지 않습니다.")
         );
         if (post.isWriting()){
-            log.info("isWriting---------------------------------------false");
             post.updatePostWriting(false, null,null);
         }
         return post.isWriting();
